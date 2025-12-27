@@ -234,7 +234,7 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
-        /* Navigation and rest of styles remain the same */
+        /* Navigation */
         .nav-tabs {
             display: flex;
             background: var(--gray-light);
@@ -403,6 +403,11 @@
             flex-wrap: wrap;
         }
 
+        .form-group {
+            flex: 1;
+            min-width: 150px;
+        }
+
         label {
             display: block;
             margin-bottom: 5px;
@@ -410,7 +415,7 @@
             color: var(--gray-dark);
         }
 
-        input, select {
+        input, select, textarea {
             width: 100%;
             padding: 10px;
             border: 1px solid var(--gray-medium);
@@ -420,13 +425,13 @@
             transition: var(--transition);
         }
 
-        .dark-mode input, .dark-mode select {
+        .dark-mode input, .dark-mode select, .dark-mode textarea {
             background-color: var(--gray-light);
             border-color: var(--gray-dark);
             color: var(--dark-color);
         }
 
-        input:focus, select:focus {
+        input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.2);
@@ -493,6 +498,13 @@
             font-weight: 600;
             color: var(--secondary-color);
             font-size: 1rem;
+        }
+
+        .task-reward {
+            font-style: italic;
+            color: var(--accent-secondary);
+            font-size: 0.9rem;
+            margin-top: 3px;
         }
 
         .task-actions {
@@ -866,6 +878,82 @@
             margin-bottom: 5px;
         }
 
+        .reward-options {
+            margin-top: 10px;
+        }
+
+        .reward-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .reward-toggle label {
+            margin-bottom: 0;
+            font-weight: normal;
+        }
+
+        .reward-description {
+            margin-top: 10px;
+        }
+
+        .rewards-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid var(--gray-light);
+        }
+
+        .rewards-container {
+            margin-top: 15px;
+        }
+
+        .reward-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: var(--gray-light);
+            margin-bottom: 8px;
+            border-radius: var(--border-radius);
+        }
+
+        .reward-info {
+            flex: 1;
+        }
+
+        .reward-name {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .reward-details {
+            font-size: 0.85rem;
+            color: var(--gray-dark);
+        }
+
+        .reward-cost {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .redeem-btn {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+        }
+
+        .redeemed-rewards {
+            margin-top: 20px;
+        }
+
+        .redeemed-item {
+            padding: 8px;
+            background: var(--gray-light);
+            margin-bottom: 5px;
+            border-radius: var(--border-radius);
+            opacity: 0.7;
+        }
+
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -928,6 +1016,20 @@
 
         .error-message.show {
             display: block;
+        }
+
+        .reward-templates-section {
+            margin-top: 30px;
+        }
+
+        .reward-template-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: var(--gray-light);
+            margin-bottom: 8px;
+            border-radius: var(--border-radius);
         }
     </style>
 </head>
@@ -1015,7 +1117,7 @@
                 <div class="header-content">
                     <div>
                         <h1><i class="fas fa-tasks"></i> Productivity Task Tracker</h1>
-                        <p class="subtitle">Welcome back! Your data is stored securely</p>
+                        <p class="subtitle">Earn points and redeem custom rewards!</p>
                     </div>
                     <div class="user-info">
                         <div class="user-email" id="userEmailDisplay">
@@ -1042,6 +1144,10 @@
                 <a href="#" class="nav-tab" data-page="addTasks">
                     <i class="fas fa-plus-circle"></i>
                     <span>Add Tasks</span>
+                </a>
+                <a href="#" class="nav-tab" data-page="rewards">
+                    <i class="fas fa-gift"></i>
+                    <span>Rewards</span>
                 </a>
             </div>
 
@@ -1081,7 +1187,7 @@
                         <!-- Points Display -->
                         <div class="points-display">
                             <div class="total-points" id="totalPoints">0</div>
-                            <div class="points-label">Total Reward Points Earned</div>
+                            <div class="points-label">Total Reward Points Available</div>
                         </div>
                     </div>
 
@@ -1182,9 +1288,9 @@
                             <i class="fas fa-tags"></i>
                             <div>Manage Categories</div>
                         </div>
-                        <div class="quick-action-btn" id="viewTemplatesBtn">
-                            <i class="fas fa-layer-group"></i>
-                            <div>View Templates</div>
+                        <div class="quick-action-btn" id="manageRewardsBtn">
+                            <i class="fas fa-gift"></i>
+                            <div>Manage Rewards</div>
                         </div>
                     </div>
                 </div>
@@ -1215,6 +1321,23 @@
                                     <label for="taskDate">For Date</label>
                                     <input type="date" id="taskDate" value="">
                                 </div>
+                            </div>
+                            
+                            <!-- Custom Reward Section -->
+                            <div class="reward-options">
+                                <div class="reward-toggle">
+                                    <input type="checkbox" id="enableCustomReward">
+                                    <label for="enableCustomReward">Add Custom Reward Description</label>
+                                </div>
+                                <div class="reward-description" id="customRewardSection" style="display: none;">
+                                    <div class="form-group">
+                                        <label for="customReward">Custom Reward</label>
+                                        <textarea id="customReward" placeholder="Describe your custom reward (e.g., 'Watch 1 episode of favorite show', 'Buy coffee', '15 min break')" rows="2"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
                                 <div class="form-group" style="align-self: flex-end;">
                                     <button type="submit" class="button button-success" style="width: 100%;">
                                         <i class="fas fa-plus"></i> Add Task
@@ -1246,6 +1369,77 @@
                             <button class="button button-secondary" id="editTemplatesBtn">
                                 <i class="fas fa-edit"></i> Edit Templates
                             </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 3: Rewards Page -->
+            <div id="rewardsPage" class="page">
+                <div class="add-task-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-gift"></i> Rewards & Incentives
+                        <span style="font-size: 0.9rem; color: var(--gray-dark);">Earn points and redeem custom rewards</span>
+                    </h2>
+                    
+                    <!-- Points Summary -->
+                    <div class="points-display" style="margin-bottom: 25px;">
+                        <div class="total-points" id="rewardsTotalPoints">0</div>
+                        <div class="points-label">Available Points to Redeem</div>
+                    </div>
+                    
+                    <div class="quick-actions">
+                        <div class="quick-action-btn" id="addCustomRewardBtn">
+                            <i class="fas fa-plus-circle"></i>
+                            <div>Add Custom Reward</div>
+                        </div>
+                        <div class="quick-action-btn" id="addRewardTemplateBtn">
+                            <i class="fas fa-layer-group"></i>
+                            <div>Add Reward Template</div>
+                        </div>
+                        <div class="quick-action-btn" id="viewRedeemedBtn">
+                            <i class="fas fa-history"></i>
+                            <div>View Redeemed</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom Rewards Section -->
+                <div class="add-task-section">
+                    <h3>Your Custom Rewards</h3>
+                    <div class="panel">
+                        <div class="rewards-container" id="customRewardsList">
+                            <!-- Custom rewards will appear here -->
+                        </div>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <button class="button button-success" id="createCustomRewardBtn">
+                                <i class="fas fa-plus"></i> Create New Reward
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reward Templates Section -->
+                <div class="add-task-section reward-templates-section">
+                    <h3>Reward Templates</h3>
+                    <div class="panel">
+                        <div class="rewards-container" id="rewardTemplatesList">
+                            <!-- Reward templates will appear here -->
+                        </div>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <button class="button button-secondary" id="createRewardTemplateBtn">
+                                <i class="fas fa-plus"></i> Create Reward Template
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Redeemed Rewards Section -->
+                <div class="add-task-section" id="redeemedSection" style="display: none;">
+                    <h3>Redeemed Rewards</h3>
+                    <div class="panel">
+                        <div class="redeemed-rewards" id="redeemedRewardsList">
+                            <!-- Redeemed rewards will appear here -->
                         </div>
                     </div>
                 </div>
@@ -1411,6 +1605,55 @@
             </div>
         </div>
 
+        <!-- Custom Reward Modal -->
+        <div class="modal" id="customRewardModal">
+            <div class="modal-content">
+                <span class="close-modal" id="closeCustomRewardModal">&times;</span>
+                <h2 class="modal-title">Create Custom Reward</h2>
+                
+                <form id="customRewardForm">
+                    <div class="form-group">
+                        <label for="rewardName">Reward Name</label>
+                        <input type="text" id="rewardName" placeholder="e.g., Watch Netflix, Buy Coffee, Game Time" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="rewardDescription">Description (Optional)</label>
+                        <textarea id="rewardDescription" placeholder="Describe your reward in detail" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="rewardCost">Points Cost</label>
+                            <input type="number" id="rewardCost" min="1" max="10000" value="100" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="rewardType">Reward Type</label>
+                            <select id="rewardType">
+                                <option value="treat">Treat/Snack</option>
+                                <option value="entertainment">Entertainment</option>
+                                <option value="purchase">Purchase</option>
+                                <option value="experience">Experience</option>
+                                <option value="break">Break/Rest</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="saveAsTemplate">
+                            <input type="checkbox" id="saveAsTemplate"> Save as Reward Template for future use
+                        </label>
+                    </div>
+                    
+                    <div style="margin-top: 20px; text-align: center;">
+                        <button type="submit" class="button button-success">Create Reward</button>
+                        <button type="button" class="button button-secondary" id="cancelRewardBtn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <!-- Edit Task Modal -->
         <div class="modal" id="editTaskModal">
             <div class="modal-content">
@@ -1430,6 +1673,21 @@
                         <label for="editTaskPoints">Reward Points</label>
                         <input type="number" id="editTaskPoints" min="1" max="100" required>
                     </div>
+                    
+                    <!-- Custom Reward in Edit -->
+                    <div class="reward-options">
+                        <div class="reward-toggle">
+                            <input type="checkbox" id="editEnableCustomReward">
+                            <label for="editEnableCustomReward">Has Custom Reward</label>
+                        </div>
+                        <div class="reward-description" id="editCustomRewardSection" style="display: none;">
+                            <div class="form-group">
+                                <label for="editCustomReward">Custom Reward</label>
+                                <textarea id="editCustomReward" placeholder="Custom reward description" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <input type="hidden" id="editTaskId">
                     <input type="hidden" id="editTaskDate">
                     
@@ -1440,10 +1698,54 @@
                 </form>
             </div>
         </div>
+
+        <!-- Reward Templates Modal -->
+        <div class="modal" id="rewardTemplatesModal">
+            <div class="modal-content">
+                <span class="close-modal" id="closeRewardTemplatesModal">&times;</span>
+                <h2 class="modal-title">Reward Templates</h2>
+                
+                <div class="template-instructions">
+                    <p><strong>How it works:</strong> Create reward templates that you can quickly add to your custom rewards list.</p>
+                </div>
+                
+                <div id="rewardTemplatesContainer">
+                    <!-- Reward templates will appear here -->
+                </div>
+                
+                <div style="margin-top: 20px; text-align: center;">
+                    <button class="button button-success" id="createNewRewardTemplateBtn">
+                        <i class="fas fa-plus"></i> Create New Template
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
     <script>
-        // App State
+        // ==================== FIREBASE CONFIGURATION ====================
+        const firebaseConfig = {
+            apiKey: "AIzaSyCOriMyRPx4pxEYo3R6G4UkAX6hNOLWUE4",
+            authDomain: "daily-tracker-ad91a.firebaseapp.com",
+            databaseURL: "https://daily-tracker-ad91a-default-rtdb.firebaseio.com",
+            projectId: "daily-tracker-ad91a",
+            storageBucket: "daily-tracker-ad91a.firebasestorage.app",
+            messagingSenderId: "64870590198",
+            appId: "1:64870590198:web:8ce72e3fef1dbcc7596ed7",
+            measurementId: "G-BMRV5G96EJ"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // ==================== APP STATE ====================
         let currentDate = new Date();
         let currentUser = null;
         let categories = [];
@@ -1454,158 +1756,110 @@
         let tasks = {};
         let charts = {};
         let clearExistingTasks = false;
+        let customRewards = [];
+        let rewardTemplates = [];
+        let redeemedRewards = [];
+        let availablePoints = 0;
+        let unsubscribeTasks = null;
+        let unsubscribeUserData = null;
 
-        // Initialize the application
+        // ==================== INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', function() {
-            // Check if user is already logged in
-            checkLoginStatus();
+            console.log('App loaded, checking Firebase connection...');
+            
+            // Setup Firebase auth state listener
+            auth.onAuthStateChanged((user) => {
+                console.log('Auth state changed:', user ? 'User logged in' : 'No user');
+                if (user) {
+                    // User is signed in
+                    currentUser = {
+                        uid: user.uid,
+                        email: user.email,
+                        name: user.displayName || user.email.split('@')[0]
+                    };
+                    console.log('Current user:', currentUser.email);
+                    loadUserData();
+                    showApp();
+                } else {
+                    // User is signed out
+                    console.log('User signed out');
+                    currentUser = null;
+                    // Unsubscribe from listeners
+                    if (unsubscribeTasks) {
+                        unsubscribeTasks();
+                        unsubscribeTasks = null;
+                    }
+                    if (unsubscribeUserData) {
+                        unsubscribeUserData();
+                        unsubscribeUserData = null;
+                    }
+                    showLogin();
+                }
+            });
             
             // Setup event listeners
             setupAuthEventListeners();
             
             // Set default dates
-            document.getElementById('applyStartDate').valueAsDate = new Date();
-            document.getElementById('taskDate').valueAsDate = new Date();
+            const today = new Date();
+            const todayStr = today.toISOString().split('T')[0];
+            document.getElementById('applyStartDate').value = todayStr;
+            document.getElementById('taskDate').value = todayStr;
+            
+            console.log('Default dates set to:', todayStr);
         });
 
-        // Authentication Functions
-        function checkLoginStatus() {
-            const loggedInUser = localStorage.getItem('productivityTracker_currentUser');
-            if (loggedInUser) {
-                try {
-                    currentUser = JSON.parse(loggedInUser);
-                    loadUserData();
-                    showApp();
-                } catch (e) {
-                    console.error('Error loading user data:', e);
-                    logout();
-                }
-            } else {
-                showLogin();
-            }
-        }
-
-        function loadUserData() {
-            if (!currentUser || !currentUser.email) {
-                logout();
-                return;
+        // ==================== FIREBASE AUTHENTICATION ====================
+        async function login(email, password) {
+            // Clear any previous errors
+            clearErrors();
+            
+            // Validation
+            if (!email || !email.trim()) {
+                showError('loginEmailError', 'Please enter your email');
+                return false;
             }
             
-            // Load user-specific data
-            const userData = localStorage.getItem(`productivityTracker_user_${currentUser.email}`);
-            if (userData) {
-                try {
-                    const data = JSON.parse(userData);
-                    categories = data.categories || getDefaultCategories();
-                    templates = data.templates || { daily: [], custom: [] };
-                    tasks = data.tasks || {};
-                } catch (e) {
-                    console.error('Error parsing user data:', e);
-                    // Reset to defaults
-                    categories = getDefaultCategories();
-                    templates = { daily: [], custom: [] };
-                    tasks = {};
-                }
-            } else {
-                // First time user - set defaults
-                categories = getDefaultCategories();
-                templates = { daily: [], custom: [] };
-                tasks = {};
-                saveUserData();
-            }
-            
-            // Initialize app components
-            initAppComponents();
-        }
-
-        function saveUserData() {
-            if (!currentUser || !currentUser.email) return;
-            
-            const userData = {
-                categories: categories,
-                templates: templates,
-                tasks: tasks,
-                lastSaved: new Date().toISOString()
-            };
-            
-            localStorage.setItem(`productivityTracker_user_${currentUser.email}`, JSON.stringify(userData));
-        }
-
-        function getDefaultCategories() {
-            return [
-                { id: 'work', name: 'Work', color: '#4a6fa5' },
-                { id: 'study', name: 'Study', color: '#4fc3a1' },
-                { id: 'fitness', name: 'Fitness', color: '#ff7e5f' },
-                { id: 'personal', name: 'Personal', color: '#9b5de5' },
-                { id: 'coding', name: 'Coding', color: '#00bbf9' }
-            ];
-        }
-
-        function showLogin() {
-            document.getElementById('loginScreen').style.display = 'flex';
-            document.getElementById('registerScreen').style.display = 'none';
-            document.getElementById('appContent').style.display = 'none';
-        }
-
-        function showRegister() {
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('registerScreen').style.display = 'flex';
-            document.getElementById('appContent').style.display = 'none';
-        }
-
-        function showApp() {
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('registerScreen').style.display = 'none';
-            document.getElementById('appContent').style.display = 'block';
-            
-            // Update user email display
-            if (currentUser && currentUser.email) {
-                document.getElementById('userEmailDisplay').innerHTML = `<i class="fas fa-user"></i> ${currentUser.email}`;
-            }
-        }
-
-        function login(email, password) {
-            // Simple validation
             if (!validateEmail(email)) {
                 showError('loginEmailError', 'Please enter a valid email address');
                 return false;
             }
             
-            if (!password || password.length < 6) {
-                showError('loginPasswordError', 'Password must be at least 6 characters');
+            if (!password) {
+                showError('loginPasswordError', 'Please enter your password');
                 return false;
             }
             
-            // Check if user exists
-            const users = JSON.parse(localStorage.getItem('productivityTracker_users') || '{}');
-            const userKey = email.toLowerCase();
-            
-            if (!users[userKey]) {
-                showError('loginEmailError', 'Email not registered');
+            try {
+                console.log('Attempting login for:', email);
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                console.log('Login successful:', userCredential.user.email);
+                return true;
+            } catch (error) {
+                console.error('Login error:', error.code, error.message);
+                
+                // Handle specific Firebase auth errors
+                switch(error.code) {
+                    case 'auth/user-not-found':
+                        showError('loginEmailError', 'No account found with this email');
+                        break;
+                    case 'auth/wrong-password':
+                        showError('loginPasswordError', 'Incorrect password');
+                        break;
+                    case 'auth/invalid-email':
+                        showError('loginEmailError', 'Invalid email address');
+                        break;
+                    case 'auth/user-disabled':
+                        showError('loginEmailError', 'This account has been disabled');
+                        break;
+                    default:
+                        showError('loginEmailError', 'Login failed: ' + error.message);
+                }
                 return false;
             }
-            
-            // Check password (in real app, this would be hashed)
-            if (users[userKey].password !== password) {
-                showError('loginPasswordError', 'Invalid password');
-                return false;
-            }
-            
-            // Login successful
-            currentUser = {
-                email: email.toLowerCase(),
-                name: users[userKey].name,
-                registered: users[userKey].registered
-            };
-            
-            localStorage.setItem('productivityTracker_currentUser', JSON.stringify(currentUser));
-            loadUserData();
-            showApp();
-            clearErrors();
-            return true;
         }
 
-        function register(name, email, password, confirmPassword) {
+        async function register(name, email, password, confirmPassword) {
             // Validation
             if (!name || name.trim().length < 2) {
                 showError('registerNameError', 'Please enter your full name');
@@ -1627,42 +1881,52 @@
                 return false;
             }
             
-            // Check if user already exists
-            const users = JSON.parse(localStorage.getItem('productivityTracker_users') || '{}');
-            const userKey = email.toLowerCase();
-            
-            if (users[userKey]) {
-                showError('registerEmailError', 'Email already registered');
+            try {
+                console.log('Attempting registration for:', email);
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                console.log('Registration successful:', userCredential.user.uid);
+                
+                // Update user profile with name
+                await userCredential.user.updateProfile({
+                    displayName: name.trim()
+                });
+                
+                // Create initial user data in Firestore
+                await initializeUserData(userCredential.user.uid, name.trim(), email);
+                
+                return true;
+            } catch (error) {
+                console.error('Registration error:', error.code, error.message);
+                
+                // Handle specific Firebase auth errors
+                switch(error.code) {
+                    case 'auth/email-already-in-use':
+                        showError('registerEmailError', 'Email already registered');
+                        break;
+                    case 'auth/invalid-email':
+                        showError('registerEmailError', 'Invalid email address');
+                        break;
+                    case 'auth/operation-not-allowed':
+                        showError('registerEmailError', 'Registration is currently disabled');
+                        break;
+                    case 'auth/weak-password':
+                        showError('registerPasswordError', 'Password is too weak');
+                        break;
+                    default:
+                        showError('registerEmailError', 'Registration failed: ' + error.message);
+                }
                 return false;
             }
-            
-            // Register new user
-            users[userKey] = {
-                name: name.trim(),
-                password: password, // In real app, this should be hashed
-                registered: new Date().toISOString()
-            };
-            
-            localStorage.setItem('productivityTracker_users', JSON.stringify(users));
-            
-            // Auto login
-            currentUser = {
-                email: email.toLowerCase(),
-                name: name.trim(),
-                registered: users[userKey].registered
-            };
-            
-            localStorage.setItem('productivityTracker_currentUser', JSON.stringify(currentUser));
-            loadUserData();
-            showApp();
-            clearErrors();
-            return true;
         }
 
-        function logout() {
-            currentUser = null;
-            localStorage.removeItem('productivityTracker_currentUser');
-            showLogin();
+        async function logout() {
+            try {
+                await auth.signOut();
+                currentUser = null;
+                console.log('Logged out successfully');
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
         }
 
         function validateEmail(email) {
@@ -1683,23 +1947,36 @@
             });
         }
 
+        function clearFormErrors() {
+            document.querySelectorAll('.error-message').forEach(error => {
+                error.textContent = '';
+                error.classList.remove('show');
+            });
+        }
+
         function setupAuthEventListeners() {
             // Login form
-            document.getElementById('loginForm').addEventListener('submit', function(e) {
+            document.getElementById('loginForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const email = document.getElementById('loginEmail').value;
                 const password = document.getElementById('loginPassword').value;
-                login(email, password);
+                const success = await login(email, password);
+                if (success) {
+                    this.reset();
+                }
             });
             
             // Register form
-            document.getElementById('registerForm').addEventListener('submit', function(e) {
+            document.getElementById('registerForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const name = document.getElementById('registerName').value;
                 const email = document.getElementById('registerEmail').value;
                 const password = document.getElementById('registerPassword').value;
                 const confirmPassword = document.getElementById('registerConfirmPassword').value;
-                register(name, email, password, confirmPassword);
+                const success = await register(name, email, password, confirmPassword);
+                if (success) {
+                    this.reset();
+                }
             });
             
             // Switch to register
@@ -1720,15 +1997,326 @@
             document.getElementById('logoutBtn').addEventListener('click', logout);
         }
 
+        // ==================== FIRESTORE DATA MANAGEMENT ====================
+        async function initializeUserData(uid, name, email) {
+            console.log('Initializing user data for:', uid);
+            
+            const defaultCategories = getDefaultCategories();
+            const defaultRewardTemplates = getDefaultRewardTemplates();
+            
+            const userData = {
+                name: name,
+                email: email,
+                categories: defaultCategories,
+                templates: {
+                    daily: [],
+                    custom: []
+                },
+                customRewards: [],
+                rewardTemplates: defaultRewardTemplates,
+                redeemedRewards: [],
+                availablePoints: 0,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            try {
+                // Create user document
+                await db.collection('users').doc(uid).set(userData);
+                console.log('User data initialized in Firestore');
+            } catch (error) {
+                console.error('Error initializing user data:', error);
+            }
+        }
+
+        async function loadUserData() {
+            if (!currentUser || !currentUser.uid) {
+                console.error('No current user found');
+                return;
+            }
+            
+            console.log('Loading user data for:', currentUser.uid);
+            
+            try {
+                // Load user data from Firestore
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    console.log('User data loaded:', userData);
+                    
+                    categories = userData.categories || getDefaultCategories();
+                    templates = userData.templates || { daily: [], custom: [] };
+                    customRewards = userData.customRewards || [];
+                    rewardTemplates = userData.rewardTemplates || getDefaultRewardTemplates();
+                    redeemedRewards = userData.redeemedRewards || [];
+                    availablePoints = userData.availablePoints || 0;
+                    
+                    // Subscribe to real-time tasks updates
+                    subscribeToTasks();
+                    
+                    // Subscribe to user data updates
+                    unsubscribeUserData = db.collection('users').doc(currentUser.uid)
+                        .onSnapshot((doc) => {
+                            if (doc.exists) {
+                                const data = doc.data();
+                                console.log('User data updated from Firestore');
+                                
+                                categories = data.categories || categories;
+                                templates = data.templates || templates;
+                                customRewards = data.customRewards || customRewards;
+                                rewardTemplates = data.rewardTemplates || rewardTemplates;
+                                redeemedRewards = data.redeemedRewards || redeemedRewards;
+                                availablePoints = data.availablePoints || availablePoints;
+                                
+                                // Update UI
+                                updateCategorySelects();
+                                updateTemplateList();
+                                updateRewardsDisplay();
+                            }
+                        }, (error) => {
+                            console.error('Error listening to user data:', error);
+                        });
+                } else {
+                    console.log('No user document found, creating one...');
+                    // Create user document if it doesn't exist
+                    await initializeUserData(currentUser.uid, currentUser.name, currentUser.email);
+                }
+                
+                // Initialize app components
+                initAppComponents();
+                
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                resetToDefaults();
+                initAppComponents();
+            }
+        }
+
+        function subscribeToTasks() {
+            if (!currentUser || !currentUser.uid) return;
+            
+            console.log('Subscribing to tasks for user:', currentUser.uid);
+            
+            // Unsubscribe from previous listener
+            if (unsubscribeTasks) {
+                unsubscribeTasks();
+                console.log('Unsubscribed from previous tasks listener');
+            }
+            
+            // Subscribe to tasks collection
+            unsubscribeTasks = db.collection('users').doc(currentUser.uid)
+                .collection('tasks')
+                .onSnapshot((querySnapshot) => {
+                    console.log('Tasks snapshot received, documents:', querySnapshot.size);
+                    
+                    tasks = {};
+                    
+                    querySnapshot.forEach((doc) => {
+                        const taskData = doc.data();
+                        const dateKey = doc.id; // Using date as document ID
+                        
+                        if (taskData.tasks && Array.isArray(taskData.tasks)) {
+                            tasks[dateKey] = taskData.tasks.map(task => {
+                                // Convert Firestore timestamps to Date objects
+                                if (task.createdAt && task.createdAt.toDate) {
+                                    task.createdAt = task.createdAt.toDate();
+                                }
+                                if (task.updatedAt && task.updatedAt.toDate) {
+                                    task.updatedAt = task.updatedAt.toDate();
+                                }
+                                return task;
+                            });
+                        }
+                    });
+                    
+                    console.log('Tasks loaded for dates:', Object.keys(tasks).length);
+                    
+                    // Update UI with new tasks
+                    renderTasks();
+                    renderAnalytics();
+                    updateTodayTasksPreview();
+                    updatePointsDisplay();
+                    
+                }, (error) => {
+                    console.error('Error listening to tasks:', error);
+                });
+        }
+
+        async function saveTasks() {
+            if (!currentUser || !currentUser.uid) return;
+            
+            console.log('Saving tasks to Firestore...');
+            
+            try {
+                // Process each date with tasks
+                for (const dateKey in tasks) {
+                    if (tasks[dateKey].length > 0) {
+                        // Add timestamps to each task
+                        const tasksWithTimestamps = tasks[dateKey].map(task => ({
+                            ...task,
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        }));
+                        
+                        // Save tasks for this date
+                        await db.collection('users').doc(currentUser.uid)
+                            .collection('tasks')
+                            .doc(dateKey)
+                            .set({
+                                tasks: tasksWithTimestamps,
+                                date: dateKey,
+                                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                            }, { merge: true });
+                    } else {
+                        // Remove date if no tasks
+                        await db.collection('users').doc(currentUser.uid)
+                            .collection('tasks')
+                            .doc(dateKey)
+                            .delete();
+                    }
+                }
+                
+                console.log('Tasks saved to Firestore successfully');
+            } catch (error) {
+                console.error('Error saving tasks:', error);
+            }
+        }
+
+        async function saveUserData() {
+            if (!currentUser || !currentUser.uid) return;
+            
+            try {
+                await db.collection('users').doc(currentUser.uid).set({
+                    categories: categories,
+                    templates: templates,
+                    customRewards: customRewards,
+                    rewardTemplates: rewardTemplates,
+                    redeemedRewards: redeemedRewards,
+                    availablePoints: availablePoints,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                
+                console.log('User data saved to Firestore');
+            } catch (error) {
+                console.error('Error saving user data:', error);
+            }
+        }
+
+        async function saveCategories() {
+            await saveUserData();
+            updateCategorySelects();
+        }
+
+        async function saveTasksLocal() {
+            await saveTasks();
+        }
+
+        async function saveTemplates() {
+            await saveUserData();
+        }
+
+        async function saveRewards() {
+            await saveUserData();
+        }
+
+        // ==================== UI FUNCTIONS ====================
+        function showLogin() {
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('registerScreen').style.display = 'none';
+            document.getElementById('appContent').style.display = 'none';
+            clearFormErrors();
+            document.getElementById('loginForm').reset();
+        }
+
+        function showRegister() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('registerScreen').style.display = 'flex';
+            document.getElementById('appContent').style.display = 'none';
+            clearFormErrors();
+            document.getElementById('registerForm').reset();
+        }
+
+        function showApp() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('registerScreen').style.display = 'none';
+            document.getElementById('appContent').style.display = 'block';
+            
+            // Update user email display
+            if (currentUser && currentUser.email) {
+                document.getElementById('userEmailDisplay').innerHTML = `<i class="fas fa-user"></i> ${currentUser.email}`;
+            }
+        }
+
+        function getDefaultCategories() {
+            return [
+                { id: 'work', name: 'Work', color: '#4a6fa5' },
+                { id: 'study', name: 'Study', color: '#4fc3a1' },
+                { id: 'fitness', name: 'Fitness', color: '#ff7e5f' },
+                { id: 'personal', name: 'Personal', color: '#9b5de5' },
+                { id: 'coding', name: 'Coding', color: '#00bbf9' }
+            ];
+        }
+
+        function getDefaultRewardTemplates() {
+            return [
+                {
+                    id: 'coffee-break',
+                    name: 'Coffee Break',
+                    description: 'Enjoy a nice cup of coffee or tea',
+                    cost: 50,
+                    type: 'treat'
+                },
+                {
+                    id: 'tv-time',
+                    name: 'TV Time',
+                    description: 'Watch 1 episode of your favorite show',
+                    cost: 100,
+                    type: 'entertainment'
+                },
+                {
+                    id: 'game-session',
+                    name: 'Game Session',
+                    description: '30 minutes of gaming',
+                    cost: 150,
+                    type: 'entertainment'
+                },
+                {
+                    id: 'snack-treat',
+                    name: 'Snack Treat',
+                    description: 'Enjoy your favorite snack',
+                    cost: 75,
+                    type: 'treat'
+                },
+                {
+                    id: 'short-break',
+                    name: 'Short Break',
+                    description: 'Take a 15-minute relaxing break',
+                    cost: 30,
+                    type: 'break'
+                }
+            ];
+        }
+
+        function resetToDefaults() {
+            categories = getDefaultCategories();
+            templates = { daily: [], custom: [] };
+            tasks = {};
+            customRewards = [];
+            rewardTemplates = getDefaultRewardTemplates();
+            redeemedRewards = [];
+            availablePoints = 0;
+        }
+
         // App Initialization
         function initAppComponents() {
             initCategories();
             renderDate();
-            renderTasks();
+            // Tasks are already rendered via Firestore listener
             renderAnalytics();
             setupEventListeners();
             setupCharts();
             setupTemplateModal();
+            setupRewards();
             
             // Show dashboard page by default
             showPage('dashboard');
@@ -1736,6 +2324,7 @@
             // Update today's tasks preview
             updateTodayTasksPreview();
             updateTemplateList();
+            updateRewardsDisplay();
         }
 
         // Page navigation
@@ -1765,26 +2354,14 @@
                 updateTodayTasksPreview();
                 updateTemplateList();
                 document.getElementById('quickAddBtn').style.display = 'inline-block';
+            } else if (pageId === 'rewards') {
+                updateRewardsDisplay();
             }
         }
 
         // Initialize categories dropdown
         function initCategories() {
             updateCategorySelects();
-        }
-
-        // Save data to localStorage
-        function saveCategories() {
-            saveUserData();
-            updateCategorySelects();
-        }
-
-        function saveTasks() {
-            saveUserData();
-        }
-
-        function saveTemplates() {
-            saveUserData();
         }
 
         // Date handling
@@ -1846,6 +2423,12 @@
                 
                 const taskElement = document.createElement('div');
                 taskElement.className = `task-item ${task.completed ? 'completed' : ''}`;
+                
+                let rewardHtml = '';
+                if (task.customReward) {
+                    rewardHtml = `<div class="task-reward">🎁 Reward: ${task.customReward}</div>`;
+                }
+                
                 taskElement.innerHTML = `
                     <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''} data-index="${index}">
                     <div class="task-content">
@@ -1854,6 +2437,7 @@
                             <span class="task-category" style="background-color: ${category.color}">${category.name}</span>
                             <span class="task-points">${task.points} pts</span>
                         </div>
+                        ${rewardHtml}
                     </div>
                 `;
                 
@@ -1861,6 +2445,7 @@
             });
             
             updateCompletionRate();
+            updateTotalPoints();
         }
 
         // Update completion rate
@@ -1896,6 +2481,11 @@
             tasksForDate.forEach((task, index) => {
                 const category = categories.find(c => c.id === task.category) || { name: 'Uncategorized', color: '#999' };
                 
+                let rewardHtml = '';
+                if (task.customReward) {
+                    rewardHtml = `<div class="task-reward">🎁 Reward: ${task.customReward}</div>`;
+                }
+                
                 const taskElement = document.createElement('div');
                 taskElement.className = `task-item ${task.completed ? 'completed' : ''}`;
                 taskElement.innerHTML = `
@@ -1906,6 +2496,7 @@
                             <span class="task-category" style="background-color: ${category.color}">${category.name}</span>
                             <span class="task-points">${task.points} pts</span>
                         </div>
+                        ${rewardHtml}
                     </div>
                     <div class="task-actions">
                         <button class="button button-small edit-task" data-index="${index}" data-date="${dateKey}">
@@ -1966,6 +2557,220 @@
             if (!hasTemplates) {
                 container.innerHTML = '<div class="no-tasks" style="padding: 15px;">No templates yet. Create your first template!</div>';
             }
+        }
+
+        // Update rewards display
+        function updateRewardsDisplay() {
+            updateCustomRewardsList();
+            updateRewardTemplatesList();
+            updateRedeemedRewardsList();
+            updatePointsDisplay();
+        }
+
+        function updateCustomRewardsList() {
+            const container = document.getElementById('customRewardsList');
+            container.innerHTML = '';
+            
+            if (customRewards.length === 0) {
+                container.innerHTML = '<div class="no-tasks" style="padding: 15px;">No custom rewards yet. Create your first reward!</div>';
+                return;
+            }
+            
+            customRewards.forEach((reward, index) => {
+                const rewardDiv = document.createElement('div');
+                rewardDiv.className = 'reward-item';
+                rewardDiv.innerHTML = `
+                    <div class="reward-info">
+                        <div class="reward-name">${reward.name}</div>
+                        <div class="reward-details">
+                            ${reward.description ? reward.description + ' • ' : ''}
+                            <span class="reward-cost">${reward.cost} points</span>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="button button-small redeem-btn ${availablePoints >= reward.cost ? 'button-success' : 'button-secondary'}" 
+                                data-index="${index}" ${availablePoints < reward.cost ? 'disabled' : ''}>
+                            <i class="fas fa-gift"></i> Redeem
+                        </button>
+                        <button class="button button-small button-danger delete-reward-btn" data-index="${index}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(rewardDiv);
+            });
+            
+            // Add event listeners
+            container.querySelectorAll('.redeem-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = parseInt(this.dataset.index);
+                    redeemReward(index);
+                });
+            });
+            
+            container.querySelectorAll('.delete-reward-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = parseInt(this.dataset.index);
+                    if (confirm('Delete this custom reward?')) {
+                        customRewards.splice(index, 1);
+                        saveRewards();
+                        updateRewardsDisplay();
+                    }
+                });
+            });
+        }
+
+        function updateRewardTemplatesList() {
+            const container = document.getElementById('rewardTemplatesList');
+            container.innerHTML = '';
+            
+            if (rewardTemplates.length === 0) {
+                container.innerHTML = '<div class="no-tasks" style="padding: 15px;">No reward templates yet. Create your first template!</div>';
+                return;
+            }
+            
+            rewardTemplates.forEach((template, index) => {
+                const templateDiv = document.createElement('div');
+                templateDiv.className = 'reward-template-item';
+                templateDiv.innerHTML = `
+                    <div class="reward-info">
+                        <div class="reward-name">${template.name}</div>
+                        <div class="reward-details">
+                            ${template.description ? template.description + ' • ' : ''}
+                            <span class="reward-cost">${template.cost} points</span>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="button button-small use-template-btn" data-index="${index}">
+                            <i class="fas fa-plus"></i> Use
+                        </button>
+                        <button class="button button-small button-danger delete-template-btn" data-index="${index}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(templateDiv);
+            });
+            
+            // Add event listeners
+            container.querySelectorAll('.use-template-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = parseInt(this.dataset.index);
+                    useRewardTemplate(index);
+                });
+            });
+            
+            container.querySelectorAll('.delete-template-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = parseInt(this.dataset.index);
+                    if (confirm('Delete this reward template?')) {
+                        rewardTemplates.splice(index, 1);
+                        saveRewards();
+                        updateRewardsDisplay();
+                    }
+                });
+            });
+        }
+
+        function updateRedeemedRewardsList() {
+            const container = document.getElementById('redeemedRewardsList');
+            container.innerHTML = '';
+            
+            if (redeemedRewards.length === 0) {
+                container.innerHTML = '<div class="no-tasks" style="padding: 15px;">No rewards redeemed yet.</div>';
+                return;
+            }
+            
+            // Sort by date (newest first)
+            const sortedRewards = [...redeemedRewards].sort((a, b) => new Date(b.redeemedDate) - new Date(a.redeemedDate));
+            
+            sortedRewards.forEach((reward, index) => {
+                const date = new Date(reward.redeemedDate);
+                const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                const rewardDiv = document.createElement('div');
+                rewardDiv.className = 'redeemed-item';
+                rewardDiv.innerHTML = `
+                    <div>
+                        <strong>${reward.name}</strong>
+                        <div style="font-size: 0.85rem; color: var(--gray-dark);">
+                            ${reward.description ? reward.description + ' • ' : ''}
+                            Cost: ${reward.cost} points • Redeemed: ${dateStr}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(rewardDiv);
+            });
+        }
+
+        function updatePointsDisplay() {
+            // Calculate total points from completed tasks
+            let totalEarned = 0;
+            for (const dateKey in tasks) {
+                tasks[dateKey].forEach(task => {
+                    if (task.completed) {
+                        totalEarned += task.points;
+                    }
+                });
+            }
+            
+            // Calculate points spent on redeemed rewards
+            let totalSpent = 0;
+            redeemedRewards.forEach(reward => {
+                totalSpent += reward.cost;
+            });
+            
+            // Update available points
+            availablePoints = totalEarned - totalSpent;
+            
+            // Update displays
+            document.getElementById('totalPoints').textContent = availablePoints;
+            document.getElementById('rewardsTotalPoints').textContent = availablePoints;
+        }
+
+        async function redeemReward(index) {
+            const reward = customRewards[index];
+            
+            if (availablePoints < reward.cost) {
+                alert(`Not enough points! You need ${reward.cost} points, but only have ${availablePoints}.`);
+                return;
+            }
+            
+            if (confirm(`Redeem "${reward.name}" for ${reward.cost} points?`)) {
+                // Add to redeemed rewards
+                redeemedRewards.push({
+                    ...reward,
+                    redeemedDate: new Date().toISOString()
+                });
+                
+                // Remove from custom rewards
+                customRewards.splice(index, 1);
+                
+                // Save and update
+                await saveRewards();
+                updateRewardsDisplay();
+                
+                alert(`🎉 Reward redeemed! Enjoy your "${reward.name}"!`);
+            }
+        }
+
+        async function useRewardTemplate(index) {
+            const template = rewardTemplates[index];
+            
+            // Add to custom rewards
+            customRewards.push({
+                id: template.id + '_' + Date.now(),
+                name: template.name,
+                description: template.description,
+                cost: template.cost,
+                type: template.type,
+                createdDate: new Date().toISOString()
+            });
+            
+            await saveRewards();
+            updateRewardsDisplay();
+            
+            alert(`Reward template "${template.name}" added to your custom rewards!`);
         }
 
         // Analytics
@@ -2054,17 +2859,7 @@
         }
 
         function updateTotalPoints() {
-            let totalPoints = 0;
-            
-            for (const dateKey in tasks) {
-                tasks[dateKey].forEach(task => {
-                    if (task.completed) {
-                        totalPoints += task.points;
-                    }
-                });
-            }
-            
-            document.getElementById('totalPoints').textContent = totalPoints;
+            updatePointsDisplay();
         }
 
         // Charts
@@ -2263,7 +3058,7 @@
             }
         }
 
-        // Event Listeners for App
+        // ==================== EVENT LISTENERS ====================
         function setupEventListeners() {
             // Theme toggle
             document.getElementById('themeToggle').addEventListener('click', function() {
@@ -2315,16 +3110,18 @@
             });
             
             // Add task form (on add tasks page)
-            document.getElementById('taskForm').addEventListener('submit', function(e) {
+            document.getElementById('taskForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
                 const taskName = document.getElementById('taskName').value;
                 const taskCategory = document.getElementById('taskCategory').value;
                 const taskPoints = parseInt(document.getElementById('taskPoints').value);
                 const taskDateStr = document.getElementById('taskDate').value;
+                const enableCustomReward = document.getElementById('enableCustomReward').checked;
+                const customReward = document.getElementById('customReward').value;
                 
                 if (!taskName || !taskCategory || !taskDateStr) {
-                    alert('Please fill all fields');
+                    alert('Please fill all required fields');
                     return;
                 }
                 
@@ -2335,32 +3132,41 @@
                     tasks[dateKey] = [];
                 }
                 
-                tasks[dateKey].push({
+                const newTask = {
                     id: Date.now(),
                     name: taskName,
                     category: taskCategory,
                     points: taskPoints,
-                    completed: false
-                });
+                    completed: false,
+                    createdAt: new Date()
+                };
                 
-                saveTasks();
+                // Add custom reward if enabled
+                if (enableCustomReward && customReward.trim()) {
+                    newTask.customReward = customReward.trim();
+                }
+                
+                tasks[dateKey].push(newTask);
+                
+                await saveTasksLocal();
                 
                 // Reset form
                 this.reset();
                 document.getElementById('taskPoints').value = 10;
                 document.getElementById('taskDate').valueAsDate = new Date();
+                document.getElementById('enableCustomReward').checked = false;
+                document.getElementById('customRewardSection').style.display = 'none';
                 
                 // Update previews
                 updateTodayTasksPreview();
                 
-                // If task added for today, update dashboard if visible
-                const today = new Date();
-                if (dateKey === formatDate(today)) {
-                    renderTasks();
-                    renderAnalytics();
-                }
-                
                 alert(`Task added for ${taskDateStr}!`);
+            });
+            
+            // Custom reward toggle
+            document.getElementById('enableCustomReward').addEventListener('change', function() {
+                const customRewardSection = document.getElementById('customRewardSection');
+                customRewardSection.style.display = this.checked ? 'block' : 'none';
             });
             
             // Task completion toggle (both pages)
@@ -2371,7 +3177,7 @@
                     
                     if (tasks[dateKey] && tasks[dateKey][index]) {
                         tasks[dateKey][index].completed = e.target.checked;
-                        saveTasks();
+                        saveTasksLocal();
                         
                         // Update UI based on current page
                         const activePage = document.querySelector('.page.active').id;
@@ -2380,6 +3186,9 @@
                             renderAnalytics();
                         } else if (activePage === 'addTasksPage') {
                             updateTodayTasksPreview();
+                        } else if (activePage === 'rewardsPage') {
+                            updatePointsDisplay();
+                            updateRewardsDisplay();
                         }
                     }
                 }
@@ -2411,10 +3220,8 @@
                 openCategoriesModal();
             });
             
-            document.getElementById('viewTemplatesBtn').addEventListener('click', function() {
-                updateTemplateList();
-                // Scroll to templates section
-                document.getElementById('templateList').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('manageRewardsBtn').addEventListener('click', function() {
+                showPage('rewards');
             });
             
             document.getElementById('editTemplatesBtn').addEventListener('click', function() {
@@ -2484,7 +3291,7 @@
             });
             
             // Add category form
-            document.getElementById('addCategoryForm').addEventListener('submit', function(e) {
+            document.getElementById('addCategoryForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
                 const name = document.getElementById('newCategoryName').value;
@@ -2502,7 +3309,7 @@
                 }
                 
                 categories.push({ id, name, color });
-                saveCategories();
+                await saveCategories();
                 
                 // Reset form
                 this.reset();
@@ -2521,6 +3328,135 @@
                     customOption.style.display = 'none';
                 }
             });
+        }
+
+        // Setup Rewards
+        function setupRewards() {
+            // Custom reward button
+            document.getElementById('createCustomRewardBtn').addEventListener('click', function() {
+                openCustomRewardModal();
+            });
+            
+            document.getElementById('addCustomRewardBtn').addEventListener('click', function() {
+                openCustomRewardModal();
+            });
+            
+            document.getElementById('addRewardTemplateBtn').addEventListener('click', function() {
+                openRewardTemplatesModal();
+            });
+            
+            document.getElementById('createRewardTemplateBtn').addEventListener('click', function() {
+                openRewardTemplatesModal();
+            });
+            
+            document.getElementById('viewRedeemedBtn').addEventListener('click', function() {
+                const section = document.getElementById('redeemedSection');
+                section.style.display = section.style.display === 'none' ? 'block' : 'none';
+            });
+            
+            // Custom reward form
+            document.getElementById('customRewardForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('rewardName').value;
+                const description = document.getElementById('rewardDescription').value;
+                const cost = parseInt(document.getElementById('rewardCost').value);
+                const type = document.getElementById('rewardType').value;
+                const saveAsTemplate = document.getElementById('saveAsTemplate').checked;
+                
+                if (!name || !cost) {
+                    alert('Please fill all required fields');
+                    return;
+                }
+                
+                const reward = {
+                    id: 'reward_' + Date.now(),
+                    name: name,
+                    description: description.trim(),
+                    cost: cost,
+                    type: type,
+                    createdDate: new Date().toISOString()
+                };
+                
+                // Add to custom rewards
+                customRewards.push(reward);
+                
+                // Save as template if requested
+                if (saveAsTemplate) {
+                    const template = {
+                        id: 'template_' + Date.now(),
+                        name: name,
+                        description: description.trim(),
+                        cost: cost,
+                        type: type
+                    };
+                    rewardTemplates.push(template);
+                }
+                
+                await saveRewards();
+                updateRewardsDisplay();
+                
+                // Close modal and reset form
+                document.getElementById('customRewardModal').style.display = 'none';
+                this.reset();
+                
+                alert('Custom reward created successfully!');
+            });
+            
+            // Close custom reward modal
+            document.getElementById('closeCustomRewardModal').addEventListener('click', function() {
+                document.getElementById('customRewardModal').style.display = 'none';
+                document.getElementById('customRewardForm').reset();
+            });
+            
+            document.getElementById('cancelRewardBtn').addEventListener('click', function() {
+                document.getElementById('customRewardModal').style.display = 'none';
+                document.getElementById('customRewardForm').reset();
+            });
+        }
+
+        function openCustomRewardModal() {
+            document.getElementById('customRewardModal').style.display = 'flex';
+        }
+
+        function openRewardTemplatesModal() {
+            const container = document.getElementById('rewardTemplatesContainer');
+            container.innerHTML = '';
+            
+            if (rewardTemplates.length === 0) {
+                container.innerHTML = '<div class="no-tasks" style="padding: 15px;">No reward templates yet.</div>';
+            } else {
+                rewardTemplates.forEach((template, index) => {
+                    const templateDiv = document.createElement('div');
+                    templateDiv.className = 'reward-template-item';
+                    templateDiv.innerHTML = `
+                        <div class="reward-info">
+                            <div class="reward-name">${template.name}</div>
+                            <div class="reward-details">
+                                ${template.description ? template.description + ' • ' : ''}
+                                <span class="reward-cost">${template.cost} points</span>
+                            </div>
+                        </div>
+                        <div>
+                            <button class="button button-small use-template-from-modal" data-index="${index}">
+                                <i class="fas fa-plus"></i> Use
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(templateDiv);
+                });
+                
+                // Add event listeners
+                container.querySelectorAll('.use-template-from-modal').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = parseInt(this.dataset.index);
+                        useRewardTemplate(index);
+                        document.getElementById('rewardTemplatesModal').style.display = 'none';
+                    });
+                });
+            }
+            
+            document.getElementById('rewardTemplatesModal').style.display = 'flex';
         }
 
         // Template Modal Functions
@@ -2578,8 +3514,8 @@
             document.getElementById('applyTemplateNow').addEventListener('click', applyTemplate);
             
             // Save template only button
-            document.getElementById('saveTemplateOnly').addEventListener('click', function() {
-                saveCurrentTemplate();
+            document.getElementById('saveTemplateOnly').addEventListener('click', async function() {
+                await saveCurrentTemplate();
                 alert('Template saved!');
                 updateTemplateList();
             });
@@ -2656,13 +3592,13 @@
             
             // Add event listeners for delete buttons
             container.querySelectorAll('.delete-template-task').forEach(btn => {
-                btn.addEventListener('click', function() {
+                btn.addEventListener('click', async function() {
                     const type = this.dataset.type;
                     const index = parseInt(this.dataset.index);
                     
                     if (confirm('Remove this task from template?')) {
                         templates[type].splice(index, 1);
-                        saveTemplates();
+                        await saveTemplates();
                         loadTemplateTasks(type);
                         updateTemplateList();
                     }
@@ -2688,7 +3624,7 @@
             });
         }
 
-        function addTemplateTask(type) {
+        async function addTemplateTask(type) {
             const nameInput = document.getElementById(`new${type.charAt(0).toUpperCase() + type.slice(1)}Task`);
             const categorySelect = document.getElementById(`new${type.charAt(0).toUpperCase() + type.slice(1)}Category`);
             const pointsInput = document.getElementById(`new${type.charAt(0).toUpperCase() + type.slice(1)}Points`);
@@ -2712,7 +3648,7 @@
                 points: points
             });
             
-            saveTemplates();
+            await saveTemplates();
             loadTemplateTasks(type);
             updateTemplateList();
             
@@ -2722,7 +3658,7 @@
             pointsInput.value = '10';
         }
 
-        function applyTemplate() {
+        async function applyTemplate() {
             const activeType = document.querySelector('.template-type-btn.active').dataset.type;
             const startDateStr = document.getElementById('applyStartDate').value;
             const duration = document.getElementById('applyDuration').value;
@@ -2798,7 +3734,8 @@
                                 name: templateTask.name,
                                 category: templateTask.category,
                                 points: templateTask.points,
-                                completed: false
+                                completed: false,
+                                createdAt: new Date()
                             });
                             tasksAdded++;
                         }
@@ -2808,32 +3745,18 @@
                 }
             }
             
-            saveTasks();
+            await saveTasksLocal();
             
             // Update previews
             updateTodayTasksPreview();
             updateTemplateList();
             
-            // If today is within the applied range, update dashboard if visible
-            const today = new Date();
-            const todayKey = formatDate(today);
-            const startKey = formatDate(startDate);
-            const endDate = new Date(startDate);
-            endDate.setDate(startDate.getDate() + daysCount);
-            const endKey = formatDate(endDate);
-            
-            if (todayKey >= startKey && todayKey <= endKey) {
-                renderTasks();
-                renderAnalytics();
-            }
-            
             alert(`Template applied to ${daysApplied} days! Added ${tasksAdded} new tasks.`);
             document.getElementById('templateModal').style.display = 'none';
         }
 
-        function saveCurrentTemplate() {
-            const activeType = document.querySelector('.template-type-btn.active').dataset.type;
-            saveTemplates();
+        async function saveCurrentTemplate() {
+            await saveTemplates();
         }
 
         function updateWarningMessage() {
@@ -2883,12 +3806,12 @@
             
             // Add event listeners for delete buttons
             container.querySelectorAll('.delete-category').forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', async function() {
                     const index = parseInt(this.dataset.index);
                     
                     if (confirm(`Delete category "${categories[index].name}"? This will not delete tasks with this category, but they will be marked as "Uncategorized".`)) {
                         categories.splice(index, 1);
-                        saveCategories();
+                        await saveCategories();
                         renderCategoriesList();
                     }
                 });
@@ -2937,6 +3860,22 @@
                 editCategorySelect.appendChild(option);
             });
             
+            // Handle custom reward
+            const hasCustomReward = task.customReward ? true : false;
+            document.getElementById('editEnableCustomReward').checked = hasCustomReward;
+            if (hasCustomReward) {
+                document.getElementById('editCustomReward').value = task.customReward;
+                document.getElementById('editCustomRewardSection').style.display = 'block';
+            } else {
+                document.getElementById('editCustomRewardSection').style.display = 'none';
+            }
+            
+            // Add event listener for custom reward toggle
+            document.getElementById('editEnableCustomReward').addEventListener('change', function() {
+                const customRewardSection = document.getElementById('editCustomRewardSection');
+                customRewardSection.style.display = this.checked ? 'block' : 'none';
+            });
+            
             document.getElementById('editTaskModal').style.display = 'flex';
         }
 
@@ -2946,7 +3885,7 @@
         });
 
         // Edit task form submission
-        document.getElementById('editTaskForm').addEventListener('submit', function(e) {
+        document.getElementById('editTaskForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const index = parseInt(document.getElementById('editTaskId').value);
@@ -2954,13 +3893,22 @@
             const taskName = document.getElementById('editTaskName').value;
             const taskCategory = document.getElementById('editTaskCategory').value;
             const taskPoints = parseInt(document.getElementById('editTaskPoints').value);
+            const hasCustomReward = document.getElementById('editEnableCustomReward').checked;
+            const customReward = document.getElementById('editCustomReward').value;
             
             if (tasks[dateKey] && tasks[dateKey][index]) {
                 tasks[dateKey][index].name = taskName;
                 tasks[dateKey][index].category = taskCategory;
                 tasks[dateKey][index].points = taskPoints;
                 
-                saveTasks();
+                // Update custom reward
+                if (hasCustomReward && customReward.trim()) {
+                    tasks[dateKey][index].customReward = customReward.trim();
+                } else {
+                    delete tasks[dateKey][index].customReward;
+                }
+                
+                await saveTasksLocal();
                 
                 // Update UI based on current page
                 const activePage = document.querySelector('.page.active').id;
@@ -2976,7 +3924,7 @@
         });
 
         // Delete task button
-        document.getElementById('deleteTaskBtn').addEventListener('click', function() {
+        document.getElementById('deleteTaskBtn').addEventListener('click', async function() {
             const index = parseInt(document.getElementById('editTaskId').value);
             const dateKey = document.getElementById('editTaskDate').value;
             
@@ -2989,7 +3937,7 @@
                         delete tasks[dateKey];
                     }
                     
-                    saveTasks();
+                    await saveTasksLocal();
                     
                     // Update UI based on current page
                     const activePage = document.querySelector('.page.active').id;

@@ -1,0 +1,2555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productivity Task Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #4aa5a3;
+            --secondary-color: #16881a;
+            --accent-color: #4fc3a1;
+            --accent-secondary: #ff7e5f;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --gray-light: #e9ecef;
+            --gray-medium: #adb5bd;
+            --gray-dark: #495057;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        .dark-mode {
+            --light-color: #212529;
+            --dark-color: #f8f9fa;
+            --gray-light: #343a40;
+            --gray-medium: #6c757d;
+            --gray-dark: #adb5bd;
+            --primary-color: #5dc993;
+            --secondary-color: #1cb872;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            transition: var(--transition);
+            line-height: 1.6;
+            padding-bottom: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 0;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 25px;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        h1 {
+            font-size: 1.6rem;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: var(--gray-light);
+            border-radius: var(--border-radius);
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            color: var(--gray-dark);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .nav-tab:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .nav-tab.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .date-selector {
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .date-display {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        .nav-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .nav-button:hover {
+            background-color: var(--secondary-color);
+            transform: scale(1.05);
+        }
+
+        .app-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 1100px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .dark-mode .panel {
+            background-color: var(--gray-light);
+        }
+
+        .panel-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--secondary-color);
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .button-secondary {
+            background-color: var(--gray-medium);
+            color: white;
+        }
+
+        .button-secondary:hover {
+            background-color: var(--gray-dark);
+        }
+
+        .button-success {
+            background-color: var(--success-color);
+        }
+
+        .button-success:hover {
+            background-color: #218838;
+        }
+
+        .button-danger {
+            background-color: var(--danger-color);
+        }
+
+        .button-danger:hover {
+            background-color: #c82333;
+        }
+
+        .button-small {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+        }
+
+        .task-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--gray-dark);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--gray-medium);
+            border-radius: var(--border-radius);
+            background-color: white;
+            color: var(--dark-color);
+            transition: var(--transition);
+        }
+
+        .dark-mode input, .dark-mode select {
+            background-color: var(--gray-light);
+            border-color: var(--gray-dark);
+            color: var(--dark-color);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.2);
+        }
+
+        .tasks-container {
+            margin-top: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background-color: var(--gray-light);
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .task-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .task-item.completed {
+            opacity: 0.8;
+            border-left-color: var(--success-color);
+        }
+
+        .task-checkbox {
+            margin-right: 12px;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            transform: scale(1.2);
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-name {
+            font-weight: 500;
+            margin-bottom: 3px;
+            font-size: 1.1rem;
+        }
+
+        .task-category {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            margin-right: 8px;
+            margin-top: 3px;
+        }
+
+        .task-points {
+            font-weight: 600;
+            color: var(--secondary-color);
+            font-size: 1rem;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-box {
+            background-color: var(--gray-light);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--gray-dark);
+        }
+
+        .chart-container {
+            margin-top: 20px;
+            height: 250px;
+            position: relative;
+        }
+
+        .tab-container {
+            margin-bottom: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--gray-medium);
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--gray-dark);
+            transition: var(--transition);
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+            padding-top: 15px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .category-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background-color: var(--gray-light);
+            padding: 5px 10px;
+            border-radius: 20px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .category-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .template-day {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--gray-medium);
+        }
+
+        .day-header {
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .template-task {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            padding: 8px;
+            background-color: var(--gray-light);
+            border-radius: var(--border-radius);
+        }
+
+        .no-tasks {
+            text-align: center;
+            color: var(--gray-dark);
+            padding: 30px;
+            font-style: italic;
+            font-size: 1.1rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .dark-mode .modal-content {
+            background-color: var(--gray-light);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray-dark);
+        }
+
+        .modal-title {
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+        }
+
+        .category-list {
+            margin-top: 15px;
+        }
+
+        .category-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: var(--gray-light);
+            margin-bottom: 8px;
+            border-radius: var(--border-radius);
+        }
+
+        .points-display {
+            margin-top: 25px;
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: var(--border-radius);
+        }
+
+        .total-points {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .points-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .template-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .template-option {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .template-types {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .template-type-btn {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            background: var(--gray-light);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .template-type-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .apply-template-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .template-instructions {
+            background: var(--gray-light);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+
+        .quick-template-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: var(--gray-light);
+            margin-bottom: 10px;
+            border-radius: var(--border-radius);
+        }
+
+        .days-selector {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .day-checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px;
+            background: var(--gray-light);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .day-checkbox-label:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .day-checkbox-label input[type="checkbox"] {
+            margin-right: 5px;
+        }
+
+        .add-task-panel {
+            margin-bottom: 25px;
+        }
+
+        .add-task-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--gray-light);
+        }
+
+        .add-task-section h3 {
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .quick-action-btn {
+            padding: 15px;
+            background: var(--gray-light);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+            text-align: center;
+        }
+
+        .quick-action-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+            border-color: var(--primary-color);
+        }
+
+        .quick-action-btn i {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .template-list {
+            margin-top: 15px;
+        }
+
+        .template-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: var(--gray-light);
+            margin-bottom: 10px;
+            border-radius: var(--border-radius);
+        }
+
+        .template-info {
+            flex: 1;
+        }
+
+        .template-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .template-details {
+            font-size: 0.85rem;
+            color: var(--gray-dark);
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .form-group {
+                width: 100%;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .task-actions {
+                flex-direction: column;
+            }
+            
+            .template-types {
+                flex-direction: column;
+            }
+            
+            .days-selector {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .apply-template-buttons {
+                flex-direction: column;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-tab span {
+                display: none;
+            }
+            
+            .nav-tab i {
+                font-size: 1.2rem;
+            }
+        }
+
+        .completion-message {
+            text-align: center;
+            padding: 20px;
+            margin: 20px 0;
+            background: linear-gradient(135deg, #4fc3a1, #4a6fa5);
+            color: white;
+            border-radius: var(--border-radius);
+            font-size: 1.1rem;
+        }
+
+        .daily-goal {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div>
+                    <h1><i class="fas fa-tasks"></i> Productivity Task Tracker</h1>
+                    <p class="subtitle">Separate pages for adding tasks and checking them off</p>
+                </div>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i> Dark Mode
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <a href="#" class="nav-tab active" data-page="dashboard">
+                <i class="fas fa-check-square"></i>
+                <span>Check Tasks</span>
+            </a>
+            <a href="#" class="nav-tab" data-page="addTasks">
+                <i class="fas fa-plus-circle"></i>
+                <span>Add Tasks</span>
+            </a>
+        </div>
+
+        <!-- PAGE 1: Dashboard (Check Tasks) -->
+        <div id="dashboardPage" class="page active">
+            <div class="date-selector">
+                <button class="nav-button" id="prevDay"><i class="fas fa-chevron-left"></i></button>
+                <div class="date-display" id="currentDateDisplay">Loading...</div>
+                <button class="nav-button" id="nextDay"><i class="fas fa-chevron-right"></i></button>
+                <button class="button" id="todayButton">Today</button>
+                <button class="button button-secondary" id="quickAddBtn" style="display: none;">
+                    <i class="fas fa-plus"></i> Quick Add
+                </button>
+            </div>
+
+            <div class="app-container">
+                <!-- Left Column: Task Checking -->
+                <div class="left-column">
+                    <!-- Task List Panel -->
+                    <div class="panel">
+                        <div class="panel-title">
+                            <span>Today's Tasks</span>
+                            <span id="completionRate">0% complete</span>
+                        </div>
+                        
+                        <!-- Daily Goal -->
+                        <div class="completion-message" id="completionMessage" style="display: none;">
+                            <div class="daily-goal" id="dailyGoalText">Daily Goal: 0/0 tasks</div>
+                            <div id="motivationText">Keep going!</div>
+                        </div>
+                        
+                        <div class="tasks-container" id="tasksContainer">
+                            <div class="no-tasks">No tasks for today. Switch to "Add Tasks" page to add tasks!</div>
+                        </div>
+                    </div>
+
+                    <!-- Points Display -->
+                    <div class="points-display">
+                        <div class="total-points" id="totalPoints">0</div>
+                        <div class="points-label">Total Reward Points Earned</div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Analytics -->
+                <div class="right-column">
+                    <!-- Analytics Tabs -->
+                    <div class="panel">
+                        <div class="tab-container">
+                            <div class="tabs">
+                                <div class="tab active" data-tab="daily">Daily Analytics</div>
+                                <div class="tab" data-tab="weekly">Weekly Analytics</div>
+                                <div class="tab" data-tab="categories">Category Analytics</div>
+                            </div>
+                        </div>
+
+                        <!-- Daily Analytics Tab -->
+                        <div class="tab-content active" id="dailyTab">
+                            <div class="stats-container">
+                                <div class="stat-box">
+                                    <div class="stat-value" id="dailyCompleted">0</div>
+                                    <div class="stat-label">Tasks Completed</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-value" id="dailyPending">0</div>
+                                    <div class="stat-label">Tasks Pending</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-value" id="dailyPoints">0</div>
+                                    <div class="stat-label">Points Earned</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-value" id="dailyRate">0%</div>
+                                    <div class="stat-label">Completion Rate</div>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="dailyChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Weekly Analytics Tab -->
+                        <div class="tab-content" id="weeklyTab">
+                            <div class="stats-container">
+                                <div class="stat-box">
+                                    <div class="stat-value" id="weeklyCompleted">0</div>
+                                    <div class="stat-label">Weekly Completed</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-value" id="weeklyPoints">0</div>
+                                    <div class="stat-label">Weekly Points</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-value" id="weeklyRate">0%</div>
+                                    <div class="stat-label">Weekly Rate</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-value" id="bestDay">-</div>
+                                    <div class="stat-label">Best Day</div>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="weeklyChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Category Analytics Tab -->
+                        <div class="tab-content" id="categoriesTab">
+                            <div class="chart-container">
+                                <canvas id="categoryPieChart"></canvas>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="categoryBarChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 2: Add Tasks Page -->
+        <div id="addTasksPage" class="page">
+            <div class="add-task-panel">
+                <h2 class="panel-title">
+                    <i class="fas fa-plus-circle"></i> Add & Manage Tasks
+                    <span style="font-size: 0.9rem; color: var(--gray-dark);">Create tasks and templates for future days</span>
+                </h2>
+                
+                <div class="quick-actions">
+                    <div class="quick-action-btn" id="addSingleTaskBtn">
+                        <i class="fas fa-tasks"></i>
+                        <div>Add Single Task</div>
+                    </div>
+                    <div class="quick-action-btn" id="applyTemplateBtn">
+                        <i class="fas fa-calendar-alt"></i>
+                        <div>Apply Template</div>
+                    </div>
+                    <div class="quick-action-btn" id="manageCategoriesBtn">
+                        <i class="fas fa-tags"></i>
+                        <div>Manage Categories</div>
+                    </div>
+                    <div class="quick-action-btn" id="viewTemplatesBtn">
+                        <i class="fas fa-layer-group"></i>
+                        <div>View Templates</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Single Task Section -->
+            <div class="add-task-section">
+                <h3>Add Single Task</h3>
+                <div class="panel">
+                    <form class="task-form" id="taskForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="taskName">Task Name</label>
+                                <input type="text" id="taskName" placeholder="Enter task name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="taskCategory">Category</label>
+                                <select id="taskCategory" required>
+                                    <option value="">Select a category</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="taskPoints">Reward Points</label>
+                                <input type="number" id="taskPoints" min="1" max="100" value="10" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="taskDate">For Date</label>
+                                <input type="date" id="taskDate" value="">
+                            </div>
+                            <div class="form-group" style="align-self: flex-end;">
+                                <button type="submit" class="button button-success" style="width: 100%;">
+                                    <i class="fas fa-plus"></i> Add Task
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Today's Tasks Preview -->
+            <div class="add-task-section">
+                <h3>Today's Tasks Preview</h3>
+                <div class="panel">
+                    <div class="tasks-container" id="todayTasksPreview" style="max-height: 300px;">
+                        <!-- Today's tasks will appear here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Existing Templates Section -->
+            <div class="add-task-section">
+                <h3>Existing Templates</h3>
+                <div class="panel">
+                    <div class="template-list" id="templateList">
+                        <!-- Templates will appear here -->
+                    </div>
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button class="button button-secondary" id="editTemplatesBtn">
+                            <i class="fas fa-edit"></i> Edit Templates
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Template Modal -->
+    <div class="modal" id="templateModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeTemplateModal">&times;</span>
+            <h2 class="modal-title">Apply Template</h2>
+            
+            <div class="template-instructions">
+                <p><strong>How it works:</strong> Set up templates for repetitive tasks (daily or custom days). When you apply a template, it adds those tasks to selected dates.</p>
+            </div>
+            
+            <div class="template-types">
+                <div class="template-type-btn active" data-type="daily">Daily Template</div>
+                <div class="template-type-btn" data-type="custom">Custom Days</div>
+            </div>
+            
+            <!-- Daily Template -->
+            <div class="template-content active" id="dailyTemplate">
+                <h3>Daily Tasks (Repeat every day)</h3>
+                <div id="dailyTasksList">
+                    <!-- Daily tasks will appear here -->
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <input type="text" id="newDailyTask" placeholder="Enter new daily task">
+                    </div>
+                    <div class="form-group">
+                        <select id="newDailyCategory">
+                            <option value="">Select category</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input type="number" id="newDailyPoints" placeholder="Points" value="10" min="1" max="100">
+                    </div>
+                    <div class="form-group" style="align-self: flex-end;">
+                        <button type="button" class="button button-small" id="addDailyTask">Add</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Custom Days Template -->
+            <div class="template-content" id="customTemplate">
+                <h3>Select Days for These Tasks</h3>
+                <div class="days-selector">
+                    <label class="day-checkbox-label">
+                        <input type="checkbox" class="day-checkbox" value="0" checked> Sunday
+                    </label>
+                    <label class="day-checkbox-label">
+                        <input type="checkbox" class="day-checkbox" value="1" checked> Monday
+                    </label>
+                    <label class="day-checkbox-label">
+                        <input type="checkbox" class="day-checkbox" value="2" checked> Tuesday
+                    </label>
+                    <label class="day-checkbox-label">
+                        <input type="checkbox" class="day-checkbox" value="3" checked> Wednesday
+                    </label>
+                    <label class="day-checkbox-label">
+                        <input type="checkbox" class="day-checkbox" value="4" checked> Thursday
+                    </label>
+                    <label class="day-checkbox-label">
+                        <input type="checkbox" class="day-checkbox" value="5" checked> Friday
+                    </label>
+                    <label class="day-checkbox-label">
+                        <input type="checkbox" class="day-checkbox" value="6" checked> Saturday
+                    </label>
+                    <label class="day-checkbox-label" style="grid-column: span 2;">
+                        <input type="checkbox" id="selectAllDays"> Select All
+                    </label>
+                </div>
+                
+                <div id="customTasksList">
+                    <!-- Custom tasks will appear here -->
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <input type="text" id="newCustomTask" placeholder="Enter new task for selected days">
+                    </div>
+                    <div class="form-group">
+                        <select id="newCustomCategory">
+                            <option value="">Select category</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input type="number" id="newCustomPoints" placeholder="Points" value="10" min="1" max="100">
+                    </div>
+                    <div class="form-group" style="align-self: flex-end;">
+                        <button type="button" class="button button-small" id="addCustomTask">Add</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Apply Options -->
+            <div class="template-options" style="margin-top: 20px;">
+                <div class="template-option">
+                    <label for="applyStartDate">Start Date</label>
+                    <input type="date" id="applyStartDate" value="">
+                </div>
+                <div class="template-option">
+                    <label for="applyDuration">Apply For</label>
+                    <select id="applyDuration">
+                        <option value="7">1 week</option>
+                        <option value="14">2 weeks</option>
+                        <option value="30">1 month</option>
+                        <option value="60">2 months</option>
+                        <option value="90">3 months</option>
+                        <option value="custom">Custom days</option>
+                    </select>
+                </div>
+                <div class="template-option" id="customDaysOption" style="display: none;">
+                    <label for="customDaysCount">Number of Days</label>
+                    <input type="number" id="customDaysCount" min="1" max="365" value="30">
+                </div>
+            </div>
+            
+            <div class="apply-template-buttons">
+                <button class="button button-success" id="applyTemplateNow">Apply Template</button>
+                <button class="button button-secondary" id="saveTemplateOnly">Save Template Only</button>
+                <button class="button" id="clearTasksOption">
+                    <i class="fas fa-trash-alt"></i> Clear Existing Tasks
+                </button>
+            </div>
+            
+            <!-- Warning Message -->
+            <div id="templateWarning" style="margin-top: 15px; padding: 10px; background: #fff3cd; color: #856404; border-radius: var(--border-radius); display: none;">
+                <i class="fas fa-exclamation-triangle"></i> 
+                <span id="warningText">Warning: This will clear all existing tasks on the selected dates!</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Categories Modal -->
+    <div class="modal" id="categoriesModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeCategoriesModal">&times;</span>
+            <h2 class="modal-title">Manage Categories</h2>
+            
+            <form id="addCategoryForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="newCategoryName">Category Name</label>
+                        <input type="text" id="newCategoryName" placeholder="Enter category name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newCategoryColor">Color</label>
+                        <input type="color" id="newCategoryColor" value="#4fc3a1" required>
+                    </div>
+                    <div class="form-group" style="align-self: flex-end;">
+                        <button type="submit" class="button button-success" style="width: 100%;">
+                            <i class="fas fa-plus"></i> Add
+                        </button>
+                    </div>
+                </div>
+            </form>
+            
+            <div class="category-list" id="categoriesList">
+                <!-- Categories will be listed here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Task Modal -->
+    <div class="modal" id="editTaskModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeEditModal">&times;</span>
+            <h2 class="modal-title">Edit Task</h2>
+            
+            <form id="editTaskForm">
+                <div class="form-group">
+                    <label for="editTaskName">Task Name</label>
+                    <input type="text" id="editTaskName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editTaskCategory">Category</label>
+                    <select id="editTaskCategory" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="editTaskPoints">Reward Points</label>
+                    <input type="number" id="editTaskPoints" min="1" max="100" required>
+                </div>
+                <input type="hidden" id="editTaskId">
+                <input type="hidden" id="editTaskDate">
+                
+                <div style="margin-top: 20px; text-align: center;">
+                    <button type="submit" class="button button-success">Save Changes</button>
+                    <button type="button" class="button button-danger" id="deleteTaskBtn">Delete Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // App State
+        let currentDate = new Date();
+        let categories = [];
+        let templates = {
+            daily: [],
+            custom: []
+        };
+        let tasks = {};
+        let charts = {};
+        let clearExistingTasks = false;
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            initCategories();
+            renderDate();
+            renderTasks();
+            renderAnalytics();
+            setupEventListeners();
+            setupCharts();
+            loadTemplates();
+            setupTemplateModal();
+            
+            // Set default dates
+            document.getElementById('applyStartDate').valueAsDate = new Date();
+            document.getElementById('taskDate').valueAsDate = new Date();
+            
+            // Show dashboard page by default
+            showPage('dashboard');
+            
+            // Update today's tasks preview
+            updateTodayTasksPreview();
+            updateTemplateList();
+        });
+
+        // Load data from localStorage
+        function loadData() {
+            // Load categories
+            const savedCategories = localStorage.getItem('productivityTracker_categories');
+            if (savedCategories) {
+                categories = JSON.parse(savedCategories);
+            } else {
+                // Default categories
+                categories = [
+                    { id: 'work', name: 'Work', color: '#4a6fa5' },
+                    { id: 'study', name: 'Study', color: '#4fc3a1' },
+                    { id: 'fitness', name: 'Fitness', color: '#ff7e5f' },
+                    { id: 'personal', name: 'Personal', color: '#9b5de5' },
+                    { id: 'coding', name: 'Coding', color: '#00bbf9' }
+                ];
+                saveCategories();
+            }
+
+            // Load templates
+            const savedTemplates = localStorage.getItem('productivityTracker_templates');
+            if (savedTemplates) {
+                templates = JSON.parse(savedTemplates);
+            }
+
+            // Load tasks
+            const savedTasks = localStorage.getItem('productivityTracker_tasks');
+            if (savedTasks) {
+                tasks = JSON.parse(savedTasks);
+            }
+        }
+
+        // Load templates
+        function loadTemplates() {
+            const savedTemplates = localStorage.getItem('productivityTracker_templates');
+            if (savedTemplates) {
+                templates = JSON.parse(savedTemplates);
+            }
+        }
+
+        // Save templates
+        function saveTemplates() {
+            localStorage.setItem('productivityTracker_templates', JSON.stringify(templates));
+        }
+
+        // Initialize categories dropdown
+        function initCategories() {
+            updateCategorySelects();
+        }
+
+        // Save data to localStorage
+        function saveCategories() {
+            localStorage.setItem('productivityTracker_categories', JSON.stringify(categories));
+            updateCategorySelects();
+        }
+
+        function saveTasks() {
+            localStorage.setItem('productivityTracker_tasks', JSON.stringify(tasks));
+        }
+
+        // Page navigation
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId + 'Page').classList.add('active');
+            
+            // Update active tab
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.dataset.page === pageId) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            // Update UI based on page
+            if (pageId === 'dashboard') {
+                renderTasks();
+                renderAnalytics();
+                document.getElementById('quickAddBtn').style.display = 'none';
+            } else if (pageId === 'addTasks') {
+                updateTodayTasksPreview();
+                updateTemplateList();
+                document.getElementById('quickAddBtn').style.display = 'inline-block';
+            }
+        }
+
+        // Date handling
+        function formatDate(date) {
+            return date.toISOString().split('T')[0];
+        }
+
+        function formatDisplayDate(date) {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        function renderDate() {
+            document.getElementById('currentDateDisplay').textContent = formatDisplayDate(currentDate);
+        }
+
+        // Task rendering for dashboard
+        function renderTasks() {
+            const dateKey = formatDate(currentDate);
+            const tasksForDate = tasks[dateKey] || [];
+            const container = document.getElementById('tasksContainer');
+            const completionMessage = document.getElementById('completionMessage');
+            
+            if (tasksForDate.length === 0) {
+                container.innerHTML = '<div class="no-tasks">No tasks for today. Switch to "Add Tasks" page to add tasks!</div>';
+                completionMessage.style.display = 'none';
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            const completedTasks = tasksForDate.filter(task => task.completed).length;
+            const totalTasks = tasksForDate.length;
+            const completionRate = Math.round((completedTasks / totalTasks) * 100);
+            
+            // Update completion message
+            if (totalTasks > 0) {
+                completionMessage.style.display = 'block';
+                document.getElementById('dailyGoalText').textContent = `Daily Goal: ${completedTasks}/${totalTasks} tasks`;
+                
+                // Motivational messages
+                let motivation = '';
+                if (completionRate === 100) {
+                    motivation = '🎉 Amazing! All tasks completed!';
+                } else if (completionRate >= 75) {
+                    motivation = '👍 Almost there! Keep going!';
+                } else if (completionRate >= 50) {
+                    motivation = '💪 Halfway there! You can do it!';
+                } else if (completionRate >= 25) {
+                    motivation = '🚀 Good start! Keep the momentum!';
+                } else {
+                    motivation = '🌟 Start with one task at a time!';
+                }
+                document.getElementById('motivationText').textContent = motivation;
+            }
+            
+            tasksForDate.forEach((task, index) => {
+                const category = categories.find(c => c.id === task.category) || { name: 'Uncategorized', color: '#999' };
+                
+                const taskElement = document.createElement('div');
+                taskElement.className = `task-item ${task.completed ? 'completed' : ''}`;
+                taskElement.innerHTML = `
+                    <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''} data-index="${index}">
+                    <div class="task-content">
+                        <div class="task-name">${task.name}</div>
+                        <div>
+                            <span class="task-category" style="background-color: ${category.color}">${category.name}</span>
+                            <span class="task-points">${task.points} pts</span>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(taskElement);
+            });
+            
+            updateCompletionRate();
+        }
+
+        // Update completion rate
+        function updateCompletionRate() {
+            const dateKey = formatDate(currentDate);
+            const tasksForDate = tasks[dateKey] || [];
+            
+            if (tasksForDate.length === 0) {
+                document.getElementById('completionRate').textContent = '0% complete';
+                return;
+            }
+            
+            const completedTasks = tasksForDate.filter(task => task.completed).length;
+            const completionRate = Math.round((completedTasks / tasksForDate.length) * 100);
+            
+            document.getElementById('completionRate').textContent = `${completionRate}% complete`;
+        }
+
+        // Update today's tasks preview on add tasks page
+        function updateTodayTasksPreview() {
+            const today = new Date();
+            const dateKey = formatDate(today);
+            const tasksForDate = tasks[dateKey] || [];
+            const container = document.getElementById('todayTasksPreview');
+            
+            if (tasksForDate.length === 0) {
+                container.innerHTML = '<div class="no-tasks" style="padding: 15px;">No tasks scheduled for today</div>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            tasksForDate.forEach((task, index) => {
+                const category = categories.find(c => c.id === task.category) || { name: 'Uncategorized', color: '#999' };
+                
+                const taskElement = document.createElement('div');
+                taskElement.className = `task-item ${task.completed ? 'completed' : ''}`;
+                taskElement.innerHTML = `
+                    <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''} data-index="${index}" data-date="${dateKey}">
+                    <div class="task-content">
+                        <div class="task-name">${task.name}</div>
+                        <div>
+                            <span class="task-category" style="background-color: ${category.color}">${category.name}</span>
+                            <span class="task-points">${task.points} pts</span>
+                        </div>
+                    </div>
+                    <div class="task-actions">
+                        <button class="button button-small edit-task" data-index="${index}" data-date="${dateKey}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                `;
+                
+                container.appendChild(taskElement);
+            });
+        }
+
+        // Update template list on add tasks page
+        function updateTemplateList() {
+            const container = document.getElementById('templateList');
+            container.innerHTML = '';
+            
+            let hasTemplates = false;
+            
+            // Daily templates
+            if (templates.daily && templates.daily.length > 0) {
+                hasTemplates = true;
+                const templateDiv = document.createElement('div');
+                templateDiv.className = 'template-item';
+                templateDiv.innerHTML = `
+                    <div class="template-info">
+                        <div class="template-name">Daily Template</div>
+                        <div class="template-details">${templates.daily.length} tasks • Applies every day</div>
+                    </div>
+                    <div>
+                        <button class="button button-small apply-template-from-list" data-type="daily">
+                            <i class="fas fa-play"></i> Apply
+                        </button>
+                    </div>
+                `;
+                container.appendChild(templateDiv);
+            }
+            
+            // Custom templates
+            if (templates.custom && templates.custom.length > 0) {
+                hasTemplates = true;
+                const templateDiv = document.createElement('div');
+                templateDiv.className = 'template-item';
+                templateDiv.innerHTML = `
+                    <div class="template-info">
+                        <div class="template-name">Custom Days Template</div>
+                        <div class="template-details">${templates.custom.length} tasks • Custom schedule</div>
+                    </div>
+                    <div>
+                        <button class="button button-small apply-template-from-list" data-type="custom">
+                            <i class="fas fa-play"></i> Apply
+                        </button>
+                    </div>
+                `;
+                container.appendChild(templateDiv);
+            }
+            
+            if (!hasTemplates) {
+                container.innerHTML = '<div class="no-tasks" style="padding: 15px;">No templates yet. Create your first template!</div>';
+            }
+        }
+
+        // Analytics
+        function renderAnalytics() {
+            updateDailyStats();
+            updateWeeklyStats();
+            updateCharts();
+            updateTotalPoints();
+        }
+
+        function updateDailyStats() {
+            const dateKey = formatDate(currentDate);
+            const tasksForDate = tasks[dateKey] || [];
+            
+            const completedTasks = tasksForDate.filter(task => task.completed).length;
+            const pendingTasks = tasksForDate.length - completedTasks;
+            
+            let earnedPoints = 0;
+            tasksForDate.forEach(task => {
+                if (task.completed) {
+                    earnedPoints += task.points;
+                }
+            });
+            
+            const completionRate = tasksForDate.length > 0 ? Math.round((completedTasks / tasksForDate.length) * 100) : 0;
+            
+            document.getElementById('dailyCompleted').textContent = completedTasks;
+            document.getElementById('dailyPending').textContent = pendingTasks;
+            document.getElementById('dailyPoints').textContent = earnedPoints;
+            document.getElementById('dailyRate').textContent = `${completionRate}%`;
+        }
+
+        function updateWeeklyStats() {
+            // Calculate stats for the current week
+            const today = new Date(currentDate);
+            const dayOfWeek = today.getDay(); // 0 = Sunday
+            const startOfWeek = new Date(today);
+            startOfWeek.setDate(today.getDate() - dayOfWeek);
+            
+            let weeklyCompleted = 0;
+            let weeklyTotal = 0;
+            let weeklyPoints = 0;
+            let dayStats = {};
+            let bestDay = { name: 'None', rate: 0 };
+            
+            // Check each day of the current week
+            for (let i = 0; i < 7; i++) {
+                const dayDate = new Date(startOfWeek);
+                dayDate.setDate(startOfWeek.getDate() + i);
+                const dateKey = formatDate(dayDate);
+                const tasksForDate = tasks[dateKey] || [];
+                
+                const completedTasks = tasksForDate.filter(task => task.completed).length;
+                const totalTasks = tasksForDate.length;
+                const dayPoints = tasksForDate.reduce((sum, task) => task.completed ? sum + task.points : sum, 0);
+                
+                weeklyCompleted += completedTasks;
+                weeklyTotal += totalTasks;
+                weeklyPoints += dayPoints;
+                
+                // Track completion rate per day
+                const dayName = dayDate.toLocaleDateString('en-US', { weekday: 'short' });
+                const dayRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+                dayStats[dayName] = dayRate;
+                
+                if (dayRate > bestDay.rate) {
+                    bestDay = { name: dayName, rate: dayRate };
+                }
+            }
+            
+            const weeklyRate = weeklyTotal > 0 ? Math.round((weeklyCompleted / weeklyTotal) * 100) : 0;
+            
+            document.getElementById('weeklyCompleted').textContent = weeklyCompleted;
+            document.getElementById('weeklyPoints').textContent = weeklyPoints;
+            document.getElementById('weeklyRate').textContent = `${weeklyRate}%`;
+            document.getElementById('bestDay').textContent = bestDay.name;
+            
+            // Update weekly chart
+            if (charts.weeklyChart) {
+                const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                const data = dayNames.map(day => dayStats[day] || 0);
+                
+                charts.weeklyChart.data.datasets[0].data = data;
+                charts.weeklyChart.update();
+            }
+        }
+
+        function updateTotalPoints() {
+            let totalPoints = 0;
+            
+            for (const dateKey in tasks) {
+                tasks[dateKey].forEach(task => {
+                    if (task.completed) {
+                        totalPoints += task.points;
+                    }
+                });
+            }
+            
+            document.getElementById('totalPoints').textContent = totalPoints;
+        }
+
+        // Charts
+        function setupCharts() {
+            // Daily chart (category-wise completion)
+            const dailyCtx = document.getElementById('dailyChart').getContext('2d');
+            charts.dailyChart = new Chart(dailyCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completed', 'Pending'],
+                    datasets: [{
+                        data: [0, 0],
+                        backgroundColor: ['#4fc3a1', '#ff7e5f'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+            
+            // Weekly chart
+            const weeklyCtx = document.getElementById('weeklyChart').getContext('2d');
+            charts.weeklyChart = new Chart(weeklyCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                    datasets: [{
+                        label: 'Completion Rate (%)',
+                        data: [0, 0, 0, 0, 0, 0, 0],
+                        backgroundColor: 'rgba(74, 111, 165, 0.7)',
+                        borderColor: 'rgba(74, 111, 165, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+            
+            // Category pie chart
+            const pieCtx = document.getElementById('categoryPieChart').getContext('2d');
+            charts.categoryPieChart = new Chart(pieCtx, {
+                type: 'pie',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: []
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+            
+            // Category bar chart
+            const barCtx = document.getElementById('categoryBarChart').getContext('2d');
+            charts.categoryBarChart = new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: 'Completed',
+                            data: [],
+                            backgroundColor: 'rgba(79, 195, 161, 0.7)'
+                        },
+                        {
+                            label: 'Total',
+                            data: [],
+                            backgroundColor: 'rgba(74, 111, 165, 0.7)'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            stacked: false
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateCharts() {
+            updateDailyChart();
+            updateCategoryCharts();
+        }
+
+        function updateDailyChart() {
+            const dateKey = formatDate(currentDate);
+            const tasksForDate = tasks[dateKey] || [];
+            
+            const completedTasks = tasksForDate.filter(task => task.completed).length;
+            const pendingTasks = tasksForDate.length - completedTasks;
+            
+            if (charts.dailyChart) {
+                charts.dailyChart.data.datasets[0].data = [completedTasks, pendingTasks];
+                charts.dailyChart.update();
+            }
+        }
+
+        function updateCategoryCharts() {
+            // Gather category stats from all tasks
+            const categoryStats = {};
+            
+            // Initialize category stats
+            categories.forEach(category => {
+                categoryStats[category.id] = {
+                    name: category.name,
+                    color: category.color,
+                    completed: 0,
+                    total: 0
+                };
+            });
+            
+            // Count tasks by category
+            for (const dateKey in tasks) {
+                tasks[dateKey].forEach(task => {
+                    if (categoryStats[task.category]) {
+                        categoryStats[task.category].total++;
+                        if (task.completed) {
+                            categoryStats[task.category].completed++;
+                        }
+                    }
+                });
+            }
+            
+            // Update pie chart
+            const pieLabels = [];
+            const pieData = [];
+            const pieColors = [];
+            
+            for (const categoryId in categoryStats) {
+                const stat = categoryStats[categoryId];
+                if (stat.total > 0) {
+                    pieLabels.push(stat.name);
+                    pieData.push(stat.total);
+                    pieColors.push(stat.color);
+                }
+            }
+            
+            if (charts.categoryPieChart) {
+                charts.categoryPieChart.data.labels = pieLabels;
+                charts.categoryPieChart.data.datasets[0].data = pieData;
+                charts.categoryPieChart.data.datasets[0].backgroundColor = pieColors;
+                charts.categoryPieChart.update();
+            }
+            
+            // Update bar chart
+            const barLabels = [];
+            const completedData = [];
+            const totalData = [];
+            const barColors = [];
+            
+            for (const categoryId in categoryStats) {
+                const stat = categoryStats[categoryId];
+                if (stat.total > 0) {
+                    barLabels.push(stat.name);
+                    completedData.push(stat.completed);
+                    totalData.push(stat.total);
+                    barColors.push(stat.color);
+                }
+            }
+            
+            if (charts.categoryBarChart) {
+                charts.categoryBarChart.data.labels = barLabels;
+                charts.categoryBarChart.data.datasets[0].data = completedData;
+                charts.categoryBarChart.data.datasets[1].data = totalData;
+                charts.categoryBarChart.update();
+            }
+        }
+
+        // Event Listeners
+        function setupEventListeners() {
+            // Theme toggle
+            document.getElementById('themeToggle').addEventListener('click', function() {
+                document.body.classList.toggle('dark-mode');
+                const icon = this.querySelector('i');
+                if (document.body.classList.contains('dark-mode')) {
+                    icon.className = 'fas fa-sun';
+                    this.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+                } else {
+                    icon.className = 'fas fa-moon';
+                    this.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+                }
+            });
+            
+            // Navigation tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const pageId = this.dataset.page;
+                    showPage(pageId);
+                });
+            });
+            
+            // Date navigation (dashboard only)
+            document.getElementById('prevDay').addEventListener('click', function() {
+                currentDate.setDate(currentDate.getDate() - 1);
+                renderDate();
+                renderTasks();
+                renderAnalytics();
+            });
+            
+            document.getElementById('nextDay').addEventListener('click', function() {
+                currentDate.setDate(currentDate.getDate() + 1);
+                renderDate();
+                renderTasks();
+                renderAnalytics();
+            });
+            
+            document.getElementById('todayButton').addEventListener('click', function() {
+                currentDate = new Date();
+                renderDate();
+                renderTasks();
+                renderAnalytics();
+            });
+            
+            // Quick add button (dashboard to add tasks)
+            document.getElementById('quickAddBtn').addEventListener('click', function() {
+                showPage('addTasks');
+            });
+            
+            // Add task form (on add tasks page)
+            document.getElementById('taskForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const taskName = document.getElementById('taskName').value;
+                const taskCategory = document.getElementById('taskCategory').value;
+                const taskPoints = parseInt(document.getElementById('taskPoints').value);
+                const taskDateStr = document.getElementById('taskDate').value;
+                
+                if (!taskName || !taskCategory || !taskDateStr) {
+                    alert('Please fill all fields');
+                    return;
+                }
+                
+                const taskDate = new Date(taskDateStr);
+                const dateKey = formatDate(taskDate);
+                
+                if (!tasks[dateKey]) {
+                    tasks[dateKey] = [];
+                }
+                
+                tasks[dateKey].push({
+                    id: Date.now(),
+                    name: taskName,
+                    category: taskCategory,
+                    points: taskPoints,
+                    completed: false
+                });
+                
+                saveTasks();
+                
+                // Reset form
+                this.reset();
+                document.getElementById('taskPoints').value = 10;
+                document.getElementById('taskDate').valueAsDate = new Date();
+                
+                // Update previews
+                updateTodayTasksPreview();
+                
+                // If task added for today, update dashboard if visible
+                const today = new Date();
+                if (dateKey === formatDate(today)) {
+                    renderTasks();
+                    renderAnalytics();
+                }
+                
+                alert(`Task added for ${taskDateStr}!`);
+            });
+            
+            // Task completion toggle (both pages)
+            document.addEventListener('change', function(e) {
+                if (e.target.classList.contains('task-checkbox')) {
+                    const index = parseInt(e.target.dataset.index);
+                    const dateKey = e.target.dataset.date || formatDate(currentDate);
+                    
+                    if (tasks[dateKey] && tasks[dateKey][index]) {
+                        tasks[dateKey][index].completed = e.target.checked;
+                        saveTasks();
+                        
+                        // Update UI based on current page
+                        const activePage = document.querySelector('.page.active').id;
+                        if (activePage === 'dashboardPage') {
+                            renderTasks();
+                            renderAnalytics();
+                        } else if (activePage === 'addTasksPage') {
+                            updateTodayTasksPreview();
+                        }
+                    }
+                }
+            });
+            
+            // Edit task button (both pages)
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.edit-task')) {
+                    const button = e.target.closest('.edit-task');
+                    const index = parseInt(button.dataset.index);
+                    const dateKey = button.dataset.date || formatDate(currentDate);
+                    
+                    if (tasks[dateKey] && tasks[dateKey][index]) {
+                        openEditModal(tasks[dateKey][index], index, dateKey);
+                    }
+                }
+            });
+            
+            // Quick action buttons (add tasks page)
+            document.getElementById('addSingleTaskBtn').addEventListener('click', function() {
+                document.getElementById('taskName').focus();
+            });
+            
+            document.getElementById('applyTemplateBtn').addEventListener('click', function() {
+                openTemplateModal();
+            });
+            
+            document.getElementById('manageCategoriesBtn').addEventListener('click', function() {
+                openCategoriesModal();
+            });
+            
+            document.getElementById('viewTemplatesBtn').addEventListener('click', function() {
+                updateTemplateList();
+                // Scroll to templates section
+                document.getElementById('templateList').scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            document.getElementById('editTemplatesBtn').addEventListener('click', function() {
+                openTemplateModal();
+            });
+            
+            // Apply template from list
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.apply-template-from-list')) {
+                    const button = e.target.closest('.apply-template-from-list');
+                    const type = button.dataset.type;
+                    
+                    // Open template modal and switch to that type
+                    openTemplateModal();
+                    
+                    // Switch to the correct template type
+                    setTimeout(() => {
+                        document.querySelectorAll('.template-type-btn').forEach(btn => {
+                            btn.classList.remove('active');
+                            if (btn.dataset.type === type) {
+                                btn.classList.add('active');
+                            }
+                        });
+                        
+                        document.querySelectorAll('.template-content').forEach(content => {
+                            content.classList.remove('active');
+                        });
+                        document.getElementById(`${type}Template`).classList.add('active');
+                        
+                        loadTemplateTasks(type);
+                    }, 100);
+                }
+            });
+            
+            // Template modal
+            document.getElementById('closeTemplateModal').addEventListener('click', function() {
+                document.getElementById('templateModal').style.display = 'none';
+            });
+            
+            // Categories modal
+            document.getElementById('closeCategoriesModal').addEventListener('click', function() {
+                document.getElementById('categoriesModal').style.display = 'none';
+            });
+            
+            // Close modals when clicking outside
+            window.addEventListener('click', function(e) {
+                if (e.target.classList.contains('modal')) {
+                    e.target.style.display = 'none';
+                }
+            });
+            
+            // Tab switching (analytics tabs)
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.dataset.tab;
+                    
+                    // Update active tab
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show active tab content
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(`${tabId}Tab`).classList.add('active');
+                });
+            });
+            
+            // Add category form
+            document.getElementById('addCategoryForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('newCategoryName').value;
+                const color = document.getElementById('newCategoryColor').value;
+                
+                if (!name) return;
+                
+                // Generate ID from name
+                const id = name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+                
+                // Check if category already exists
+                if (categories.find(c => c.id === id)) {
+                    alert('Category with this name already exists!');
+                    return;
+                }
+                
+                categories.push({ id, name, color });
+                saveCategories();
+                
+                // Reset form
+                this.reset();
+                document.getElementById('newCategoryColor').value = '#4fc3a1';
+                
+                // Update categories list
+                renderCategoriesList();
+            });
+            
+            // Apply duration selector
+            document.getElementById('applyDuration').addEventListener('change', function() {
+                const customOption = document.getElementById('customDaysOption');
+                if (this.value === 'custom') {
+                    customOption.style.display = 'block';
+                } else {
+                    customOption.style.display = 'none';
+                }
+            });
+        }
+
+        // Template Modal Functions
+        function setupTemplateModal() {
+            // Template type switching
+            document.querySelectorAll('.template-type-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Update active button
+                    document.querySelectorAll('.template-type-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show active template content
+                    const type = this.dataset.type;
+                    document.querySelectorAll('.template-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(`${type}Template`).classList.add('active');
+                    
+                    // Load template tasks for this type
+                    loadTemplateTasks(type);
+                    
+                    // Update warning message
+                    updateWarningMessage();
+                });
+            });
+            
+            // Add task buttons
+            document.getElementById('addDailyTask').addEventListener('click', function() {
+                addTemplateTask('daily');
+            });
+            
+            document.getElementById('addCustomTask').addEventListener('click', function() {
+                addTemplateTask('custom');
+            });
+            
+            // Select All days checkbox
+            document.getElementById('selectAllDays').addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.day-checkbox');
+                checkboxes.forEach(cb => {
+                    cb.checked = this.checked;
+                });
+            });
+            
+            // Individual day checkboxes
+            document.querySelectorAll('.day-checkbox').forEach(cb => {
+                cb.addEventListener('change', function() {
+                    const allCheckboxes = document.querySelectorAll('.day-checkbox');
+                    const selectAllCheckbox = document.getElementById('selectAllDays');
+                    const allChecked = Array.from(allCheckboxes).every(cb => cb.checked);
+                    selectAllCheckbox.checked = allChecked;
+                });
+            });
+            
+            // Apply template button
+            document.getElementById('applyTemplateNow').addEventListener('click', applyTemplate);
+            
+            // Save template only button
+            document.getElementById('saveTemplateOnly').addEventListener('click', function() {
+                saveCurrentTemplate();
+                alert('Template saved!');
+                updateTemplateList();
+            });
+            
+            // Clear tasks toggle button
+            document.getElementById('clearTasksOption').addEventListener('click', function() {
+                clearExistingTasks = !clearExistingTasks;
+                this.classList.toggle('button-danger', clearExistingTasks);
+                this.classList.toggle('button', !clearExistingTasks);
+                
+                const icon = this.querySelector('i');
+                if (clearExistingTasks) {
+                    icon.className = 'fas fa-check-circle';
+                    this.innerHTML = '<i class="fas fa-check-circle"></i> Clear Existing Tasks (ON)';
+                } else {
+                    icon.className = 'fas fa-trash-alt';
+                    this.innerHTML = '<i class="fas fa-trash-alt"></i> Clear Existing Tasks';
+                }
+                
+                updateWarningMessage();
+            });
+            
+            // Initialize with daily template
+            loadTemplateTasks('daily');
+        }
+
+        function openTemplateModal() {
+            loadTemplateTasks('daily');
+            document.getElementById('templateModal').style.display = 'flex';
+            
+            // Reset clear tasks option
+            clearExistingTasks = false;
+            const clearBtn = document.getElementById('clearTasksOption');
+            clearBtn.classList.remove('button-danger');
+            clearBtn.classList.add('button');
+            clearBtn.innerHTML = '<i class="fas fa-trash-alt"></i> Clear Existing Tasks';
+            
+            updateWarningMessage();
+        }
+
+        function loadTemplateTasks(type) {
+            const tasksList = templates[type] || [];
+            const container = document.getElementById(`${type}TasksList`);
+            
+            if (tasksList.length === 0) {
+                container.innerHTML = '<div class="no-tasks" style="font-size: 0.9rem;">No template tasks yet. Add some below!</div>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            tasksList.forEach((task, index) => {
+                const category = categories.find(c => c.id === task.category) || { name: 'Uncategorized', color: '#999' };
+                
+                const taskDiv = document.createElement('div');
+                taskDiv.className = 'quick-template-item';
+                taskDiv.innerHTML = `
+                    <div>
+                        <div style="font-weight: 500;">${task.name}</div>
+                        <div style="font-size: 0.8rem; color: var(--gray-dark);">
+                            <span style="background-color: ${category.color}; color: white; padding: 2px 6px; border-radius: 10px; margin-right: 5px;">${category.name}</span>
+                            <span>${task.points} pts</span>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="button button-small button-danger delete-template-task" data-type="${type}" data-index="${index}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                
+                container.appendChild(taskDiv);
+            });
+            
+            // Add event listeners for delete buttons
+            container.querySelectorAll('.delete-template-task').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const type = this.dataset.type;
+                    const index = parseInt(this.dataset.index);
+                    
+                    if (confirm('Remove this task from template?')) {
+                        templates[type].splice(index, 1);
+                        saveTemplates();
+                        loadTemplateTasks(type);
+                        updateTemplateList();
+                    }
+                });
+            });
+            
+            // Update category selects
+            updateTemplateCategorySelects(type);
+        }
+
+        function updateTemplateCategorySelects(type) {
+            const selectId = `new${type.charAt(0).toUpperCase() + type.slice(1)}Category`;
+            const select = document.getElementById(selectId);
+            
+            if (!select) return;
+            
+            select.innerHTML = '<option value="">Select category</option>';
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category.id;
+                option.textContent = category.name;
+                select.appendChild(option);
+            });
+        }
+
+        function addTemplateTask(type) {
+            const nameInput = document.getElementById(`new${type.charAt(0).toUpperCase() + type.slice(1)}Task`);
+            const categorySelect = document.getElementById(`new${type.charAt(0).toUpperCase() + type.slice(1)}Category`);
+            const pointsInput = document.getElementById(`new${type.charAt(0).toUpperCase() + type.slice(1)}Points`);
+            
+            const name = nameInput.value.trim();
+            const category = categorySelect.value;
+            const points = parseInt(pointsInput.value) || 10;
+            
+            if (!name || !category) {
+                alert('Please enter task name and select category');
+                return;
+            }
+            
+            if (!templates[type]) {
+                templates[type] = [];
+            }
+            
+            templates[type].push({
+                name: name,
+                category: category,
+                points: points
+            });
+            
+            saveTemplates();
+            loadTemplateTasks(type);
+            updateTemplateList();
+            
+            // Clear inputs
+            nameInput.value = '';
+            categorySelect.value = '';
+            pointsInput.value = '10';
+        }
+
+        function applyTemplate() {
+            const activeType = document.querySelector('.template-type-btn.active').dataset.type;
+            const startDateStr = document.getElementById('applyStartDate').value;
+            const duration = document.getElementById('applyDuration').value;
+            
+            if (!startDateStr) {
+                alert('Please select a start date');
+                return;
+            }
+            
+            let daysCount = parseInt(duration);
+            if (duration === 'custom') {
+                daysCount = parseInt(document.getElementById('customDaysCount').value) || 30;
+            }
+            
+            if (daysCount < 1 || daysCount > 365) {
+                alert('Please enter a valid number of days (1-365)');
+                return;
+            }
+            
+            const startDate = new Date(startDateStr);
+            const templateTasks = templates[activeType] || [];
+            
+            if (templateTasks.length === 0) {
+                alert('No tasks in this template. Add some tasks first.');
+                return;
+            }
+            
+            let daysApplied = 0;
+            let tasksAdded = 0;
+            
+            for (let i = 0; i < daysCount; i++) {
+                const currentDate = new Date(startDate);
+                currentDate.setDate(startDate.getDate() + i);
+                
+                // Check if this day matches the template type
+                const dayOfWeek = currentDate.getDay(); // 0 = Sunday
+                let shouldApply = false;
+                
+                switch(activeType) {
+                    case 'daily':
+                        shouldApply = true;
+                        break;
+                    case 'custom':
+                        const selectedDays = Array.from(document.querySelectorAll('.day-checkbox:checked'))
+                            .map(cb => parseInt(cb.value));
+                        shouldApply = selectedDays.includes(dayOfWeek);
+                        break;
+                }
+                
+                if (shouldApply) {
+                    const dateKey = formatDate(currentDate);
+                    
+                    // Clear existing tasks if option is enabled
+                    if (clearExistingTasks) {
+                        delete tasks[dateKey];
+                    }
+                    
+                    if (!tasks[dateKey]) {
+                        tasks[dateKey] = [];
+                    }
+                    
+                    // Add template tasks to this date
+                    templateTasks.forEach(templateTask => {
+                        // Check if similar task already exists for this date
+                        const exists = tasks[dateKey].some(task => 
+                            task.name === templateTask.name && 
+                            task.category === templateTask.category
+                        );
+                        
+                        if (!exists) {
+                            tasks[dateKey].push({
+                                id: Date.now() + Math.random(),
+                                name: templateTask.name,
+                                category: templateTask.category,
+                                points: templateTask.points,
+                                completed: false
+                            });
+                            tasksAdded++;
+                        }
+                    });
+                    
+                    daysApplied++;
+                }
+            }
+            
+            saveTasks();
+            
+            // Update previews
+            updateTodayTasksPreview();
+            updateTemplateList();
+            
+            // If today is within the applied range, update dashboard if visible
+            const today = new Date();
+            const todayKey = formatDate(today);
+            const startKey = formatDate(startDate);
+            const endDate = new Date(startDate);
+            endDate.setDate(startDate.getDate() + daysCount);
+            const endKey = formatDate(endDate);
+            
+            if (todayKey >= startKey && todayKey <= endKey) {
+                renderTasks();
+                renderAnalytics();
+            }
+            
+            alert(`Template applied to ${daysApplied} days! Added ${tasksAdded} new tasks.`);
+            document.getElementById('templateModal').style.display = 'none';
+        }
+
+        function saveCurrentTemplate() {
+            const activeType = document.querySelector('.template-type-btn.active').dataset.type;
+            saveTemplates();
+        }
+
+        function updateWarningMessage() {
+            const warningDiv = document.getElementById('templateWarning');
+            const warningText = document.getElementById('warningText');
+            
+            if (clearExistingTasks) {
+                warningDiv.style.display = 'block';
+                warningText.textContent = 'Warning: This will clear all existing tasks on the selected dates before adding template tasks!';
+            } else {
+                warningDiv.style.display = 'none';
+            }
+        }
+
+        // Categories modal
+        function openCategoriesModal() {
+            renderCategoriesList();
+            document.getElementById('categoriesModal').style.display = 'flex';
+        }
+
+        function renderCategoriesList() {
+            const container = document.getElementById('categoriesList');
+            container.innerHTML = '';
+            
+            if (categories.length === 0) {
+                container.innerHTML = '<div class="no-tasks">No categories yet. Add your first category!</div>';
+                return;
+            }
+            
+            categories.forEach((category, index) => {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'category-item';
+                categoryDiv.innerHTML = `
+                    <div>
+                        <span class="category-color" style="background-color: ${category.color}"></span>
+                        <strong>${category.name}</strong> (ID: ${category.id})
+                    </div>
+                    <div>
+                        <button class="button button-small button-danger delete-category" data-index="${index}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                
+                container.appendChild(categoryDiv);
+            });
+            
+            // Add event listeners for delete buttons
+            container.querySelectorAll('.delete-category').forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = parseInt(this.dataset.index);
+                    
+                    if (confirm(`Delete category "${categories[index].name}"? This will not delete tasks with this category, but they will be marked as "Uncategorized".`)) {
+                        categories.splice(index, 1);
+                        saveCategories();
+                        renderCategoriesList();
+                    }
+                });
+            });
+        }
+
+        function updateCategorySelects() {
+            // Update all category selects
+            const selects = [
+                'taskCategory',
+                'editTaskCategory',
+                'newDailyCategory',
+                'newCustomCategory'
+            ];
+            
+            selects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                if (select) {
+                    select.innerHTML = '<option value="">Select category</option>';
+                    categories.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category.id;
+                        option.textContent = category.name;
+                        select.appendChild(option);
+                    });
+                }
+            });
+        }
+
+        // Edit task modal
+        function openEditModal(task, index, dateKey) {
+            document.getElementById('editTaskName').value = task.name;
+            document.getElementById('editTaskPoints').value = task.points;
+            document.getElementById('editTaskId').value = index;
+            document.getElementById('editTaskDate').value = dateKey;
+            
+            // Set category select
+            const editCategorySelect = document.getElementById('editTaskCategory');
+            editCategorySelect.innerHTML = '';
+            
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category.id;
+                option.textContent = category.name;
+                option.selected = category.id === task.category;
+                editCategorySelect.appendChild(option);
+            });
+            
+            document.getElementById('editTaskModal').style.display = 'flex';
+        }
+
+        // Close edit modal
+        document.getElementById('closeEditModal').addEventListener('click', function() {
+            document.getElementById('editTaskModal').style.display = 'none';
+        });
+
+        // Edit task form submission
+        document.getElementById('editTaskForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const index = parseInt(document.getElementById('editTaskId').value);
+            const dateKey = document.getElementById('editTaskDate').value;
+            const taskName = document.getElementById('editTaskName').value;
+            const taskCategory = document.getElementById('editTaskCategory').value;
+            const taskPoints = parseInt(document.getElementById('editTaskPoints').value);
+            
+            if (tasks[dateKey] && tasks[dateKey][index]) {
+                tasks[dateKey][index].name = taskName;
+                tasks[dateKey][index].category = taskCategory;
+                tasks[dateKey][index].points = taskPoints;
+                
+                saveTasks();
+                
+                // Update UI based on current page
+                const activePage = document.querySelector('.page.active').id;
+                if (activePage === 'dashboardPage') {
+                    renderTasks();
+                    renderAnalytics();
+                } else if (activePage === 'addTasksPage') {
+                    updateTodayTasksPreview();
+                }
+                
+                document.getElementById('editTaskModal').style.display = 'none';
+            }
+        });
+
+        // Delete task button
+        document.getElementById('deleteTaskBtn').addEventListener('click', function() {
+            const index = parseInt(document.getElementById('editTaskId').value);
+            const dateKey = document.getElementById('editTaskDate').value;
+            
+            if (confirm('Are you sure you want to delete this task?')) {
+                if (tasks[dateKey] && tasks[dateKey][index]) {
+                    tasks[dateKey].splice(index, 1);
+                    
+                    // If no tasks left for this date, remove the date entry
+                    if (tasks[dateKey].length === 0) {
+                        delete tasks[dateKey];
+                    }
+                    
+                    saveTasks();
+                    
+                    // Update UI based on current page
+                    const activePage = document.querySelector('.page.active').id;
+                    if (activePage === 'dashboardPage') {
+                        renderTasks();
+                        renderAnalytics();
+                    } else if (activePage === 'addTasksPage') {
+                        updateTodayTasksPreview();
+                    }
+                    
+                    document.getElementById('editTaskModal').style.display = 'none';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

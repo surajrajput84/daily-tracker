@@ -8,8 +8,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --primary-color: #4aa5a3;
-            --secondary-color: #16881a;
+            --primary-color: #4a6fa5;
+            --secondary-color: #166088;
             --accent-color: #4fc3a1;
             --accent-secondary: #ff7e5f;
             --light-color: #f8f9fa;
@@ -31,8 +31,8 @@
             --gray-light: #343a40;
             --gray-medium: #6c757d;
             --gray-dark: #adb5bd;
-            --primary-color: #5dc993;
-            --secondary-color: #1cb872;
+            --primary-color: #5d8cc9;
+            --secondary-color: #1c7ab8;
         }
 
         * {
@@ -56,6 +56,111 @@
             padding: 0 15px;
         }
 
+        /* Login Screen */
+        .login-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .login-container {
+            background-color: white;
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .dark-mode .login-container {
+            background-color: var(--gray-light);
+        }
+
+        .login-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--secondary-color);
+        }
+
+        .login-title h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .login-title p {
+            color: var(--gray-dark);
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--gray-dark);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--gray-medium);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.2);
+        }
+
+        .login-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 10px;
+        }
+
+        .login-button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .login-switch {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--gray-dark);
+        }
+
+        .login-switch a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .login-switch a:hover {
+            text-decoration: underline;
+        }
+
+        /* App Header */
         header {
             background-color: var(--primary-color);
             color: white;
@@ -70,6 +175,36 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-email {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
 
         h1 {
@@ -99,6 +234,7 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
+        /* Navigation and rest of styles remain the same */
         .nav-tabs {
             display: flex;
             background: var(--gray-light);
@@ -265,11 +401,6 @@
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
-        }
-
-        .form-group {
-            flex: 1;
-            min-width: 150px;
         }
 
         label {
@@ -719,11 +850,32 @@
             color: var(--gray-dark);
         }
 
+        .completion-message {
+            text-align: center;
+            padding: 20px;
+            margin: 20px 0;
+            background: linear-gradient(135deg, #4fc3a1, #4a6fa5);
+            color: white;
+            border-radius: var(--border-radius);
+            font-size: 1.1rem;
+        }
+
+        .daily-goal {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 15px;
+            }
+            
+            .user-info {
+                width: 100%;
+                justify-content: space-between;
             }
             
             .form-row {
@@ -767,450 +919,533 @@
             }
         }
 
-        .completion-message {
-            text-align: center;
-            padding: 20px;
-            margin: 20px 0;
-            background: linear-gradient(135deg, #4fc3a1, #4a6fa5);
-            color: white;
-            border-radius: var(--border-radius);
-            font-size: 1.1rem;
+        .error-message {
+            color: var(--danger-color);
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
         }
 
-        .daily-goal {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 5px;
+        .error-message.show {
+            display: block;
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div>
-                    <h1><i class="fas fa-tasks"></i> Productivity Task Tracker</h1>
-                    <p class="subtitle">Separate pages for adding tasks and checking them off</p>
-                </div>
-                <button class="theme-toggle" id="themeToggle">
-                    <i class="fas fa-moon"></i> Dark Mode
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <main class="container">
-        <!-- Navigation Tabs -->
-        <div class="nav-tabs">
-            <a href="#" class="nav-tab active" data-page="dashboard">
-                <i class="fas fa-check-square"></i>
-                <span>Check Tasks</span>
-            </a>
-            <a href="#" class="nav-tab" data-page="addTasks">
-                <i class="fas fa-plus-circle"></i>
-                <span>Add Tasks</span>
-            </a>
-        </div>
-
-        <!-- PAGE 1: Dashboard (Check Tasks) -->
-        <div id="dashboardPage" class="page active">
-            <div class="date-selector">
-                <button class="nav-button" id="prevDay"><i class="fas fa-chevron-left"></i></button>
-                <div class="date-display" id="currentDateDisplay">Loading...</div>
-                <button class="nav-button" id="nextDay"><i class="fas fa-chevron-right"></i></button>
-                <button class="button" id="todayButton">Today</button>
-                <button class="button button-secondary" id="quickAddBtn" style="display: none;">
-                    <i class="fas fa-plus"></i> Quick Add
-                </button>
-            </div>
-
-            <div class="app-container">
-                <!-- Left Column: Task Checking -->
-                <div class="left-column">
-                    <!-- Task List Panel -->
-                    <div class="panel">
-                        <div class="panel-title">
-                            <span>Today's Tasks</span>
-                            <span id="completionRate">0% complete</span>
-                        </div>
-                        
-                        <!-- Daily Goal -->
-                        <div class="completion-message" id="completionMessage" style="display: none;">
-                            <div class="daily-goal" id="dailyGoalText">Daily Goal: 0/0 tasks</div>
-                            <div id="motivationText">Keep going!</div>
-                        </div>
-                        
-                        <div class="tasks-container" id="tasksContainer">
-                            <div class="no-tasks">No tasks for today. Switch to "Add Tasks" page to add tasks!</div>
-                        </div>
-                    </div>
-
-                    <!-- Points Display -->
-                    <div class="points-display">
-                        <div class="total-points" id="totalPoints">0</div>
-                        <div class="points-label">Total Reward Points Earned</div>
-                    </div>
-                </div>
-
-                <!-- Right Column: Analytics -->
-                <div class="right-column">
-                    <!-- Analytics Tabs -->
-                    <div class="panel">
-                        <div class="tab-container">
-                            <div class="tabs">
-                                <div class="tab active" data-tab="daily">Daily Analytics</div>
-                                <div class="tab" data-tab="weekly">Weekly Analytics</div>
-                                <div class="tab" data-tab="categories">Category Analytics</div>
-                            </div>
-                        </div>
-
-                        <!-- Daily Analytics Tab -->
-                        <div class="tab-content active" id="dailyTab">
-                            <div class="stats-container">
-                                <div class="stat-box">
-                                    <div class="stat-value" id="dailyCompleted">0</div>
-                                    <div class="stat-label">Tasks Completed</div>
-                                </div>
-                                <div class="stat-box">
-                                    <div class="stat-value" id="dailyPending">0</div>
-                                    <div class="stat-label">Tasks Pending</div>
-                                </div>
-                                <div class="stat-box">
-                                    <div class="stat-value" id="dailyPoints">0</div>
-                                    <div class="stat-label">Points Earned</div>
-                                </div>
-                                <div class="stat-box">
-                                    <div class="stat-value" id="dailyRate">0%</div>
-                                    <div class="stat-label">Completion Rate</div>
-                                </div>
-                            </div>
-                            <div class="chart-container">
-                                <canvas id="dailyChart"></canvas>
-                            </div>
-                        </div>
-
-                        <!-- Weekly Analytics Tab -->
-                        <div class="tab-content" id="weeklyTab">
-                            <div class="stats-container">
-                                <div class="stat-box">
-                                    <div class="stat-value" id="weeklyCompleted">0</div>
-                                    <div class="stat-label">Weekly Completed</div>
-                                </div>
-                                <div class="stat-box">
-                                    <div class="stat-value" id="weeklyPoints">0</div>
-                                    <div class="stat-label">Weekly Points</div>
-                                </div>
-                                <div class="stat-box">
-                                    <div class="stat-value" id="weeklyRate">0%</div>
-                                    <div class="stat-label">Weekly Rate</div>
-                                </div>
-                                <div class="stat-box">
-                                    <div class="stat-value" id="bestDay">-</div>
-                                    <div class="stat-label">Best Day</div>
-                                </div>
-                            </div>
-                            <div class="chart-container">
-                                <canvas id="weeklyChart"></canvas>
-                            </div>
-                        </div>
-
-                        <!-- Category Analytics Tab -->
-                        <div class="tab-content" id="categoriesTab">
-                            <div class="chart-container">
-                                <canvas id="categoryPieChart"></canvas>
-                            </div>
-                            <div class="chart-container">
-                                <canvas id="categoryBarChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- PAGE 2: Add Tasks Page -->
-        <div id="addTasksPage" class="page">
-            <div class="add-task-panel">
-                <h2 class="panel-title">
-                    <i class="fas fa-plus-circle"></i> Add & Manage Tasks
-                    <span style="font-size: 0.9rem; color: var(--gray-dark);">Create tasks and templates for future days</span>
-                </h2>
-                
-                <div class="quick-actions">
-                    <div class="quick-action-btn" id="addSingleTaskBtn">
-                        <i class="fas fa-tasks"></i>
-                        <div>Add Single Task</div>
-                    </div>
-                    <div class="quick-action-btn" id="applyTemplateBtn">
-                        <i class="fas fa-calendar-alt"></i>
-                        <div>Apply Template</div>
-                    </div>
-                    <div class="quick-action-btn" id="manageCategoriesBtn">
-                        <i class="fas fa-tags"></i>
-                        <div>Manage Categories</div>
-                    </div>
-                    <div class="quick-action-btn" id="viewTemplatesBtn">
-                        <i class="fas fa-layer-group"></i>
-                        <div>View Templates</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Add Single Task Section -->
-            <div class="add-task-section">
-                <h3>Add Single Task</h3>
-                <div class="panel">
-                    <form class="task-form" id="taskForm">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="taskName">Task Name</label>
-                                <input type="text" id="taskName" placeholder="Enter task name" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="taskCategory">Category</label>
-                                <select id="taskCategory" required>
-                                    <option value="">Select a category</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="taskPoints">Reward Points</label>
-                                <input type="number" id="taskPoints" min="1" max="100" value="10" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="taskDate">For Date</label>
-                                <input type="date" id="taskDate" value="">
-                            </div>
-                            <div class="form-group" style="align-self: flex-end;">
-                                <button type="submit" class="button button-success" style="width: 100%;">
-                                    <i class="fas fa-plus"></i> Add Task
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Today's Tasks Preview -->
-            <div class="add-task-section">
-                <h3>Today's Tasks Preview</h3>
-                <div class="panel">
-                    <div class="tasks-container" id="todayTasksPreview" style="max-height: 300px;">
-                        <!-- Today's tasks will appear here -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Existing Templates Section -->
-            <div class="add-task-section">
-                <h3>Existing Templates</h3>
-                <div class="panel">
-                    <div class="template-list" id="templateList">
-                        <!-- Templates will appear here -->
-                    </div>
-                    <div style="text-align: center; margin-top: 20px;">
-                        <button class="button button-secondary" id="editTemplatesBtn">
-                            <i class="fas fa-edit"></i> Edit Templates
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Template Modal -->
-    <div class="modal" id="templateModal">
-        <div class="modal-content">
-            <span class="close-modal" id="closeTemplateModal">&times;</span>
-            <h2 class="modal-title">Apply Template</h2>
-            
-            <div class="template-instructions">
-                <p><strong>How it works:</strong> Set up templates for repetitive tasks (daily or custom days). When you apply a template, it adds those tasks to selected dates.</p>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <div class="login-title">
+                <h1><i class="fas fa-tasks"></i> Productivity Tracker</h1>
+                <p>Login to access your personal task data</p>
             </div>
             
-            <div class="template-types">
-                <div class="template-type-btn active" data-type="daily">Daily Template</div>
-                <div class="template-type-btn" data-type="custom">Custom Days</div>
-            </div>
-            
-            <!-- Daily Template -->
-            <div class="template-content active" id="dailyTemplate">
-                <h3>Daily Tasks (Repeat every day)</h3>
-                <div id="dailyTasksList">
-                    <!-- Daily tasks will appear here -->
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <input type="text" id="newDailyTask" placeholder="Enter new daily task">
-                    </div>
-                    <div class="form-group">
-                        <select id="newDailyCategory">
-                            <option value="">Select category</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <input type="number" id="newDailyPoints" placeholder="Points" value="10" min="1" max="100">
-                    </div>
-                    <div class="form-group" style="align-self: flex-end;">
-                        <button type="button" class="button button-small" id="addDailyTask">Add</button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Custom Days Template -->
-            <div class="template-content" id="customTemplate">
-                <h3>Select Days for These Tasks</h3>
-                <div class="days-selector">
-                    <label class="day-checkbox-label">
-                        <input type="checkbox" class="day-checkbox" value="0" checked> Sunday
-                    </label>
-                    <label class="day-checkbox-label">
-                        <input type="checkbox" class="day-checkbox" value="1" checked> Monday
-                    </label>
-                    <label class="day-checkbox-label">
-                        <input type="checkbox" class="day-checkbox" value="2" checked> Tuesday
-                    </label>
-                    <label class="day-checkbox-label">
-                        <input type="checkbox" class="day-checkbox" value="3" checked> Wednesday
-                    </label>
-                    <label class="day-checkbox-label">
-                        <input type="checkbox" class="day-checkbox" value="4" checked> Thursday
-                    </label>
-                    <label class="day-checkbox-label">
-                        <input type="checkbox" class="day-checkbox" value="5" checked> Friday
-                    </label>
-                    <label class="day-checkbox-label">
-                        <input type="checkbox" class="day-checkbox" value="6" checked> Saturday
-                    </label>
-                    <label class="day-checkbox-label" style="grid-column: span 2;">
-                        <input type="checkbox" id="selectAllDays"> Select All
-                    </label>
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="loginEmail">Email Address</label>
+                    <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                    <div class="error-message" id="loginEmailError"></div>
                 </div>
                 
-                <div id="customTasksList">
-                    <!-- Custom tasks will appear here -->
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                    <div class="error-message" id="loginPasswordError"></div>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <input type="text" id="newCustomTask" placeholder="Enter new task for selected days">
-                    </div>
-                    <div class="form-group">
-                        <select id="newCustomCategory">
-                            <option value="">Select category</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <input type="number" id="newCustomPoints" placeholder="Points" value="10" min="1" max="100">
-                    </div>
-                    <div class="form-group" style="align-self: flex-end;">
-                        <button type="button" class="button button-small" id="addCustomTask">Add</button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Apply Options -->
-            <div class="template-options" style="margin-top: 20px;">
-                <div class="template-option">
-                    <label for="applyStartDate">Start Date</label>
-                    <input type="date" id="applyStartDate" value="">
-                </div>
-                <div class="template-option">
-                    <label for="applyDuration">Apply For</label>
-                    <select id="applyDuration">
-                        <option value="7">1 week</option>
-                        <option value="14">2 weeks</option>
-                        <option value="30">1 month</option>
-                        <option value="60">2 months</option>
-                        <option value="90">3 months</option>
-                        <option value="custom">Custom days</option>
-                    </select>
-                </div>
-                <div class="template-option" id="customDaysOption" style="display: none;">
-                    <label for="customDaysCount">Number of Days</label>
-                    <input type="number" id="customDaysCount" min="1" max="365" value="30">
-                </div>
-            </div>
-            
-            <div class="apply-template-buttons">
-                <button class="button button-success" id="applyTemplateNow">Apply Template</button>
-                <button class="button button-secondary" id="saveTemplateOnly">Save Template Only</button>
-                <button class="button" id="clearTasksOption">
-                    <i class="fas fa-trash-alt"></i> Clear Existing Tasks
+                
+                <button type="submit" class="login-button" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i> Login
                 </button>
-            </div>
+            </form>
             
-            <!-- Warning Message -->
-            <div id="templateWarning" style="margin-top: 15px; padding: 10px; background: #fff3cd; color: #856404; border-radius: var(--border-radius); display: none;">
-                <i class="fas fa-exclamation-triangle"></i> 
-                <span id="warningText">Warning: This will clear all existing tasks on the selected dates!</span>
+            <div class="login-switch">
+                Don't have an account? <a id="switchToRegister">Register</a>
             </div>
         </div>
     </div>
 
-    <!-- Categories Modal -->
-    <div class="modal" id="categoriesModal">
-        <div class="modal-content">
-            <span class="close-modal" id="closeCategoriesModal">&times;</span>
-            <h2 class="modal-title">Manage Categories</h2>
+    <!-- Register Screen -->
+    <div id="registerScreen" class="login-screen" style="display: none;">
+        <div class="login-container">
+            <div class="login-title">
+                <h1><i class="fas fa-user-plus"></i> Create Account</h1>
+                <p>Register to start tracking your tasks</p>
+            </div>
             
-            <form id="addCategoryForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="newCategoryName">Category Name</label>
-                        <input type="text" id="newCategoryName" placeholder="Enter category name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="newCategoryColor">Color</label>
-                        <input type="color" id="newCategoryColor" value="#4fc3a1" required>
-                    </div>
-                    <div class="form-group" style="align-self: flex-end;">
-                        <button type="submit" class="button button-success" style="width: 100%;">
-                            <i class="fas fa-plus"></i> Add
-                        </button>
-                    </div>
+            <form id="registerForm" class="login-form">
+                <div class="form-group">
+                    <label for="registerName">Full Name</label>
+                    <input type="text" id="registerName" placeholder="Enter your full name" required>
+                    <div class="error-message" id="registerNameError"></div>
                 </div>
+                
+                <div class="form-group">
+                    <label for="registerEmail">Email Address</label>
+                    <input type="email" id="registerEmail" placeholder="Enter your email" required>
+                    <div class="error-message" id="registerEmailError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" placeholder="Create a password" required>
+                    <div class="error-message" id="registerPasswordError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="registerConfirmPassword">Confirm Password</label>
+                    <input type="password" id="registerConfirmPassword" placeholder="Confirm your password" required>
+                    <div class="error-message" id="registerConfirmPasswordError"></div>
+                </div>
+                
+                <button type="submit" class="login-button" id="registerBtn">
+                    <i class="fas fa-user-plus"></i> Register
+                </button>
             </form>
             
-            <div class="category-list" id="categoriesList">
-                <!-- Categories will be listed here -->
+            <div class="login-switch">
+                Already have an account? <a id="switchToLogin">Login</a>
             </div>
         </div>
     </div>
 
-    <!-- Edit Task Modal -->
-    <div class="modal" id="editTaskModal">
-        <div class="modal-content">
-            <span class="close-modal" id="closeEditModal">&times;</span>
-            <h2 class="modal-title">Edit Task</h2>
-            
-            <form id="editTaskForm">
-                <div class="form-group">
-                    <label for="editTaskName">Task Name</label>
-                    <input type="text" id="editTaskName" required>
+    <!-- Main App (Hidden until login) -->
+    <div id="appContent" style="display: none;">
+        <header>
+            <div class="container">
+                <div class="header-content">
+                    <div>
+                        <h1><i class="fas fa-tasks"></i> Productivity Task Tracker</h1>
+                        <p class="subtitle">Welcome back! Your data is stored securely</p>
+                    </div>
+                    <div class="user-info">
+                        <div class="user-email" id="userEmailDisplay">
+                            <i class="fas fa-user"></i> user@example.com
+                        </div>
+                        <button class="theme-toggle" id="themeToggle">
+                            <i class="fas fa-moon"></i> Dark Mode
+                        </button>
+                        <button class="logout-btn" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="editTaskCategory">Category</label>
-                    <select id="editTaskCategory" required></select>
+            </div>
+        </header>
+
+        <main class="container">
+            <!-- Navigation Tabs -->
+            <div class="nav-tabs">
+                <a href="#" class="nav-tab active" data-page="dashboard">
+                    <i class="fas fa-check-square"></i>
+                    <span>Check Tasks</span>
+                </a>
+                <a href="#" class="nav-tab" data-page="addTasks">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Add Tasks</span>
+                </a>
+            </div>
+
+            <!-- PAGE 1: Dashboard (Check Tasks) -->
+            <div id="dashboardPage" class="page active">
+                <div class="date-selector">
+                    <button class="nav-button" id="prevDay"><i class="fas fa-chevron-left"></i></button>
+                    <div class="date-display" id="currentDateDisplay">Loading...</div>
+                    <button class="nav-button" id="nextDay"><i class="fas fa-chevron-right"></i></button>
+                    <button class="button" id="todayButton">Today</button>
+                    <button class="button button-secondary" id="quickAddBtn" style="display: none;">
+                        <i class="fas fa-plus"></i> Quick Add
+                    </button>
                 </div>
-                <div class="form-group">
-                    <label for="editTaskPoints">Reward Points</label>
-                    <input type="number" id="editTaskPoints" min="1" max="100" required>
+
+                <div class="app-container">
+                    <!-- Left Column: Task Checking -->
+                    <div class="left-column">
+                        <!-- Task List Panel -->
+                        <div class="panel">
+                            <div class="panel-title">
+                                <span>Today's Tasks</span>
+                                <span id="completionRate">0% complete</span>
+                            </div>
+                            
+                            <!-- Daily Goal -->
+                            <div class="completion-message" id="completionMessage" style="display: none;">
+                                <div class="daily-goal" id="dailyGoalText">Daily Goal: 0/0 tasks</div>
+                                <div id="motivationText">Keep going!</div>
+                            </div>
+                            
+                            <div class="tasks-container" id="tasksContainer">
+                                <div class="no-tasks">No tasks for today. Switch to "Add Tasks" page to add tasks!</div>
+                            </div>
+                        </div>
+
+                        <!-- Points Display -->
+                        <div class="points-display">
+                            <div class="total-points" id="totalPoints">0</div>
+                            <div class="points-label">Total Reward Points Earned</div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Analytics -->
+                    <div class="right-column">
+                        <!-- Analytics Tabs -->
+                        <div class="panel">
+                            <div class="tab-container">
+                                <div class="tabs">
+                                    <div class="tab active" data-tab="daily">Daily Analytics</div>
+                                    <div class="tab" data-tab="weekly">Weekly Analytics</div>
+                                    <div class="tab" data-tab="categories">Category Analytics</div>
+                                </div>
+                            </div>
+
+                            <!-- Daily Analytics Tab -->
+                            <div class="tab-content active" id="dailyTab">
+                                <div class="stats-container">
+                                    <div class="stat-box">
+                                        <div class="stat-value" id="dailyCompleted">0</div>
+                                        <div class="stat-label">Tasks Completed</div>
+                                    </div>
+                                    <div class="stat-box">
+                                        <div class="stat-value" id="dailyPending">0</div>
+                                        <div class="stat-label">Tasks Pending</div>
+                                    </div>
+                                    <div class="stat-box">
+                                        <div class="stat-value" id="dailyPoints">0</div>
+                                        <div class="stat-label">Points Earned</div>
+                                    </div>
+                                    <div class="stat-box">
+                                        <div class="stat-value" id="dailyRate">0%</div>
+                                        <div class="stat-label">Completion Rate</div>
+                                    </div>
+                                </div>
+                                <div class="chart-container">
+                                    <canvas id="dailyChart"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- Weekly Analytics Tab -->
+                            <div class="tab-content" id="weeklyTab">
+                                <div class="stats-container">
+                                    <div class="stat-box">
+                                        <div class="stat-value" id="weeklyCompleted">0</div>
+                                        <div class="stat-label">Weekly Completed</div>
+                                    </div>
+                                    <div class="stat-box">
+                                        <div class="stat-value" id="weeklyPoints">0</div>
+                                        <div class="stat-label">Weekly Points</div>
+                                    </div>
+                                    <div class="stat-box">
+                                        <div class="stat-value" id="weeklyRate">0%</div>
+                                        <div class="stat-label">Weekly Rate</div>
+                                    </div>
+                                    <div class="stat-box">
+                                        <div class="stat-value" id="bestDay">-</div>
+                                        <div class="stat-label">Best Day</div>
+                                    </div>
+                                </div>
+                                <div class="chart-container">
+                                    <canvas id="weeklyChart"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- Category Analytics Tab -->
+                            <div class="tab-content" id="categoriesTab">
+                                <div class="chart-container">
+                                    <canvas id="categoryPieChart"></canvas>
+                                </div>
+                                <div class="chart-container">
+                                    <canvas id="categoryBarChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <input type="hidden" id="editTaskId">
-                <input type="hidden" id="editTaskDate">
+            </div>
+
+            <!-- PAGE 2: Add Tasks Page -->
+            <div id="addTasksPage" class="page">
+                <div class="add-task-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-plus-circle"></i> Add & Manage Tasks
+                        <span style="font-size: 0.9rem; color: var(--gray-dark);">Create tasks and templates for future days</span>
+                    </h2>
+                    
+                    <div class="quick-actions">
+                        <div class="quick-action-btn" id="addSingleTaskBtn">
+                            <i class="fas fa-tasks"></i>
+                            <div>Add Single Task</div>
+                        </div>
+                        <div class="quick-action-btn" id="applyTemplateBtn">
+                            <i class="fas fa-calendar-alt"></i>
+                            <div>Apply Template</div>
+                        </div>
+                        <div class="quick-action-btn" id="manageCategoriesBtn">
+                            <i class="fas fa-tags"></i>
+                            <div>Manage Categories</div>
+                        </div>
+                        <div class="quick-action-btn" id="viewTemplatesBtn">
+                            <i class="fas fa-layer-group"></i>
+                            <div>View Templates</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Single Task Section -->
+                <div class="add-task-section">
+                    <h3>Add Single Task</h3>
+                    <div class="panel">
+                        <form class="task-form" id="taskForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="taskName">Task Name</label>
+                                    <input type="text" id="taskName" placeholder="Enter task name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="taskCategory">Category</label>
+                                    <select id="taskCategory" required>
+                                        <option value="">Select a category</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="taskPoints">Reward Points</label>
+                                    <input type="number" id="taskPoints" min="1" max="100" value="10" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="taskDate">For Date</label>
+                                    <input type="date" id="taskDate" value="">
+                                </div>
+                                <div class="form-group" style="align-self: flex-end;">
+                                    <button type="submit" class="button button-success" style="width: 100%;">
+                                        <i class="fas fa-plus"></i> Add Task
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Today's Tasks Preview -->
+                <div class="add-task-section">
+                    <h3>Today's Tasks Preview</h3>
+                    <div class="panel">
+                        <div class="tasks-container" id="todayTasksPreview" style="max-height: 300px;">
+                            <!-- Today's tasks will appear here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Existing Templates Section -->
+                <div class="add-task-section">
+                    <h3>Existing Templates</h3>
+                    <div class="panel">
+                        <div class="template-list" id="templateList">
+                            <!-- Templates will appear here -->
+                        </div>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <button class="button button-secondary" id="editTemplatesBtn">
+                                <i class="fas fa-edit"></i> Edit Templates
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Template Modal -->
+        <div class="modal" id="templateModal">
+            <div class="modal-content">
+                <span class="close-modal" id="closeTemplateModal">&times;</span>
+                <h2 class="modal-title">Apply Template</h2>
                 
-                <div style="margin-top: 20px; text-align: center;">
-                    <button type="submit" class="button button-success">Save Changes</button>
-                    <button type="button" class="button button-danger" id="deleteTaskBtn">Delete Task</button>
+                <div class="template-instructions">
+                    <p><strong>How it works:</strong> Set up templates for repetitive tasks (daily or custom days). When you apply a template, it adds those tasks to selected dates.</p>
                 </div>
-            </form>
+                
+                <div class="template-types">
+                    <div class="template-type-btn active" data-type="daily">Daily Template</div>
+                    <div class="template-type-btn" data-type="custom">Custom Days</div>
+                </div>
+                
+                <!-- Daily Template -->
+                <div class="template-content active" id="dailyTemplate">
+                    <h3>Daily Tasks (Repeat every day)</h3>
+                    <div id="dailyTasksList">
+                        <!-- Daily tasks will appear here -->
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" id="newDailyTask" placeholder="Enter new daily task">
+                        </div>
+                        <div class="form-group">
+                            <select id="newDailyCategory">
+                                <option value="">Select category</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <input type="number" id="newDailyPoints" placeholder="Points" value="10" min="1" max="100">
+                        </div>
+                        <div class="form-group" style="align-self: flex-end;">
+                            <button type="button" class="button button-small" id="addDailyTask">Add</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Custom Days Template -->
+                <div class="template-content" id="customTemplate">
+                    <h3>Select Days for These Tasks</h3>
+                    <div class="days-selector">
+                        <label class="day-checkbox-label">
+                            <input type="checkbox" class="day-checkbox" value="0" checked> Sunday
+                        </label>
+                        <label class="day-checkbox-label">
+                            <input type="checkbox" class="day-checkbox" value="1" checked> Monday
+                        </label>
+                        <label class="day-checkbox-label">
+                            <input type="checkbox" class="day-checkbox" value="2" checked> Tuesday
+                        </label>
+                        <label class="day-checkbox-label">
+                            <input type="checkbox" class="day-checkbox" value="3" checked> Wednesday
+                        </label>
+                        <label class="day-checkbox-label">
+                            <input type="checkbox" class="day-checkbox" value="4" checked> Thursday
+                        </label>
+                        <label class="day-checkbox-label">
+                            <input type="checkbox" class="day-checkbox" value="5" checked> Friday
+                        </label>
+                        <label class="day-checkbox-label">
+                            <input type="checkbox" class="day-checkbox" value="6" checked> Saturday
+                        </label>
+                        <label class="day-checkbox-label" style="grid-column: span 2;">
+                            <input type="checkbox" id="selectAllDays"> Select All
+                        </label>
+                    </div>
+                    
+                    <div id="customTasksList">
+                        <!-- Custom tasks will appear here -->
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" id="newCustomTask" placeholder="Enter new task for selected days">
+                        </div>
+                        <div class="form-group">
+                            <select id="newCustomCategory">
+                                <option value="">Select category</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <input type="number" id="newCustomPoints" placeholder="Points" value="10" min="1" max="100">
+                        </div>
+                        <div class="form-group" style="align-self: flex-end;">
+                            <button type="button" class="button button-small" id="addCustomTask">Add</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Apply Options -->
+                <div class="template-options" style="margin-top: 20px;">
+                    <div class="template-option">
+                        <label for="applyStartDate">Start Date</label>
+                        <input type="date" id="applyStartDate" value="">
+                    </div>
+                    <div class="template-option">
+                        <label for="applyDuration">Apply For</label>
+                        <select id="applyDuration">
+                            <option value="7">1 week</option>
+                            <option value="14">2 weeks</option>
+                            <option value="30">1 month</option>
+                            <option value="60">2 months</option>
+                            <option value="90">3 months</option>
+                            <option value="custom">Custom days</option>
+                        </select>
+                    </div>
+                    <div class="template-option" id="customDaysOption" style="display: none;">
+                        <label for="customDaysCount">Number of Days</label>
+                        <input type="number" id="customDaysCount" min="1" max="365" value="30">
+                    </div>
+                </div>
+                
+                <div class="apply-template-buttons">
+                    <button class="button button-success" id="applyTemplateNow">Apply Template</button>
+                    <button class="button button-secondary" id="saveTemplateOnly">Save Template Only</button>
+                    <button class="button" id="clearTasksOption">
+                        <i class="fas fa-trash-alt"></i> Clear Existing Tasks
+                    </button>
+                </div>
+                
+                <!-- Warning Message -->
+                <div id="templateWarning" style="margin-top: 15px; padding: 10px; background: #fff3cd; color: #856404; border-radius: var(--border-radius); display: none;">
+                    <i class="fas fa-exclamation-triangle"></i> 
+                    <span id="warningText">Warning: This will clear all existing tasks on the selected dates!</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories Modal -->
+        <div class="modal" id="categoriesModal">
+            <div class="modal-content">
+                <span class="close-modal" id="closeCategoriesModal">&times;</span>
+                <h2 class="modal-title">Manage Categories</h2>
+                
+                <form id="addCategoryForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="newCategoryName">Category Name</label>
+                            <input type="text" id="newCategoryName" placeholder="Enter category name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newCategoryColor">Color</label>
+                            <input type="color" id="newCategoryColor" value="#4fc3a1" required>
+                        </div>
+                        <div class="form-group" style="align-self: flex-end;">
+                            <button type="submit" class="button button-success" style="width: 100%;">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                
+                <div class="category-list" id="categoriesList">
+                    <!-- Categories will be listed here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Task Modal -->
+        <div class="modal" id="editTaskModal">
+            <div class="modal-content">
+                <span class="close-modal" id="closeEditModal">&times;</span>
+                <h2 class="modal-title">Edit Task</h2>
+                
+                <form id="editTaskForm">
+                    <div class="form-group">
+                        <label for="editTaskName">Task Name</label>
+                        <input type="text" id="editTaskName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editTaskCategory">Category</label>
+                        <select id="editTaskCategory" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editTaskPoints">Reward Points</label>
+                        <input type="number" id="editTaskPoints" min="1" max="100" required>
+                    </div>
+                    <input type="hidden" id="editTaskId">
+                    <input type="hidden" id="editTaskDate">
+                    
+                    <div style="margin-top: 20px; text-align: center;">
+                        <button type="submit" class="button button-success">Save Changes</button>
+                        <button type="button" class="button button-danger" id="deleteTaskBtn">Delete Task</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
     <script>
         // App State
         let currentDate = new Date();
+        let currentUser = null;
         let categories = [];
         let templates = {
             daily: [],
@@ -1222,19 +1457,278 @@
 
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
-            loadData();
+            // Check if user is already logged in
+            checkLoginStatus();
+            
+            // Setup event listeners
+            setupAuthEventListeners();
+            
+            // Set default dates
+            document.getElementById('applyStartDate').valueAsDate = new Date();
+            document.getElementById('taskDate').valueAsDate = new Date();
+        });
+
+        // Authentication Functions
+        function checkLoginStatus() {
+            const loggedInUser = localStorage.getItem('productivityTracker_currentUser');
+            if (loggedInUser) {
+                try {
+                    currentUser = JSON.parse(loggedInUser);
+                    loadUserData();
+                    showApp();
+                } catch (e) {
+                    console.error('Error loading user data:', e);
+                    logout();
+                }
+            } else {
+                showLogin();
+            }
+        }
+
+        function loadUserData() {
+            if (!currentUser || !currentUser.email) {
+                logout();
+                return;
+            }
+            
+            // Load user-specific data
+            const userData = localStorage.getItem(`productivityTracker_user_${currentUser.email}`);
+            if (userData) {
+                try {
+                    const data = JSON.parse(userData);
+                    categories = data.categories || getDefaultCategories();
+                    templates = data.templates || { daily: [], custom: [] };
+                    tasks = data.tasks || {};
+                } catch (e) {
+                    console.error('Error parsing user data:', e);
+                    // Reset to defaults
+                    categories = getDefaultCategories();
+                    templates = { daily: [], custom: [] };
+                    tasks = {};
+                }
+            } else {
+                // First time user - set defaults
+                categories = getDefaultCategories();
+                templates = { daily: [], custom: [] };
+                tasks = {};
+                saveUserData();
+            }
+            
+            // Initialize app components
+            initAppComponents();
+        }
+
+        function saveUserData() {
+            if (!currentUser || !currentUser.email) return;
+            
+            const userData = {
+                categories: categories,
+                templates: templates,
+                tasks: tasks,
+                lastSaved: new Date().toISOString()
+            };
+            
+            localStorage.setItem(`productivityTracker_user_${currentUser.email}`, JSON.stringify(userData));
+        }
+
+        function getDefaultCategories() {
+            return [
+                { id: 'work', name: 'Work', color: '#4a6fa5' },
+                { id: 'study', name: 'Study', color: '#4fc3a1' },
+                { id: 'fitness', name: 'Fitness', color: '#ff7e5f' },
+                { id: 'personal', name: 'Personal', color: '#9b5de5' },
+                { id: 'coding', name: 'Coding', color: '#00bbf9' }
+            ];
+        }
+
+        function showLogin() {
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('registerScreen').style.display = 'none';
+            document.getElementById('appContent').style.display = 'none';
+        }
+
+        function showRegister() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('registerScreen').style.display = 'flex';
+            document.getElementById('appContent').style.display = 'none';
+        }
+
+        function showApp() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('registerScreen').style.display = 'none';
+            document.getElementById('appContent').style.display = 'block';
+            
+            // Update user email display
+            if (currentUser && currentUser.email) {
+                document.getElementById('userEmailDisplay').innerHTML = `<i class="fas fa-user"></i> ${currentUser.email}`;
+            }
+        }
+
+        function login(email, password) {
+            // Simple validation
+            if (!validateEmail(email)) {
+                showError('loginEmailError', 'Please enter a valid email address');
+                return false;
+            }
+            
+            if (!password || password.length < 6) {
+                showError('loginPasswordError', 'Password must be at least 6 characters');
+                return false;
+            }
+            
+            // Check if user exists
+            const users = JSON.parse(localStorage.getItem('productivityTracker_users') || '{}');
+            const userKey = email.toLowerCase();
+            
+            if (!users[userKey]) {
+                showError('loginEmailError', 'Email not registered');
+                return false;
+            }
+            
+            // Check password (in real app, this would be hashed)
+            if (users[userKey].password !== password) {
+                showError('loginPasswordError', 'Invalid password');
+                return false;
+            }
+            
+            // Login successful
+            currentUser = {
+                email: email.toLowerCase(),
+                name: users[userKey].name,
+                registered: users[userKey].registered
+            };
+            
+            localStorage.setItem('productivityTracker_currentUser', JSON.stringify(currentUser));
+            loadUserData();
+            showApp();
+            clearErrors();
+            return true;
+        }
+
+        function register(name, email, password, confirmPassword) {
+            // Validation
+            if (!name || name.trim().length < 2) {
+                showError('registerNameError', 'Please enter your full name');
+                return false;
+            }
+            
+            if (!validateEmail(email)) {
+                showError('registerEmailError', 'Please enter a valid email address');
+                return false;
+            }
+            
+            if (!password || password.length < 6) {
+                showError('registerPasswordError', 'Password must be at least 6 characters');
+                return false;
+            }
+            
+            if (password !== confirmPassword) {
+                showError('registerConfirmPasswordError', 'Passwords do not match');
+                return false;
+            }
+            
+            // Check if user already exists
+            const users = JSON.parse(localStorage.getItem('productivityTracker_users') || '{}');
+            const userKey = email.toLowerCase();
+            
+            if (users[userKey]) {
+                showError('registerEmailError', 'Email already registered');
+                return false;
+            }
+            
+            // Register new user
+            users[userKey] = {
+                name: name.trim(),
+                password: password, // In real app, this should be hashed
+                registered: new Date().toISOString()
+            };
+            
+            localStorage.setItem('productivityTracker_users', JSON.stringify(users));
+            
+            // Auto login
+            currentUser = {
+                email: email.toLowerCase(),
+                name: name.trim(),
+                registered: users[userKey].registered
+            };
+            
+            localStorage.setItem('productivityTracker_currentUser', JSON.stringify(currentUser));
+            loadUserData();
+            showApp();
+            clearErrors();
+            return true;
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('productivityTracker_currentUser');
+            showLogin();
+        }
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.classList.add('show');
+        }
+
+        function clearErrors() {
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.textContent = '';
+                el.classList.remove('show');
+            });
+        }
+
+        function setupAuthEventListeners() {
+            // Login form
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                login(email, password);
+            });
+            
+            // Register form
+            document.getElementById('registerForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const name = document.getElementById('registerName').value;
+                const email = document.getElementById('registerEmail').value;
+                const password = document.getElementById('registerPassword').value;
+                const confirmPassword = document.getElementById('registerConfirmPassword').value;
+                register(name, email, password, confirmPassword);
+            });
+            
+            // Switch to register
+            document.getElementById('switchToRegister').addEventListener('click', function(e) {
+                e.preventDefault();
+                showRegister();
+                clearErrors();
+            });
+            
+            // Switch to login
+            document.getElementById('switchToLogin').addEventListener('click', function(e) {
+                e.preventDefault();
+                showLogin();
+                clearErrors();
+            });
+            
+            // Logout button
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+        }
+
+        // App Initialization
+        function initAppComponents() {
             initCategories();
             renderDate();
             renderTasks();
             renderAnalytics();
             setupEventListeners();
             setupCharts();
-            loadTemplates();
             setupTemplateModal();
-            
-            // Set default dates
-            document.getElementById('applyStartDate').valueAsDate = new Date();
-            document.getElementById('taskDate').valueAsDate = new Date();
             
             // Show dashboard page by default
             showPage('dashboard');
@@ -1242,65 +1736,6 @@
             // Update today's tasks preview
             updateTodayTasksPreview();
             updateTemplateList();
-        });
-
-        // Load data from localStorage
-        function loadData() {
-            // Load categories
-            const savedCategories = localStorage.getItem('productivityTracker_categories');
-            if (savedCategories) {
-                categories = JSON.parse(savedCategories);
-            } else {
-                // Default categories
-                categories = [
-                    { id: 'work', name: 'Work', color: '#4a6fa5' },
-                    { id: 'study', name: 'Study', color: '#4fc3a1' },
-                    { id: 'fitness', name: 'Fitness', color: '#ff7e5f' },
-                    { id: 'personal', name: 'Personal', color: '#9b5de5' },
-                    { id: 'coding', name: 'Coding', color: '#00bbf9' }
-                ];
-                saveCategories();
-            }
-
-            // Load templates
-            const savedTemplates = localStorage.getItem('productivityTracker_templates');
-            if (savedTemplates) {
-                templates = JSON.parse(savedTemplates);
-            }
-
-            // Load tasks
-            const savedTasks = localStorage.getItem('productivityTracker_tasks');
-            if (savedTasks) {
-                tasks = JSON.parse(savedTasks);
-            }
-        }
-
-        // Load templates
-        function loadTemplates() {
-            const savedTemplates = localStorage.getItem('productivityTracker_templates');
-            if (savedTemplates) {
-                templates = JSON.parse(savedTemplates);
-            }
-        }
-
-        // Save templates
-        function saveTemplates() {
-            localStorage.setItem('productivityTracker_templates', JSON.stringify(templates));
-        }
-
-        // Initialize categories dropdown
-        function initCategories() {
-            updateCategorySelects();
-        }
-
-        // Save data to localStorage
-        function saveCategories() {
-            localStorage.setItem('productivityTracker_categories', JSON.stringify(categories));
-            updateCategorySelects();
-        }
-
-        function saveTasks() {
-            localStorage.setItem('productivityTracker_tasks', JSON.stringify(tasks));
         }
 
         // Page navigation
@@ -1331,6 +1766,25 @@
                 updateTemplateList();
                 document.getElementById('quickAddBtn').style.display = 'inline-block';
             }
+        }
+
+        // Initialize categories dropdown
+        function initCategories() {
+            updateCategorySelects();
+        }
+
+        // Save data to localStorage
+        function saveCategories() {
+            saveUserData();
+            updateCategorySelects();
+        }
+
+        function saveTasks() {
+            saveUserData();
+        }
+
+        function saveTemplates() {
+            saveUserData();
         }
 
         // Date handling
@@ -1809,7 +2263,7 @@
             }
         }
 
-        // Event Listeners
+        // Event Listeners for App
         function setupEventListeners() {
             // Theme toggle
             document.getElementById('themeToggle').addEventListener('click', function() {

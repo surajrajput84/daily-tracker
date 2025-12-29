@@ -546,11 +546,6 @@
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
 
-        .reward-card.unlocked {
-            border-left-color: var(--success-color);
-            opacity: 0.7;
-        }
-
         .reward-card.affordable {
             border-left-color: var(--accent-color);
         }
@@ -606,14 +601,6 @@
             background-color: var(--gray-medium);
             cursor: not-allowed;
             transform: none;
-        }
-
-        .redeemed-badge {
-            background-color: var(--success-color);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
         }
 
         .reward-stats {
@@ -726,6 +713,47 @@
             margin-top: 15px;
         }
 
+        /* Custom Day Selector */
+        .day-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+            padding: 15px;
+            background: var(--gray-light);
+            border-radius: var(--border-radius);
+        }
+
+        .day-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 12px;
+            background: white;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .dark-mode .day-option {
+            background: var(--gray-medium);
+        }
+
+        .day-option:hover {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .day-option.selected {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .day-option input {
+            width: auto;
+            margin-right: 5px;
+        }
+
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -763,6 +791,10 @@
             
             .nav-menu {
                 width: 100%;
+                justify-content: center;
+            }
+            
+            .day-selector {
                 justify-content: center;
             }
         }
@@ -927,12 +959,12 @@
                         <div class="reward-stat-label">Total Rewards</div>
                     </div>
                     <div class="reward-stat">
-                        <div class="reward-stat-value" id="redeemedRewards">0</div>
-                        <div class="reward-stat-label">Redeemed</div>
+                        <div class="reward-stat-value" id="affordableRewards">0</div>
+                        <div class="reward-stat-label">Affordable Now</div>
                     </div>
                     <div class="reward-stat">
-                        <div class="reward-stat-value" id="affordableRewards">0</div>
-                        <div class="reward-stat-label">Affordable</div>
+                        <div class="reward-stat-value" id="timesRedeemed">0</div>
+                        <div class="reward-stat-label">Times Redeemed</div>
                     </div>
                 </div>
 
@@ -1026,18 +1058,15 @@
             <div class="panel">
                 <h2 class="panel-title">Task Templates</h2>
                 <div style="margin-bottom: 20px; padding: 15px; background: var(--gray-light); border-radius: var(--border-radius);">
-                    <p><strong>How templates work:</strong> Create templates for repetitive tasks (daily, weekday, weekend). Apply them to add those tasks to selected dates automatically.</p>
+                    <p><strong>How templates work:</strong> Create templates for repetitive tasks. Apply them to add those tasks to selected dates automatically.</p>
                 </div>
 
                 <div class="template-types" style="display: flex; gap: 10px; margin-bottom: 20px;">
                     <button class="button button-secondary template-type-btn active" data-type="daily">
                         <i class="fas fa-calendar-day"></i> Daily
                     </button>
-                    <button class="button button-secondary template-type-btn" data-type="weekday">
-                        <i class="fas fa-briefcase"></i> Weekday
-                    </button>
-                    <button class="button button-secondary template-type-btn" data-type="weekend">
-                        <i class="fas fa-umbrella-beach"></i> Weekend
+                    <button class="button button-secondary template-type-btn" data-type="custom">
+                        <i class="fas fa-calendar-week"></i> Custom Days
                     </button>
                 </div>
 
@@ -1065,50 +1094,49 @@
                     </div>
                 </div>
 
-                <!-- Weekday Template -->
-                <div class="template-content" id="weekdayTemplateContent">
-                    <h3>Weekday Tasks (Monday-Friday)</h3>
-                    <div id="weekdayTasksList" style="margin: 15px 0;">
-                        <!-- Weekday tasks will appear here -->
+                <!-- Custom Days Template -->
+                <div class="template-content" id="customTemplateContent">
+                    <h3>Custom Day Tasks</h3>
+                    <div class="day-selector">
+                        <label class="day-option">
+                            <input type="checkbox" class="day-checkbox" value="0"> Sunday
+                        </label>
+                        <label class="day-option">
+                            <input type="checkbox" class="day-checkbox" value="1"> Monday
+                        </label>
+                        <label class="day-option">
+                            <input type="checkbox" class="day-checkbox" value="2"> Tuesday
+                        </label>
+                        <label class="day-option">
+                            <input type="checkbox" class="day-checkbox" value="3"> Wednesday
+                        </label>
+                        <label class="day-option">
+                            <input type="checkbox" class="day-checkbox" value="4"> Thursday
+                        </label>
+                        <label class="day-option">
+                            <input type="checkbox" class="day-checkbox" value="5"> Friday
+                        </label>
+                        <label class="day-option">
+                            <input type="checkbox" class="day-checkbox" value="6"> Saturday
+                        </label>
+                    </div>
+                    <div id="customTasksList" style="margin: 15px 0;">
+                        <!-- Custom tasks will appear here -->
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <input type="text" id="newWeekdayTask" placeholder="Enter new weekday task">
+                            <input type="text" id="newCustomTask" placeholder="Enter new task">
                         </div>
                         <div class="form-group">
-                            <select id="newWeekdayCategory">
+                            <select id="newCustomCategory">
                                 <option value="">Select category</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <input type="number" id="newWeekdayPoints" placeholder="Points" value="10" min="1" max="100">
+                            <input type="number" id="newCustomPoints" placeholder="Points" value="10" min="1" max="100">
                         </div>
                         <div class="form-group" style="align-self: flex-end;">
-                            <button type="button" class="button button-small" id="addWeekdayTask">Add</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Weekend Template -->
-                <div class="template-content" id="weekendTemplateContent">
-                    <h3>Weekend Tasks (Saturday-Sunday)</h3>
-                    <div id="weekendTasksList" style="margin: 15px 0;">
-                        <!-- Weekend tasks will appear here -->
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <input type="text" id="newWeekendTask" placeholder="Enter new weekend task">
-                        </div>
-                        <div class="form-group">
-                            <select id="newWeekendCategory">
-                                <option value="">Select category</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <input type="number" id="newWeekendPoints" placeholder="Points" value="10" min="1" max="100">
-                        </div>
-                        <div class="form-group" style="align-self: flex-end;">
-                            <button type="button" class="button button-small" id="addWeekendTask">Add</button>
+                            <button type="button" class="button button-small" id="addCustomTask">Add</button>
                         </div>
                     </div>
                 </div>
@@ -1249,6 +1277,7 @@
                 <div style="margin-top: 20px; text-align: center;">
                     <button type="submit" class="button button-success">Save Reward</button>
                     <button type="button" class="button button-secondary" id="cancelRewardBtn">Cancel</button>
+                    <button type="button" class="button button-danger" id="deleteRewardBtn" style="display: none;">Delete Reward</button>
                 </div>
             </form>
         </div>
@@ -1290,12 +1319,14 @@
         let categories = [];
         let templates = {
             daily: [],
-            weekday: [],
-            weekend: []
+            custom: {
+                days: [],
+                tasks: []
+            }
         };
         let tasks = {};
         let rewards = [];
-        let redeemedRewards = [];
+        let redeemedRewards = []; // Track when rewards were redeemed
         let charts = {};
         let currentPage = 'home';
 
@@ -1306,21 +1337,29 @@
             renderDate();
             renderHomePage();
             setupEventListeners();
-            setupCharts();
-            loadTemplates();
             
             // Set default dates
-            document.getElementById('applyStartDate').valueAsDate = new Date();
-            document.getElementById('taskDate').valueAsDate = new Date();
+            const today = new Date();
+            document.getElementById('applyStartDate').valueAsDate = today;
+            document.getElementById('taskDate').valueAsDate = today;
         });
 
         // Load data from localStorage
         function loadData() {
+            console.log("Loading data from localStorage...");
+            
             // Load categories
-            const savedCategories = localStorage.getItem('productivityTracker_categories');
-            if (savedCategories) {
-                categories = JSON.parse(savedCategories);
-            } else {
+            try {
+                const savedCategories = localStorage.getItem('productivityTracker_categories');
+                if (savedCategories) {
+                    categories = JSON.parse(savedCategories);
+                    console.log("Loaded categories:", categories.length);
+                }
+            } catch (e) {
+                console.error("Error loading categories:", e);
+            }
+            
+            if (categories.length === 0) {
                 // Default categories
                 categories = [
                     { id: 'work', name: 'Work', color: '#4a6fa5' },
@@ -1333,22 +1372,61 @@
             }
 
             // Load templates
-            const savedTemplates = localStorage.getItem('productivityTracker_templates');
-            if (savedTemplates) {
-                templates = JSON.parse(savedTemplates);
+            try {
+                const savedTemplatesData = localStorage.getItem('productivityTracker_templates');
+                if (savedTemplatesData) {
+                    templates = JSON.parse(savedTemplatesData);
+                    console.log("Loaded templates:", templates);
+                }
+            } catch (e) {
+                console.error("Error loading templates:", e);
             }
 
             // Load tasks
-            const savedTasks = localStorage.getItem('productivityTracker_tasks');
-            if (savedTasks) {
-                tasks = JSON.parse(savedTasks);
+            try {
+                const savedTasks = localStorage.getItem('productivityTracker_tasks');
+                if (savedTasks) {
+                    tasks = JSON.parse(savedTasks);
+                    console.log("Loaded tasks for dates:", Object.keys(tasks).length);
+                }
+            } catch (e) {
+                console.error("Error loading tasks:", e);
             }
 
             // Load rewards
-            const savedRewards = localStorage.getItem('productivityTracker_rewards');
-            if (savedRewards) {
-                rewards = JSON.parse(savedRewards);
-            } else {
+            try {
+                const savedRewardsData = localStorage.getItem('productivityTracker_rewards');
+                if (savedRewardsData) {
+                    const parsedData = JSON.parse(savedRewardsData);
+                    
+                    // Handle both old format (array) and new format (object)
+                    if (Array.isArray(parsedData)) {
+                        rewards = parsedData;
+                    } else if (typeof parsedData === 'object' && parsedData !== null) {
+                        // Convert object to array
+                        rewards = Object.values(parsedData);
+                    }
+                    console.log("Loaded rewards:", rewards.length);
+                }
+            } catch (e) {
+                console.error("Error loading rewards:", e);
+            }
+            
+            // Ensure all rewards have required properties
+            rewards = rewards.map(reward => {
+                if (!reward.id) {
+                    reward.id = generateId(reward.name);
+                }
+                if (!reward.createdAt) {
+                    reward.createdAt = new Date().toISOString();
+                }
+                if (!reward.timesRedeemed) {
+                    reward.timesRedeemed = 0;
+                }
+                return reward;
+            });
+            
+            if (rewards.length === 0) {
                 // Default rewards
                 rewards = [
                     {
@@ -1358,7 +1436,8 @@
                         points: 150,
                         type: 'experience',
                         icon: 'fas fa-film',
-                        createdAt: new Date().toISOString()
+                        createdAt: new Date().toISOString(),
+                        timesRedeemed: 0
                     },
                     {
                         id: 'coffee-treat',
@@ -1367,7 +1446,8 @@
                         points: 50,
                         type: 'treat',
                         icon: 'fas fa-coffee',
-                        createdAt: new Date().toISOString()
+                        createdAt: new Date().toISOString(),
+                        timesRedeemed: 0
                     },
                     {
                         id: 'book-purchase',
@@ -1376,39 +1456,75 @@
                         points: 300,
                         type: 'purchase',
                         icon: 'fas fa-book',
-                        createdAt: new Date().toISOString()
+                        createdAt: new Date().toISOString(),
+                        timesRedeemed: 0
                     }
                 ];
                 saveRewards();
             }
 
-            // Load redeemed rewards
-            const savedRedeemed = localStorage.getItem('productivityTracker_redeemed');
-            if (savedRedeemed) {
-                redeemedRewards = JSON.parse(savedRedeemed);
+            // Load redeemed rewards history (just for tracking, not for disabling)
+            try {
+                const savedRedeemed = localStorage.getItem('productivityTracker_redeemed');
+                if (savedRedeemed) {
+                    redeemedRewards = JSON.parse(savedRedeemed);
+                    console.log("Loaded redeemed rewards history:", redeemedRewards.length);
+                }
+            } catch (e) {
+                console.error("Error loading redeemed rewards:", e);
             }
+        }
+
+        // Generate ID for new rewards
+        function generateId(name) {
+            return name.toLowerCase().replace(/[^a-z0-9]/g, '-') + '-' + Date.now();
         }
 
         // Save data
         function saveCategories() {
-            localStorage.setItem('productivityTracker_categories', JSON.stringify(categories));
-            updateCategorySelects();
+            try {
+                localStorage.setItem('productivityTracker_categories', JSON.stringify(categories));
+                updateCategorySelects();
+                console.log("Categories saved successfully");
+            } catch (e) {
+                console.error("Error saving categories:", e);
+            }
         }
 
         function saveTemplates() {
-            localStorage.setItem('productivityTracker_templates', JSON.stringify(templates));
+            try {
+                localStorage.setItem('productivityTracker_templates', JSON.stringify(templates));
+                console.log("Templates saved successfully");
+            } catch (e) {
+                console.error("Error saving templates:", e);
+            }
         }
 
         function saveTasks() {
-            localStorage.setItem('productivityTracker_tasks', JSON.stringify(tasks));
+            try {
+                localStorage.setItem('productivityTracker_tasks', JSON.stringify(tasks));
+                console.log("Tasks saved successfully");
+            } catch (e) {
+                console.error("Error saving tasks:", e);
+            }
         }
 
         function saveRewards() {
-            localStorage.setItem('productivityTracker_rewards', JSON.stringify(rewards));
+            try {
+                localStorage.setItem('productivityTracker_rewards', JSON.stringify(rewards));
+                console.log("Rewards saved successfully:", rewards.length);
+            } catch (e) {
+                console.error("Error saving rewards:", e);
+            }
         }
 
         function saveRedeemedRewards() {
-            localStorage.setItem('productivityTracker_redeemed', JSON.stringify(redeemedRewards));
+            try {
+                localStorage.setItem('productivityTracker_redeemed', JSON.stringify(redeemedRewards));
+                console.log("Redeemed rewards saved successfully");
+            } catch (e) {
+                console.error("Error saving redeemed rewards:", e);
+            }
         }
 
         // Initialize categories dropdown
@@ -1422,8 +1538,7 @@
                 'taskCategory',
                 'editTaskCategory',
                 'newDailyCategory',
-                'newWeekdayCategory',
-                'newWeekendCategory'
+                'newCustomCategory'
             ];
             
             selects.forEach(selectId => {
@@ -1581,33 +1696,19 @@
             document.getElementById('homePoints').textContent = earnedPoints;
             
             // Update rewards stats
-            let totalPoints = 0;
-            for (const dateKey in tasks) {
-                tasks[dateKey].forEach(task => {
-                    if (task.completed) {
-                        totalPoints += task.points;
-                    }
-                });
-            }
-            
-            const redeemedPoints = redeemedRewards.reduce((sum, redeemed) => {
-                const reward = rewards.find(r => r.id === redeemed.rewardId);
-                return sum + (reward ? reward.points : 0);
-            }, 0);
-            
-            const availablePoints = totalPoints - redeemedPoints;
-            const affordableCount = rewards.filter(reward => reward.points <= availablePoints && !redeemedRewards.some(r => r.rewardId === reward.id)).length;
+            const availablePoints = calculateAvailablePoints();
+            const affordableCount = rewards.filter(reward => reward.points <= availablePoints).length;
             
             document.getElementById('homeAvailablePoints').textContent = availablePoints;
             document.getElementById('homeAffordableRewards').textContent = affordableCount;
         }
 
-        // Update total points
-        function updateTotalPoints() {
+        // Calculate available points
+        function calculateAvailablePoints() {
             let totalPoints = 0;
-            let availablePoints = 0;
             let redeemedPoints = 0;
             
+            // Calculate total earned points from completed tasks
             for (const dateKey in tasks) {
                 tasks[dateKey].forEach(task => {
                     if (task.completed) {
@@ -1616,15 +1717,30 @@
                 });
             }
             
-            // Calculate available points (total - redeemed)
+            // Calculate total points spent on rewards
             redeemedPoints = redeemedRewards.reduce((sum, redeemed) => {
                 const reward = rewards.find(r => r.id === redeemed.rewardId);
                 return sum + (reward ? reward.points : 0);
             }, 0);
             
-            availablePoints = totalPoints - redeemedPoints;
+            return totalPoints - redeemedPoints;
+        }
+
+        // Update total points
+        function updateTotalPoints() {
+            const availablePoints = calculateAvailablePoints();
             
-            document.getElementById('totalPoints').textContent = totalPoints;
+            // Calculate total points earned (not spent)
+            let totalPointsEarned = 0;
+            for (const dateKey in tasks) {
+                tasks[dateKey].forEach(task => {
+                    if (task.completed) {
+                        totalPointsEarned += task.points;
+                    }
+                });
+            }
+            
+            document.getElementById('totalPoints').textContent = totalPointsEarned;
             document.getElementById('rewardsPagePoints').textContent = availablePoints;
         }
 
@@ -1711,7 +1827,7 @@
         // Render rewards page
         function renderRewardsPage() {
             const container = document.getElementById('rewardsList');
-            const availablePoints = parseInt(document.getElementById('rewardsPagePoints').textContent);
+            const availablePoints = calculateAvailablePoints();
             
             if (rewards.length === 0) {
                 container.innerHTML = '<div class="no-tasks">No rewards yet. Click "Add New Reward" to create your first reward!</div>';
@@ -1732,29 +1848,32 @@
             container.innerHTML = '';
             
             sortedRewards.forEach(reward => {
-                const isRedeemed = redeemedRewards.some(r => r.rewardId === reward.id);
                 const isAffordable = reward.points <= availablePoints;
                 
                 const rewardCard = document.createElement('div');
-                rewardCard.className = `reward-card ${isRedeemed ? 'unlocked' : isAffordable ? 'affordable' : 'unaffordable'}`;
+                rewardCard.className = `reward-card ${isAffordable ? 'affordable' : 'unaffordable'}`;
                 
                 const iconHtml = reward.icon ? `<i class="${reward.icon}" style="margin-right: 5px;"></i>` : '';
                 const typeBadge = `<span style="font-size: 0.7rem; background: var(--gray-medium); color: white; padding: 2px 6px; border-radius: 10px; margin-left: 5px;">${reward.type}</span>`;
+                const timesRedeemedBadge = reward.timesRedeemed > 0 ? 
+                    `<span style="font-size: 0.7rem; background: var(--success-color); color: white; padding: 2px 6px; border-radius: 10px; margin-left: 5px;">Redeemed ${reward.timesRedeemed}x</span>` : '';
                 
                 rewardCard.innerHTML = `
-                    <div class="reward-name">${iconHtml}${reward.name}${typeBadge}</div>
+                    <div class="reward-name">${iconHtml}${reward.name}${typeBadge}${timesRedeemedBadge}</div>
                     <div class="reward-description">${reward.description}</div>
                     <div class="reward-footer">
                         <div class="reward-points">${reward.points} pts</div>
-                        ${isRedeemed ? 
-                            '<span class="redeemed-badge"><i class="fas fa-check"></i> Redeemed</span>' : 
-                            `<button class="redeem-button" data-reward-id="${reward.id}" ${!isAffordable ? 'disabled' : ''}>
-                                ${isAffordable ? '<i class="fas fa-gift"></i> Redeem Now' : `Need ${reward.points - availablePoints} more pts`}
-                            </button>`
-                        }
-                        <button class="button button-small edit-reward" data-reward-id="${reward.id}">
-                            <i class="fas fa-edit"></i>
+                        <button class="redeem-button" data-reward-id="${reward.id}" ${!isAffordable ? 'disabled' : ''}>
+                            ${isAffordable ? '<i class="fas fa-gift"></i> Redeem Now' : `Need ${reward.points - availablePoints} more pts`}
                         </button>
+                        <div class="task-actions">
+                            <button class="button button-small edit-reward" data-reward-id="${reward.id}" title="Edit Reward">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="button button-small button-danger delete-reward" data-reward-id="${reward.id}" title="Delete Reward">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
                     </div>
                 `;
                 
@@ -1763,19 +1882,12 @@
             
             // Update stats
             const totalRewards = rewards.length;
-            const redeemedCount = redeemedRewards.length;
-            const affordableCount = rewards.filter(reward => reward.points <= availablePoints && !redeemedRewards.some(r => r.rewardId === reward.id)).length;
+            const affordableCount = rewards.filter(reward => reward.points <= availablePoints).length;
+            const totalTimesRedeemed = rewards.reduce((sum, reward) => sum + reward.timesRedeemed, 0);
             
             document.getElementById('totalRewards').textContent = totalRewards;
-            document.getElementById('redeemedRewards').textContent = redeemedCount;
             document.getElementById('affordableRewards').textContent = affordableCount;
-        }
-
-        // Render analytics page
-        function renderAnalyticsPage() {
-            updateDailyStats();
-            updateWeeklyStats();
-            updateCharts();
+            document.getElementById('timesRedeemed').textContent = totalTimesRedeemed;
         }
 
         // Render templates page
@@ -1783,51 +1895,91 @@
             loadTemplateTasks('daily');
         }
 
-        // Render settings page
-        function renderSettingsPage() {
-            renderCategoriesList();
-        }
-
-        // Templates functions
+        // Load template tasks
         function loadTemplateTasks(type) {
-            const tasksList = templates[type] || [];
-            const container = document.getElementById(`${type}TasksList`);
+            console.log("Loading template tasks for:", type);
             
-            if (tasksList.length === 0) {
-                container.innerHTML = '<div class="no-tasks" style="font-size: 0.9rem;">No template tasks yet. Add some below!</div>';
-                return;
-            }
-            
-            container.innerHTML = '';
-            
-            tasksList.forEach((task, index) => {
-                const category = categories.find(c => c.id === task.category) || { name: 'Uncategorized', color: '#999' };
+            if (type === 'daily') {
+                const tasksList = templates.daily || [];
+                const container = document.getElementById('dailyTasksList');
                 
-                const taskDiv = document.createElement('div');
-                taskDiv.className = 'task-item';
-                taskDiv.innerHTML = `
-                    <div class="task-content" style="flex: 1; margin-left: 0;">
-                        <div class="task-name">${task.name}</div>
-                        <div>
-                            <span class="task-category" style="background-color: ${category.color}">${category.name}</span>
-                            <span class="task-points">${task.points} pts</span>
+                if (tasksList.length === 0) {
+                    container.innerHTML = '<div class="no-tasks" style="font-size: 0.9rem;">No daily template tasks yet. Add some below!</div>';
+                    return;
+                }
+                
+                container.innerHTML = '';
+                
+                tasksList.forEach((task, index) => {
+                    const category = categories.find(c => c.id === task.category) || { name: 'Uncategorized', color: '#999' };
+                    
+                    const taskDiv = document.createElement('div');
+                    taskDiv.className = 'task-item';
+                    taskDiv.innerHTML = `
+                        <div class="task-content" style="flex: 1; margin-left: 0;">
+                            <div class="task-name">${task.name}</div>
+                            <div>
+                                <span class="task-category" style="background-color: ${category.color}">${category.name}</span>
+                                <span class="task-points">${task.points} pts</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="task-actions">
-                        <button class="button button-small button-danger delete-template-task" data-type="${type}" data-index="${index}">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                `;
+                        <div class="task-actions">
+                            <button class="button button-small button-danger delete-template-task" data-type="daily" data-index="${index}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    
+                    container.appendChild(taskDiv);
+                });
                 
-                container.appendChild(taskDiv);
-            });
-            
-            updateTemplateCategorySelects(type);
+                updateTemplateCategorySelects('daily');
+            } else if (type === 'custom') {
+                const tasksList = templates.custom.tasks || [];
+                const container = document.getElementById('customTasksList');
+                
+                // Update day checkboxes
+                const selectedDays = templates.custom.days || [];
+                document.querySelectorAll('.day-checkbox').forEach(checkbox => {
+                    checkbox.checked = selectedDays.includes(parseInt(checkbox.value));
+                });
+                
+                if (tasksList.length === 0) {
+                    container.innerHTML = '<div class="no-tasks" style="font-size: 0.9rem;">No custom template tasks yet. Add some below!</div>';
+                    return;
+                }
+                
+                container.innerHTML = '';
+                
+                tasksList.forEach((task, index) => {
+                    const category = categories.find(c => c.id === task.category) || { name: 'Uncategorized', color: '#999' };
+                    
+                    const taskDiv = document.createElement('div');
+                    taskDiv.className = 'task-item';
+                    taskDiv.innerHTML = `
+                        <div class="task-content" style="flex: 1; margin-left: 0;">
+                            <div class="task-name">${task.name}</div>
+                            <div>
+                                <span class="task-category" style="background-color: ${category.color}">${category.name}</span>
+                                <span class="task-points">${task.points} pts</span>
+                            </div>
+                        </div>
+                        <div class="task-actions">
+                            <button class="button button-small button-danger delete-template-task" data-type="custom" data-index="${index}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    
+                    container.appendChild(taskDiv);
+                });
+                
+                updateTemplateCategorySelects('custom');
+            }
         }
 
         function updateTemplateCategorySelects(type) {
-            const selectId = `new${type.charAt(0).toUpperCase() + type.slice(1)}Category`;
+            const selectId = type === 'daily' ? 'newDailyCategory' : 'newCustomCategory';
             const select = document.getElementById(selectId);
             
             if (!select) return;
@@ -1841,10 +1993,11 @@
             });
         }
 
+        // Add template task
         function addTemplateTask(type) {
-            const nameInput = document.getElementById(`new${type.charAt(0).toUpperCase() + type.slice(1)}Task`);
-            const categorySelect = document.getElementById(`new${type.charAt(0).toUpperCase() + type.slice(1)}Category`);
-            const pointsInput = document.getElementById(`new${type.charAt(0).toUpperCase() + type.slice(1)}Points`);
+            const nameInput = document.getElementById(type === 'daily' ? 'newDailyTask' : 'newCustomTask');
+            const categorySelect = document.getElementById(type === 'daily' ? 'newDailyCategory' : 'newCustomCategory');
+            const pointsInput = document.getElementById(type === 'daily' ? 'newDailyPoints' : 'newCustomPoints');
             
             const name = nameInput.value.trim();
             const category = categorySelect.value;
@@ -1855,15 +2008,28 @@
                 return;
             }
             
-            if (!templates[type]) {
-                templates[type] = [];
+            if (type === 'daily') {
+                if (!templates.daily) templates.daily = [];
+                templates.daily.push({
+                    name: name,
+                    category: category,
+                    points: points
+                });
+            } else if (type === 'custom') {
+                if (!templates.custom.tasks) templates.custom.tasks = [];
+                templates.custom.tasks.push({
+                    name: name,
+                    category: category,
+                    points: points
+                });
+                
+                // Save selected days
+                const selectedDays = [];
+                document.querySelectorAll('.day-checkbox:checked').forEach(checkbox => {
+                    selectedDays.push(parseInt(checkbox.value));
+                });
+                templates.custom.days = selectedDays;
             }
-            
-            templates[type].push({
-                name: name,
-                category: category,
-                points: points
-            });
             
             saveTemplates();
             loadTemplateTasks(type);
@@ -1874,6 +2040,7 @@
             pointsInput.value = '10';
         }
 
+        // Apply template
         function applyTemplate() {
             const activeType = document.querySelector('.template-type-btn.active').dataset.type;
             const startDateStr = document.getElementById('applyStartDate').value;
@@ -1885,7 +2052,21 @@
             }
             
             const startDate = new Date(startDateStr);
-            const templateTasks = templates[activeType] || [];
+            
+            let templateTasks = [];
+            let selectedDays = [];
+            
+            if (activeType === 'daily') {
+                templateTasks = templates.daily || [];
+            } else if (activeType === 'custom') {
+                templateTasks = templates.custom.tasks || [];
+                selectedDays = templates.custom.days || [];
+                
+                if (selectedDays.length === 0) {
+                    alert('Please select at least one day for custom template');
+                    return;
+                }
+            }
             
             if (templateTasks.length === 0) {
                 alert('No tasks in this template. Add some tasks first.');
@@ -1898,20 +2079,13 @@
                 const currentDate = new Date(startDate);
                 currentDate.setDate(startDate.getDate() + i);
                 
-                // Check if this day matches the template type
-                const dayOfWeek = currentDate.getDay(); // 0 = Sunday
                 let shouldApply = false;
                 
-                switch(activeType) {
-                    case 'daily':
-                        shouldApply = true;
-                        break;
-                    case 'weekday':
-                        shouldApply = dayOfWeek >= 1 && dayOfWeek <= 5; // Mon-Fri
-                        break;
-                    case 'weekend':
-                        shouldApply = dayOfWeek === 0 || dayOfWeek === 6; // Sat-Sun
-                        break;
+                if (activeType === 'daily') {
+                    shouldApply = true;
+                } else if (activeType === 'custom') {
+                    const dayOfWeek = currentDate.getDay(); // 0 = Sunday
+                    shouldApply = selectedDays.includes(dayOfWeek);
                 }
                 
                 if (shouldApply) {
@@ -1946,267 +2120,10 @@
             
             saveTasks();
             alert(`Template applied to ${daysApplied} days!`);
-        }
-
-        // Analytics functions
-        function updateDailyStats() {
-            const dateKey = formatDate(currentDate);
-            const tasksForDate = tasks[dateKey] || [];
             
-            const completedTasks = tasksForDate.filter(task => task.completed).length;
-            const pendingTasks = tasksForDate.length - completedTasks;
-            
-            let earnedPoints = 0;
-            tasksForDate.forEach(task => {
-                if (task.completed) {
-                    earnedPoints += task.points;
-                }
-            });
-            
-            const completionRate = tasksForDate.length > 0 ? Math.round((completedTasks / tasksForDate.length) * 100) : 0;
-            
-            document.getElementById('dailyCompleted').textContent = completedTasks;
-            document.getElementById('dailyPending').textContent = pendingTasks;
-            document.getElementById('dailyPoints').textContent = earnedPoints;
-            document.getElementById('dailyRate').textContent = `${completionRate}%`;
-        }
-
-        function updateWeeklyStats() {
-            const today = new Date(currentDate);
-            const dayOfWeek = today.getDay();
-            const startOfWeek = new Date(today);
-            startOfWeek.setDate(today.getDate() - dayOfWeek);
-            
-            let weeklyCompleted = 0;
-            let weeklyTotal = 0;
-            let weeklyPoints = 0;
-            let dayStats = {};
-            let bestDay = { name: 'None', rate: 0 };
-            
-            for (let i = 0; i < 7; i++) {
-                const dayDate = new Date(startOfWeek);
-                dayDate.setDate(startOfWeek.getDate() + i);
-                const dateKey = formatDate(dayDate);
-                const tasksForDate = tasks[dateKey] || [];
-                
-                const completedTasks = tasksForDate.filter(task => task.completed).length;
-                const totalTasks = tasksForDate.length;
-                const dayPoints = tasksForDate.reduce((sum, task) => task.completed ? sum + task.points : sum, 0);
-                
-                weeklyCompleted += completedTasks;
-                weeklyTotal += totalTasks;
-                weeklyPoints += dayPoints;
-                
-                const dayName = dayDate.toLocaleDateString('en-US', { weekday: 'short' });
-                const dayRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-                dayStats[dayName] = dayRate;
-                
-                if (dayRate > bestDay.rate) {
-                    bestDay = { name: dayName, rate: dayRate };
-                }
-            }
-            
-            const weeklyRate = weeklyTotal > 0 ? Math.round((weeklyCompleted / weeklyTotal) * 100) : 0;
-            
-            document.getElementById('weeklyCompleted').textContent = weeklyCompleted;
-            document.getElementById('weeklyPoints').textContent = weeklyPoints;
-            document.getElementById('weeklyRate').textContent = `${weeklyRate}%`;
-            document.getElementById('bestDay').textContent = bestDay.name;
-            
-            if (charts.weeklyChart) {
-                const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-                const data = dayNames.map(day => dayStats[day] || 0);
-                
-                charts.weeklyChart.data.datasets[0].data = data;
-                charts.weeklyChart.update();
-            }
-        }
-
-        // Charts
-        function setupCharts() {
-            // Daily chart
-            const dailyCtx = document.getElementById('dailyChart').getContext('2d');
-            charts.dailyChart = new Chart(dailyCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Completed', 'Pending'],
-                    datasets: [{
-                        data: [0, 0],
-                        backgroundColor: ['#4fc3a1', '#ff7e5f'],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
-            });
-            
-            // Weekly chart
-            const weeklyCtx = document.getElementById('weeklyChart').getContext('2d');
-            charts.weeklyChart = new Chart(weeklyCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-                    datasets: [{
-                        label: 'Completion Rate (%)',
-                        data: [0, 0, 0, 0, 0, 0, 0],
-                        backgroundColor: 'rgba(74, 111, 165, 0.7)',
-                        borderColor: 'rgba(74, 111, 165, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100
-                        }
-                    }
-                }
-            });
-            
-            // Category pie chart
-            const pieCtx = document.getElementById('categoryPieChart').getContext('2d');
-            charts.categoryPieChart = new Chart(pieCtx, {
-                type: 'pie',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        data: [],
-                        backgroundColor: []
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
-            });
-            
-            // Category bar chart
-            const barCtx = document.getElementById('categoryBarChart').getContext('2d');
-            charts.categoryBarChart = new Chart(barCtx, {
-                type: 'bar',
-                data: {
-                    labels: [],
-                    datasets: [
-                        {
-                            label: 'Completed',
-                            data: [],
-                            backgroundColor: 'rgba(79, 195, 161, 0.7)'
-                        },
-                        {
-                            label: 'Total',
-                            data: [],
-                            backgroundColor: 'rgba(74, 111, 165, 0.7)'
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        }
-
-        function updateCharts() {
-            updateDailyChart();
-            updateCategoryCharts();
-        }
-
-        function updateDailyChart() {
-            const dateKey = formatDate(currentDate);
-            const tasksForDate = tasks[dateKey] || [];
-            
-            const completedTasks = tasksForDate.filter(task => task.completed).length;
-            const pendingTasks = tasksForDate.length - completedTasks;
-            
-            if (charts.dailyChart) {
-                charts.dailyChart.data.datasets[0].data = [completedTasks, pendingTasks];
-                charts.dailyChart.update();
-            }
-        }
-
-        function updateCategoryCharts() {
-            const categoryStats = {};
-            
-            categories.forEach(category => {
-                categoryStats[category.id] = {
-                    name: category.name,
-                    color: category.color,
-                    completed: 0,
-                    total: 0
-                };
-            });
-            
-            for (const dateKey in tasks) {
-                tasks[dateKey].forEach(task => {
-                    if (categoryStats[task.category]) {
-                        categoryStats[task.category].total++;
-                        if (task.completed) {
-                            categoryStats[task.category].completed++;
-                        }
-                    }
-                });
-            }
-            
-            // Update pie chart
-            const pieLabels = [];
-            const pieData = [];
-            const pieColors = [];
-            
-            for (const categoryId in categoryStats) {
-                const stat = categoryStats[categoryId];
-                if (stat.total > 0) {
-                    pieLabels.push(stat.name);
-                    pieData.push(stat.total);
-                    pieColors.push(stat.color);
-                }
-            }
-            
-            if (charts.categoryPieChart) {
-                charts.categoryPieChart.data.labels = pieLabels;
-                charts.categoryPieChart.data.datasets[0].data = pieData;
-                charts.categoryPieChart.data.datasets[0].backgroundColor = pieColors;
-                charts.categoryPieChart.update();
-            }
-            
-            // Update bar chart
-            const barLabels = [];
-            const completedData = [];
-            const totalData = [];
-            
-            for (const categoryId in categoryStats) {
-                const stat = categoryStats[categoryId];
-                if (stat.total > 0) {
-                    barLabels.push(stat.name);
-                    completedData.push(stat.completed);
-                    totalData.push(stat.total);
-                }
-            }
-            
-            if (charts.categoryBarChart) {
-                charts.categoryBarChart.data.labels = barLabels;
-                charts.categoryBarChart.data.datasets[0].data = completedData;
-                charts.categoryBarChart.data.datasets[1].data = totalData;
-                charts.categoryBarChart.update();
+            // Refresh home page if needed
+            if (currentPage === 'home') {
+                renderHomePage();
             }
         }
 
@@ -2215,31 +2132,42 @@
             const reward = rewards.find(r => r.id === rewardId);
             if (!reward) return;
             
-            const availablePoints = parseInt(document.getElementById('rewardsPagePoints').textContent);
+            const availablePoints = calculateAvailablePoints();
             
             if (reward.points > availablePoints) {
                 alert(`You need ${reward.points - availablePoints} more points to redeem this reward!`);
                 return;
             }
             
-            if (confirm(`Redeem "${reward.name}" for ${reward.points} points?`)) {
+            if (confirm(`Redeem "${reward.name}" for ${reward.points} points?\n\nYou can redeem this reward again anytime you have enough points!`)) {
+                // Record the redemption
                 redeemedRewards.push({
                     rewardId: reward.id,
-                    redeemedAt: new Date().toISOString()
+                    redeemedAt: new Date().toISOString(),
+                    points: reward.points
                 });
                 
+                // Update the reward's redemption count
+                const rewardIndex = rewards.findIndex(r => r.id === rewardId);
+                if (rewardIndex !== -1) {
+                    rewards[rewardIndex].timesRedeemed++;
+                    rewards[rewardIndex].lastRedeemedAt = new Date().toISOString();
+                }
+                
                 saveRedeemedRewards();
+                saveRewards();
                 renderRewardsPage();
                 updateTotalPoints();
                 updateHomeStats();
                 
-                alert(`Congratulations! You've redeemed "${reward.name}"!`);
+                alert(`Congratulations! You've redeemed "${reward.name}"!\n\nYou've redeemed this reward ${rewards[rewardIndex].timesRedeemed} time(s) total.`);
             }
         }
 
         function showRewardForm(reward = null) {
             const modalTitle = document.getElementById('rewardModalTitle');
             const form = document.getElementById('rewardForm');
+            const deleteBtn = document.getElementById('deleteRewardBtn');
             
             if (reward) {
                 modalTitle.textContent = 'Edit Reward';
@@ -2249,64 +2177,40 @@
                 document.getElementById('rewardType').value = reward.type;
                 document.getElementById('rewardIcon').value = reward.icon || '';
                 document.getElementById('rewardId').value = reward.id;
+                deleteBtn.style.display = 'inline-block';
             } else {
                 modalTitle.textContent = 'Add New Reward';
                 form.reset();
                 document.getElementById('rewardPoints').value = 100;
                 document.getElementById('rewardId').value = '';
+                deleteBtn.style.display = 'none';
             }
             
             document.getElementById('rewardModal').style.display = 'flex';
         }
 
-        // Categories list
-        function renderCategoriesList() {
-            const container = document.getElementById('categoriesList');
-            container.innerHTML = '';
+        function deleteReward(rewardId) {
+            const reward = rewards.find(r => r.id === rewardId);
+            if (!reward) return;
             
-            if (categories.length === 0) {
-                container.innerHTML = '<div class="no-tasks">No categories yet. Add your first category!</div>';
-                return;
-            }
-            
-            categories.forEach((category, index) => {
-                const categoryDiv = document.createElement('div');
-                categoryDiv.className = 'category-item';
-                categoryDiv.innerHTML = `
-                    <div>
-                        <span class="category-color" style="background-color: ${category.color}"></span>
-                        <strong>${category.name}</strong> (ID: ${category.id})
-                    </div>
-                    <div>
-                        <button class="button button-small button-danger delete-category" data-index="${index}">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                `;
+            if (confirm(`Are you sure you want to delete the reward "${reward.name}"?\n\nThis will also remove all redemption history for this reward.\n\nThis action cannot be undone.`)) {
+                // Remove from rewards list
+                const index = rewards.findIndex(r => r.id === rewardId);
+                if (index !== -1) {
+                    rewards.splice(index, 1);
+                }
                 
-                container.appendChild(categoryDiv);
-            });
-        }
-
-        // Edit task modal
-        function openEditModal(task, index, dateKey) {
-            document.getElementById('editTaskName').value = task.name;
-            document.getElementById('editTaskPoints').value = task.points;
-            document.getElementById('editTaskId').value = index;
-            document.getElementById('editTaskDate').value = dateKey;
-            
-            const editCategorySelect = document.getElementById('editTaskCategory');
-            editCategorySelect.innerHTML = '';
-            
-            categories.forEach(category => {
-                const option = document.createElement('option');
-                option.value = category.id;
-                option.textContent = category.name;
-                option.selected = category.id === task.category;
-                editCategorySelect.appendChild(option);
-            });
-            
-            document.getElementById('editTaskModal').style.display = 'flex';
+                // Remove redemption records for this reward
+                const newRedeemedRewards = redeemedRewards.filter(r => r.rewardId !== rewardId);
+                redeemedRewards = newRedeemedRewards;
+                
+                saveRewards();
+                saveRedeemedRewards();
+                renderRewardsPage();
+                document.getElementById('rewardModal').style.display = 'none';
+                
+                alert('Reward deleted successfully!');
+            }
         }
 
         // Event Listeners
@@ -2446,20 +2350,14 @@
                     }
                 }
                 
-                // Delete template task
-                if (e.target.closest('.delete-template-task')) {
-                    const button = e.target.closest('.delete-template-task');
-                    const type = button.dataset.type;
-                    const index = parseInt(button.dataset.index);
-                    
-                    if (confirm('Remove this task from template?')) {
-                        templates[type].splice(index, 1);
-                        saveTemplates();
-                        loadTemplateTasks(type);
-                    }
+                // Delete reward button
+                if (e.target.closest('.delete-reward')) {
+                    const button = e.target.closest('.delete-reward');
+                    const rewardId = button.dataset.rewardId;
+                    deleteReward(rewardId);
                 }
                 
-                // Redeem reward
+                // Redeem reward button
                 if (e.target.closest('.redeem-button')) {
                     const button = e.target.closest('.redeem-button');
                     if (!button.disabled) {
@@ -2468,15 +2366,20 @@
                     }
                 }
                 
-                // Delete category
-                if (e.target.closest('.delete-category')) {
-                    const button = e.target.closest('.delete-category');
+                // Delete template task
+                if (e.target.closest('.delete-template-task')) {
+                    const button = e.target.closest('.delete-template-task');
+                    const type = button.dataset.type;
                     const index = parseInt(button.dataset.index);
                     
-                    if (confirm(`Delete category "${categories[index].name}"?`)) {
-                        categories.splice(index, 1);
-                        saveCategories();
-                        renderCategoriesList();
+                    if (confirm('Remove this task from template?')) {
+                        if (type === 'daily') {
+                            templates.daily.splice(index, 1);
+                        } else if (type === 'custom') {
+                            templates.custom.tasks.splice(index, 1);
+                        }
+                        saveTemplates();
+                        loadTemplateTasks(type);
                     }
                 }
             });
@@ -2512,12 +2415,13 @@
                             description,
                             points,
                             type,
-                            icon
+                            icon,
+                            updatedAt: new Date().toISOString()
                         };
                     }
                 } else {
                     // Add new reward
-                    const newId = name.toLowerCase().replace(/[^a-z0-9]/g, '-') + '-' + Date.now();
+                    const newId = generateId(name);
                     rewards.push({
                         id: newId,
                         name,
@@ -2525,13 +2429,24 @@
                         points,
                         type,
                         icon,
-                        createdAt: new Date().toISOString()
+                        createdAt: new Date().toISOString(),
+                        timesRedeemed: 0
                     });
                 }
                 
                 saveRewards();
                 renderRewardsPage();
                 document.getElementById('rewardModal').style.display = 'none';
+                
+                alert(rewardId ? 'Reward updated successfully!' : 'Reward added successfully!');
+            });
+            
+            // Delete reward button in modal
+            document.getElementById('deleteRewardBtn').addEventListener('click', function() {
+                const rewardId = document.getElementById('rewardId').value;
+                if (rewardId) {
+                    deleteReward(rewardId);
+                }
             });
             
             // Cancel reward form
@@ -2544,38 +2459,25 @@
                 document.getElementById('rewardModal').style.display = 'none';
             });
             
-            document.getElementById('closeEditModal').addEventListener('click', function() {
-                document.getElementById('editTaskModal').style.display = 'none';
-            });
-            
             window.addEventListener('click', function(e) {
                 if (e.target.classList.contains('modal')) {
                     e.target.style.display = 'none';
                 }
             });
             
-            // Add category form
-            document.getElementById('addCategoryForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const name = document.getElementById('newCategoryName').value;
-                const color = document.getElementById('newCategoryColor').value;
-                
-                if (!name) return;
-                
-                const id = name.toLowerCase().replace(/[^a-z0-9]/g, '-');
-                
-                if (categories.find(c => c.id === id)) {
-                    alert('Category with this name already exists!');
-                    return;
+            // Tab switching in analytics page
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('tab')) {
+                    const tabId = e.target.dataset.tab;
+                    
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    e.target.classList.add('active');
+                    
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(`${tabId}Tab`).classList.add('active');
                 }
-                
-                categories.push({ id, name, color });
-                saveCategories();
-                
-                this.reset();
-                document.getElementById('newCategoryColor').value = '#4fc3a1';
-                renderCategoriesList();
             });
             
             // Template type buttons
@@ -2596,145 +2498,20 @@
             
             // Add template task buttons
             document.getElementById('addDailyTask').addEventListener('click', () => addTemplateTask('daily'));
-            document.getElementById('addWeekdayTask').addEventListener('click', () => addTemplateTask('weekday'));
-            document.getElementById('addWeekendTask').addEventListener('click', () => addTemplateTask('weekend'));
+            document.getElementById('addCustomTask').addEventListener('click', () => addTemplateTask('custom'));
             
             // Apply template button
             document.getElementById('applyTemplateNow').addEventListener('click', applyTemplate);
             
-            // Edit task form
-            document.getElementById('editTaskForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const index = parseInt(document.getElementById('editTaskId').value);
-                const dateKey = document.getElementById('editTaskDate').value;
-                const taskName = document.getElementById('editTaskName').value;
-                const taskCategory = document.getElementById('editTaskCategory').value;
-                const taskPoints = parseInt(document.getElementById('editTaskPoints').value);
-                
-                if (tasks[dateKey] && tasks[dateKey][index]) {
-                    tasks[dateKey][index].name = taskName;
-                    tasks[dateKey][index].category = taskCategory;
-                    tasks[dateKey][index].points = taskPoints;
-                    
-                    saveTasks();
-                    
-                    if (currentPage === 'home') {
-                        renderHomePage();
-                    } else if (currentPage === 'addTasks') {
-                        renderAddTasksPage();
-                    }
-                    
-                    document.getElementById('editTaskModal').style.display = 'none';
-                }
-            });
-            
-            // Delete task button
-            document.getElementById('deleteTaskBtn').addEventListener('click', function() {
-                const index = parseInt(document.getElementById('editTaskId').value);
-                const dateKey = document.getElementById('editTaskDate').value;
-                
-                if (confirm('Are you sure you want to delete this task?')) {
-                    if (tasks[dateKey] && tasks[dateKey][index]) {
-                        tasks[dateKey].splice(index, 1);
-                        
-                        if (tasks[dateKey].length === 0) {
-                            delete tasks[dateKey];
-                        }
-                        
-                        saveTasks();
-                        
-                        if (currentPage === 'home') {
-                            renderHomePage();
-                        } else if (currentPage === 'addTasks') {
-                            renderAddTasksPage();
-                        }
-                        
-                        document.getElementById('editTaskModal').style.display = 'none';
-                    }
-                }
-            });
-            
-            // Tab switching
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('tab')) {
-                    const tabId = e.target.dataset.tab;
-                    
-                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                    e.target.classList.add('active');
-                    
-                    document.querySelectorAll('.tab-content').forEach(content => {
-                        content.classList.remove('active');
+            // Day checkbox changes
+            document.addEventListener('change', function(e) {
+                if (e.target.classList.contains('day-checkbox')) {
+                    const selectedDays = [];
+                    document.querySelectorAll('.day-checkbox:checked').forEach(checkbox => {
+                        selectedDays.push(parseInt(checkbox.value));
                     });
-                    document.getElementById(`${tabId}Tab`).classList.add('active');
-                }
-            });
-            
-            // Data management
-            document.getElementById('exportDataBtn').addEventListener('click', function() {
-                const data = {
-                    categories: categories,
-                    tasks: tasks,
-                    rewards: rewards,
-                    redeemedRewards: redeemedRewards,
-                    templates: templates
-                };
-                
-                const dataStr = JSON.stringify(data, null, 2);
-                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-                
-                const exportFileDefaultName = 'productivity-tracker-backup.json';
-                
-                const linkElement = document.createElement('a');
-                linkElement.setAttribute('href', dataUri);
-                linkElement.setAttribute('download', exportFileDefaultName);
-                linkElement.click();
-            });
-            
-            document.getElementById('importDataBtn').addEventListener('click', function() {
-                document.getElementById('importDataInput').click();
-            });
-            
-            document.getElementById('importDataInput').addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-                
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    try {
-                        const data = JSON.parse(event.target.result);
-                        
-                        if (confirm('Importing data will replace all current data. Continue?')) {
-                            categories = data.categories || [];
-                            tasks = data.tasks || {};
-                            rewards = data.rewards || [];
-                            redeemedRewards = data.redeemedRewards || [];
-                            templates = data.templates || { daily: [], weekday: [], weekend: [] };
-                            
-                            saveCategories();
-                            saveTasks();
-                            saveRewards();
-                            saveRedeemedRewards();
-                            saveTemplates();
-                            
-                            initCategories();
-                            renderHomePage();
-                            renderCategoriesList();
-                            
-                            alert('Data imported successfully!');
-                        }
-                    } catch (error) {
-                        alert('Error importing data. Please check the file format.');
-                    }
-                };
-                reader.readAsText(file);
-                e.target.value = '';
-            });
-            
-            document.getElementById('clearDataBtn').addEventListener('click', function() {
-                if (confirm('Are you sure you want to clear ALL data? This cannot be undone.')) {
-                    localStorage.clear();
-                    location.reload();
+                    templates.custom.days = selectedDays;
+                    saveTemplates();
                 }
             });
         }

@@ -1,2849 +1,334 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Productivity Task Tracker</title>
+    <title>TaskFlow | Productivity Tracker</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            --primary-color: #4a6fa5;
-            --secondary-color: #166088;
-            --accent-color: #4fc3a1;
-            --accent-secondary: #ff7e5f;
-            --reward-color: #9b5de5;
-            --light-color: #f8f9fa;
-            --dark-color: #343a40;
-            --gray-light: #e9ecef;
-            --gray-medium: #adb5bd;
-            --gray-dark: #495057;
-            --success-color: #28a745;
-            --warning-color: #ffc107;
-            --danger-color: #dc3545;
-            --border-radius: 8px;
-            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
-        }
-
-        .dark-mode {
-            --light-color: #212529;
-            --dark-color: #f8f9fa;
-            --gray-light: #343a40;
-            --gray-medium: #6c757d;
-            --gray-dark: #adb5bd;
-            --primary-color: #5d8cc9;
-            --secondary-color: #1c7ab8;
-            --reward-color: #b185f1;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: var(--light-color);
-            color: var(--dark-color);
-            transition: var(--transition);
-            line-height: 1.6;
-            padding-bottom: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-
-        header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 20px 0;
-            box-shadow: var(--box-shadow);
-            margin-bottom: 30px;
-            border-radius: 0 0 var(--border-radius) var(--border-radius);
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        h1 {
-            font-size: 1.8rem;
-            margin-bottom: 5px;
-        }
-
-        .subtitle {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-
-        .theme-toggle {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: var(--transition);
-        }
-
-        .theme-toggle:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .nav-menu {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        }
-
-        .nav-button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition);
-        }
-
-        .nav-button:hover {
-            background-color: var(--secondary-color);
-            transform: scale(1.05);
-        }
-
-        .date-selector {
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .date-display {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--secondary-color);
-        }
-
-        .panel {
-            background-color: white;
-            border-radius: var(--border-radius);
-            padding: 20px;
-            box-shadow: var(--box-shadow);
-            transition: var(--transition);
-            margin-bottom: 25px;
-        }
-
-        .dark-mode .panel {
-            background-color: var(--gray-light);
-        }
-
-        .panel-title {
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-            color: var(--secondary-color);
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--accent-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            transition: var(--transition);
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            text-decoration: none;
-        }
-
-        .button:hover {
-            background-color: var(--secondary-color);
-            transform: translateY(-2px);
-        }
-
-        .button-secondary {
-            background-color: var(--gray-medium);
-            color: white;
-        }
-
-        .button-secondary:hover {
-            background-color: var(--gray-dark);
-        }
-
-        .button-success {
-            background-color: var(--success-color);
-        }
-
-        .button-success:hover {
-            background-color: #218838;
-        }
-
-        .button-danger {
-            background-color: var(--danger-color);
-        }
-
-        .button-danger:hover {
-            background-color: #c82333;
-        }
-
-        .button-reward {
-            background-color: var(--reward-color);
-        }
-
-        .button-reward:hover {
-            background-color: #8a4bd8;
-        }
-
-        .button-small {
-            padding: 5px 10px;
-            font-size: 0.8rem;
-        }
-
-        .button-wide {
-            width: 100%;
-            justify-content: center;
-            padding: 12px;
-            font-size: 1rem;
-            margin-bottom: 10px;
-        }
-
-        .page-container {
-            display: none;
-        }
-
-        .page-container.active {
-            display: block;
-        }
-
-        .task-form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .form-group {
-            flex: 1;
-            min-width: 150px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-            color: var(--gray-dark);
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--gray-medium);
-            border-radius: var(--border-radius);
-            background-color: white;
-            color: var(--dark-color);
-            transition: var(--transition);
-        }
-
-        .dark-mode input, .dark-mode select, .dark-mode textarea {
-            background-color: var(--gray-light);
-            border-color: var(--gray-dark);
-            color: var(--dark-color);
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.2);
-        }
-
-        .tasks-container {
-            margin-top: 20px;
-            max-height: 500px;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-
-        .task-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 15px;
-            margin-bottom: 10px;
-            background-color: var(--gray-light);
-            border-radius: var(--border-radius);
-            transition: var(--transition);
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .task-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .task-item.completed {
-            opacity: 0.8;
-            border-left-color: var(--success-color);
-        }
-
-        .task-checkbox {
-            margin-right: 12px;
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-        }
-
-        .task-content {
-            flex: 1;
-        }
-
-        .task-name {
-            font-weight: 500;
-            margin-bottom: 3px;
-        }
-
-        .task-category {
-            display: inline-block;
-            background-color: var(--accent-color);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            margin-right: 8px;
-            margin-top: 3px;
-        }
-
-        .task-points {
-            font-weight: 600;
-            color: var(--secondary-color);
-            font-size: 0.9rem;
-        }
-
-        .task-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .points-display {
-            margin-top: 25px;
-            text-align: center;
-            padding: 15px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border-radius: var(--border-radius);
-        }
-
-        .total-points {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .points-label {
-            font-size: 1rem;
-            opacity: 0.9;
-        }
-
-        .no-tasks {
-            text-align: center;
-            color: var(--gray-dark);
-            padding: 20px;
-            font-style: italic;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background-color: white;
-            padding: 25px;
-            border-radius: var(--border-radius);
-            width: 90%;
-            max-width: 700px;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-        }
-
-        .dark-mode .modal-content {
-            background-color: var(--gray-light);
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--gray-dark);
-        }
-
-        .modal-title {
-            margin-bottom: 20px;
-            color: var(--secondary-color);
-        }
-
-        .category-list {
-            margin-top: 15px;
-        }
-
-        .category-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            background-color: var(--gray-light);
-            margin-bottom: 8px;
-            border-radius: var(--border-radius);
-        }
-
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .stat-box {
-            background-color: var(--gray-light);
-            padding: 15px;
-            border-radius: var(--border-radius);
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            color: var(--gray-dark);
-        }
-
-        .chart-container {
-            margin-top: 20px;
-            height: 250px;
-            position: relative;
-        }
-
-        .tab-container {
-            margin-bottom: 20px;
-        }
-
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid var(--gray-medium);
-        }
-
-        .tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            font-weight: 500;
-            color: var(--gray-dark);
-            transition: var(--transition);
-            border-bottom: 3px solid transparent;
-        }
-
-        .tab.active {
-            color: var(--primary-color);
-            border-bottom: 3px solid var(--primary-color);
-        }
-
-        .tab-content {
-            display: none;
-            padding-top: 15px;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .category-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            background-color: var(--gray-light);
-            padding: 5px 10px;
-            border-radius: 20px;
-            margin-right: 8px;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-        }
-
-        .category-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        /* Rewards-specific styles */
-        .rewards-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .reward-card {
-            background-color: white;
-            border-radius: var(--border-radius);
-            padding: 15px;
-            box-shadow: var(--box-shadow);
-            border-left: 4px solid var(--reward-color);
-            transition: var(--transition);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .dark-mode .reward-card {
-            background-color: var(--gray-light);
-        }
-
-        .reward-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .reward-card.affordable {
-            border-left-color: var(--accent-color);
-        }
-
-        .reward-card.unaffordable {
-            opacity: 0.6;
-        }
-
-        .reward-name {
-            font-weight: 600;
-            font-size: 1.1rem;
-            margin-bottom: 8px;
-            color: var(--dark-color);
-        }
-
-        .reward-description {
-            font-size: 0.9rem;
-            color: var(--gray-dark);
-            margin-bottom: 10px;
-            flex-grow: 1;
-        }
-
-        .reward-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: auto;
-        }
-
-        .reward-points {
-            font-weight: 700;
-            color: var(--reward-color);
-            font-size: 1.2rem;
-        }
-
-        .redeem-button {
-            background-color: var(--reward-color);
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: var(--transition);
-        }
-
-        .redeem-button:hover {
-            background-color: #8a4bd8;
-            transform: translateY(-2px);
-        }
-
-        .redeem-button:disabled {
-            background-color: var(--gray-medium);
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .reward-stats {
-            display: flex;
-            gap: 15px;
-            margin-top: 15px;
-            padding: 10px;
-            background-color: var(--gray-light);
-            border-radius: var(--border-radius);
-        }
-
-        .reward-stat {
-            text-align: center;
-            flex: 1;
-        }
-
-        .reward-stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--reward-color);
-        }
-
-        .reward-stat-label {
-            font-size: 0.8rem;
-            color: var(--gray-dark);
-        }
-
-        /* Home page specific */
-        .home-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .completion-rate {
-            font-weight: 600;
-            color: var(--secondary-color);
-            font-size: 1.1rem;
-        }
-
-        .home-points {
-            text-align: center;
-            padding: 15px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border-radius: var(--border-radius);
-            margin-top: 20px;
-        }
-
-        /* Dashboard grid */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .dashboard-card {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 20px;
-            box-shadow: var(--box-shadow);
-            transition: var(--transition);
-        }
-
-        .dark-mode .dashboard-card {
-            background: var(--gray-light);
-        }
-
-        .dashboard-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .dashboard-card-title {
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-            color: var(--secondary-color);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .dashboard-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--primary-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.2rem;
-        }
-
-        .dashboard-stats {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        /* Custom Day Selector */
-        .day-selector {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 15px 0;
-            padding: 15px;
-            background: var(--gray-light);
-            border-radius: var(--border-radius);
-        }
-
-        .day-option {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            padding: 8px 12px;
-            background: white;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .dark-mode .day-option {
-            background: var(--gray-medium);
-        }
-
-        .day-option:hover {
-            background: var(--accent-color);
-            color: white;
-        }
-
-        .day-option.selected {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .day-option input {
-            width: auto;
-            margin-right: 5px;
-        }
-
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-            
-            .form-row {
-                flex-direction: column;
-            }
-            
-            .form-group {
-                width: 100%;
-            }
-            
-            .stats-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .task-actions {
-                flex-direction: column;
-            }
-            
-            .rewards-list {
-                grid-template-columns: 1fr;
-            }
-            
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .quick-actions {
-                grid-template-columns: 1fr;
-            }
-            
-            .nav-menu {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .day-selector {
-                justify-content: center;
-            }
-        }
-    </style>
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div>
-                    <h1><i class="fas fa-tasks"></i> Productivity Task Tracker</h1>
-                    <p class="subtitle">Just check off your daily tasks - manage everything else in separate pages</p>
-                </div>
-                <button class="theme-toggle" id="themeToggle">
-                    <i class="fas fa-moon"></i> Dark Mode
-                </button>
+    <!-- Auth Screen -->
+    <div id="authBox">
+        <div class="auth-container">
+            <h2 id="authTitle">TaskFlow</h2>
+            <p id="authSubtitle" style="color: var(--text-muted); margin-bottom: 2rem;">Your productivity, organized.</p>
+            
+            <input type="email" id="authEmail" class="auth-input" placeholder="Email address" autocomplete="email">
+            <input type="password" id="authPassword" class="auth-input" placeholder="Password" autocomplete="current-password">
+            
+            <button id="authActionBtn" class="auth-btn auth-btn-primary">
+                <span id="authActionText">Get Started</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+            
+            <div style="display: flex; align-items: center; gap: 1rem; margin: 1.5rem 0;">
+                <div style="flex: 1; height: 1px; background: var(--border);"></div>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">OR</span>
+                <div style="flex: 1; height: 1px; background: var(--border);"></div>
             </div>
             
-            <div class="nav-menu">
-                <button class="button" id="homeBtn"><i class="fas fa-home"></i> Home</button>
-                <button class="button button-secondary" id="addTaskPageBtn"><i class="fas fa-plus-circle"></i> Add Tasks</button>
-                <button class="button button-reward" id="rewardsPageBtn"><i class="fas fa-gift"></i> Rewards</button>
-                <button class="button button-secondary" id="analyticsPageBtn"><i class="fas fa-chart-bar"></i> Analytics</button>
-                <button class="button button-secondary" id="templatesPageBtn"><i class="fas fa-clone"></i> Templates</button>
-                <button class="button button-secondary" id="settingsPageBtn"><i class="fas fa-cog"></i> Settings</button>
+            <button id="googleAuthBtn" class="auth-btn auth-btn-google">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" alt="G" style="width: 18px;">
+                Continue with Google
+            </button>
+            
+            <div id="authToggle" class="auth-toggle">
+                New here? Create an account
             </div>
+            
+            <div id="authMessage" class="auth-message" style="display: none;"></div>
         </div>
-    </header>
+    </div>
 
-    <main class="container">
-        <!-- Home Page (Default) - Just Task Checking -->
-        <div class="page-container active" id="homePage">
-            <div class="home-controls">
-                <div class="date-selector">
-                    <button class="nav-button" id="prevDay"><i class="fas fa-chevron-left"></i></button>
-                    <div class="date-display" id="currentDateDisplay">Loading...</div>
-                    <button class="nav-button" id="nextDay"><i class="fas fa-chevron-right"></i></button>
-                    <button class="button" id="todayButton">Today</button>
-                </div>
-                <div class="completion-rate" id="completionRate">0% complete</div>
-            </div>
-
-            <div class="panel">
-                <h2 class="panel-title">Today's Tasks</h2>
-                <div class="tasks-container" id="tasksContainer">
-                    <div class="no-tasks">No tasks for today. Go to "Add Tasks" page to create some!</div>
-                </div>
-            </div>
-
-            <div class="home-points">
-                <div class="total-points" id="totalPoints">0</div>
-                <div class="points-label">Total Reward Points Earned</div>
-            </div>
-
-            <div class="dashboard-grid">
-                <div class="dashboard-card">
-                    <div class="dashboard-card-title">
-                        <div class="dashboard-icon">
-                            <i class="fas fa-bolt"></i>
-                        </div>
-                        Quick Stats
+    <!-- App Shell -->
+    <div id="mainApp">
+        <header>
+            <div class="container">
+                <div class="header-content">
+                    <div class="brand">
+                        <h1><i class="fas fa-bolt"></i> TaskFlow</h1>
                     </div>
-                    <div class="dashboard-stats">
-                        <div class="stat-box">
-                            <div class="stat-value" id="homeCompleted">0</div>
-                            <div class="stat-label">Completed Today</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-value" id="homePoints">0</div>
-                            <div class="stat-label">Today's Points</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="dashboard-card">
-                    <div class="dashboard-card-title">
-                        <div class="dashboard-icon" style="background: var(--reward-color);">
-                            <i class="fas fa-gift"></i>
-                        </div>
-                        Available Rewards
-                    </div>
-                    <div class="dashboard-stats">
-                        <div class="stat-box">
-                            <div class="stat-value" id="homeAvailablePoints">0</div>
-                            <div class="stat-label">Available Points</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-value" id="homeAffordableRewards">0</div>
-                            <div class="stat-label">Affordable Rewards</div>
-                        </div>
-                    </div>
-                    <div class="quick-actions">
-                        <a href="#" class="button button-reward button-wide" id="viewRewardsBtn">
-                            <i class="fas fa-gift"></i> View Rewards
-                        </a>
-                        <a href="#" class="button button-success button-wide" id="addTaskBtn">
-                            <i class="fas fa-plus"></i> Add Task
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Add Tasks Page -->
-        <div class="page-container" id="addTasksPage">
-            <div class="panel">
-                <h2 class="panel-title">Add New Task</h2>
-                <form class="task-form" id="taskForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="taskName">Task Name</label>
-                            <input type="text" id="taskName" placeholder="Enter task name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="taskCategory">Category</label>
-                            <select id="taskCategory" required>
-                                <option value="">Select a category</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="taskPoints">Reward Points</label>
-                            <input type="number" id="taskPoints" min="1" max="100" value="10" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="taskDate">Date</label>
-                            <input type="date" id="taskDate" value="">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" class="button button-success button-wide">
-                            <i class="fas fa-plus"></i> Add Task
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="panel">
-                <h2 class="panel-title">Manage Tasks</h2>
-                <div class="tasks-container" id="allTasksContainer">
-                    <!-- All tasks will appear here -->
-                </div>
-            </div>
-        </div>
-
-        <!-- Rewards Page -->
-        <div class="page-container" id="rewardsPage">
-            <div class="panel">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h2 class="panel-title" style="margin-bottom: 0;">Your Rewards</h2>
-                    <div>
-                        <span style="font-weight: 600; color: var(--reward-color); font-size: 1.2rem;">
-                            <i class="fas fa-coins"></i> <span id="rewardsPagePoints">0</span> points available
-                        </span>
-                    </div>
-                </div>
-
-                <div class="reward-stats">
-                    <div class="reward-stat">
-                        <div class="reward-stat-value" id="totalRewards">0</div>
-                        <div class="reward-stat-label">Total Rewards</div>
-                    </div>
-                    <div class="reward-stat">
-                        <div class="reward-stat-value" id="affordableRewards">0</div>
-                        <div class="reward-stat-label">Affordable Now</div>
-                    </div>
-                    <div class="reward-stat">
-                        <div class="reward-stat-value" id="timesRedeemed">0</div>
-                        <div class="reward-stat-label">Times Redeemed</div>
-                    </div>
-                </div>
-
-                <div style="text-align: center; margin: 20px 0;">
-                    <button class="button button-reward" id="addNewRewardBtn">
-                        <i class="fas fa-plus"></i> Add New Reward
-                    </button>
-                </div>
-
-                <div class="rewards-list" id="rewardsList">
-                    <!-- Rewards will appear here -->
-                </div>
-            </div>
-        </div>
-
-        <!-- Analytics Page -->
-        <div class="page-container" id="analyticsPage">
-            <div class="panel">
-                <div class="tab-container">
-                    <div class="tabs">
-                        <div class="tab active" data-tab="daily">Daily Analytics</div>
-                        <div class="tab" data-tab="weekly">Weekly Analytics</div>
-                        <div class="tab" data-tab="categories">Category Analytics</div>
-                    </div>
-                </div>
-
-                <!-- Daily Analytics Tab -->
-                <div class="tab-content active" id="dailyTab">
-                    <div class="stats-container">
-                        <div class="stat-box">
-                            <div class="stat-value" id="dailyCompleted">0</div>
-                            <div class="stat-label">Tasks Completed</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-value" id="dailyPending">0</div>
-                            <div class="stat-label">Tasks Pending</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-value" id="dailyPoints">0</div>
-                            <div class="stat-label">Points Earned</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-value" id="dailyRate">0%</div>
-                            <div class="stat-label">Completion Rate</div>
-                        </div>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="dailyChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Weekly Analytics Tab -->
-                <div class="tab-content" id="weeklyTab">
-                    <div class="stats-container">
-                        <div class="stat-box">
-                            <div class="stat-value" id="weeklyCompleted">0</div>
-                            <div class="stat-label">Weekly Completed</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-value" id="weeklyPoints">0</div>
-                            <div class="stat-label">Weekly Points</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-value" id="weeklyRate">0%</div>
-                            <div class="stat-label">Weekly Rate</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-value" id="bestDay">-</div>
-                            <div class="stat-label">Best Day</div>
-                        </div>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="weeklyChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Category Analytics Tab -->
-                <div class="tab-content" id="categoriesTab">
-                    <div class="chart-container">
-                        <canvas id="categoryPieChart"></canvas>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="categoryBarChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Templates Page -->
-        <div class="page-container" id="templatesPage">
-            <div class="panel">
-                <h2 class="panel-title">Task Templates</h2>
-                <div style="margin-bottom: 20px; padding: 15px; background: var(--gray-light); border-radius: var(--border-radius);">
-                    <p><strong>How templates work:</strong> Create templates for repetitive tasks. Apply them to add those tasks to selected dates automatically.</p>
-                </div>
-
-                <div class="template-types" style="display: flex; gap: 10px; margin-bottom: 20px;">
-                    <button class="button button-secondary template-type-btn active" data-type="daily">
-                        <i class="fas fa-calendar-day"></i> Daily
-                    </button>
-                    <button class="button button-secondary template-type-btn" data-type="custom">
-                        <i class="fas fa-calendar-week"></i> Custom Days
-                    </button>
-                </div>
-
-                <!-- Daily Template -->
-                <div class="template-content active" id="dailyTemplateContent">
-                    <h3>Daily Tasks (Repeat every day)</h3>
-                    <div id="dailyTasksList" style="margin: 15px 0;">
-                        <!-- Daily tasks will appear here -->
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <input type="text" id="newDailyTask" placeholder="Enter new daily task">
-                        </div>
-                        <div class="form-group">
-                            <select id="newDailyCategory">
-                                <option value="">Select category</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <input type="number" id="newDailyPoints" placeholder="Points" value="10" min="1" max="100">
-                        </div>
-                        <div class="form-group" style="align-self: flex-end;">
-                            <button type="button" class="button button-small" id="addDailyTask">Add</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Custom Days Template -->
-                <div class="template-content" id="customTemplateContent">
-                    <h3>Custom Day Tasks</h3>
-                    <div class="day-selector">
-                        <label class="day-option">
-                            <input type="checkbox" class="day-checkbox" value="0"> Sunday
-                        </label>
-                        <label class="day-option">
-                            <input type="checkbox" class="day-checkbox" value="1"> Monday
-                        </label>
-                        <label class="day-option">
-                            <input type="checkbox" class="day-checkbox" value="2"> Tuesday
-                        </label>
-                        <label class="day-option">
-                            <input type="checkbox" class="day-checkbox" value="3"> Wednesday
-                        </label>
-                        <label class="day-option">
-                            <input type="checkbox" class="day-checkbox" value="4"> Thursday
-                        </label>
-                        <label class="day-option">
-                            <input type="checkbox" class="day-checkbox" value="5"> Friday
-                        </label>
-                        <label class="day-option">
-                            <input type="checkbox" class="day-checkbox" value="6"> Saturday
-                        </label>
-                    </div>
-                    <div id="customTasksList" style="margin: 15px 0;">
-                        <!-- Custom tasks will appear here -->
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <input type="text" id="newCustomTask" placeholder="Enter new task">
-                        </div>
-                        <div class="form-group">
-                            <select id="newCustomCategory">
-                                <option value="">Select category</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <input type="number" id="newCustomPoints" placeholder="Points" value="10" min="1" max="100">
-                        </div>
-                        <div class="form-group" style="align-self: flex-end;">
-                            <button type="button" class="button button-small" id="addCustomTask">Add</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-row" style="margin-top: 20px;">
-                    <div class="form-group">
-                        <label for="applyStartDate">Start Date</label>
-                        <input type="date" id="applyStartDate" value="">
-                    </div>
-                    <div class="form-group">
-                        <label for="applyDuration">Apply For</label>
-                        <select id="applyDuration">
-                            <option value="7">1 week</option>
-                            <option value="14">2 weeks</option>
-                            <option value="30">1 month</option>
-                            <option value="90">3 months</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div style="text-align: center; margin-top: 20px;">
-                    <button class="button button-success" id="applyTemplateNow">
-                        <i class="fas fa-magic"></i> Apply Template to Dates
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Settings Page -->
-        <div class="page-container" id="settingsPage">
-            <div class="panel">
-                <h2 class="panel-title">Settings</h2>
-                
-                <div style="margin-bottom: 30px;">
-                    <h3 style="margin-bottom: 15px; color: var(--secondary-color);">
-                        <i class="fas fa-tags"></i> Categories
-                    </h3>
-                    <form id="addCategoryForm">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="newCategoryName">Category Name</label>
-                                <input type="text" id="newCategoryName" placeholder="Enter category name" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="newCategoryColor">Color</label>
-                                <input type="color" id="newCategoryColor" value="#4fc3a1" required>
-                            </div>
-                            <div class="form-group" style="align-self: flex-end;">
-                                <button type="submit" class="button button-success" style="width: 100%;">
-                                    <i class="fas fa-plus"></i> Add Category
-                                </button>
-                            </div>
-                        </div>
-                    </form>
                     
-                    <div class="category-list" id="categoriesList">
-                        <!-- Categories will be listed here -->
+                    <div class="header-actions">
+                        <button id="themeToggle" class="nav-item" style="padding: 0.5rem; background: var(--background);">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        
+                        <div id="userInfoHeader" class="user-pill">
+                            <div id="userAvatar" class="avatar">U</div>
+                            <div style="display: flex; flex-direction: column;">
+                                <span id="userDisplayName" style="font-weight: 600; font-size: 0.875rem;">User</span>
+                                <span id="userEmail" style="font-size: 0.75rem; color: var(--text-muted);">user@example.com</span>
+                            </div>
+                        </div>
+                        
+                        <button id="logoutBtn" class="btn btn-secondary">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <nav class="nav-menu">
+                    <button class="nav-item active" id="homeBtn">
+                        <i class="bi bi-house-door"></i> Home
+                    </button>
+                    <button class="nav-item" id="addTaskBtn">
+                        <i class="bi bi-plus-circle"></i> Tasks
+                    </button>
+                    <button class="nav-item" id="rewardsBtn">
+                        <i class="bi bi-gift"></i> Rewards
+                    </button>
+                    <button class="nav-item" id="analyticsBtn">
+                        <i class="bi bi-pie-chart"></i> Stats
+                    </button>
+                    <button class="nav-item" id="templatesBtn">
+                        <i class="bi bi-files"></i> Templates
+                    </button>
+                    <button class="nav-item" id="settingsBtn">
+                        <i class="bi bi-gear"></i> Settings
+                    </button>
+                </nav>
+            </div>
+        </header>
+
+        <main class="container">
+            <!-- Home Page -->
+            <div id="homePage" class="page-container active">
+                <div class="panel-header">
+                    <div>
+                        <h2 id="currentDateDisplay">Today</h2>
+                        <p style="color: var(--text-muted);">Here's your agenda for today</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <span id="totalPoints" style="font-size: 2rem; font-weight: 700; color: var(--primary);">0</span>
+                        <p style="font-size: 0.75rem; color: var(--text-muted);">Points Earned</p>
                     </div>
                 </div>
 
-                <div style="margin-bottom: 30px;">
-                    <h3 style="margin-bottom: 15px; color: var(--secondary-color);">
-                        <i class="fas fa-database"></i> Data Management
-                    </h3>
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        <button class="button button-secondary" id="exportDataBtn">
-                            <i class="fas fa-download"></i> Export Data
-                        </button>
-                        <button class="button button-secondary" id="importDataBtn">
-                            <i class="fas fa-upload"></i> Import Data
-                        </button>
-                        <button class="button button-danger" id="clearDataBtn">
-                            <i class="fas fa-trash"></i> Clear All Data
-                        </button>
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Today's Tasks</h3>
+                        <div id="completionRate" style="font-size: 0.875rem; color: var(--accent); font-weight: 600;">0% complete</div>
                     </div>
-                    <input type="file" id="importDataInput" style="display: none;" accept=".json">
+                    <div id="tasksContainer" class="task-list">
+                        <div class="no-tasks">All clear! Add some tasks to get started.</div>
+                    </div>
                 </div>
+                
+                <div class="dashboard-grid">
+                    <div class="stat-pill">
+                        <div class="stat-icon primary">
+                            <i class="bi bi-check2-circle"></i>
+                        </div>
+                        <div>
+                            <span id="homeCompleted" style="font-size: 1.25rem; font-weight: 700;">0</span>
+                            <p style="font-size: 0.75rem; color: var(--text-muted);">Tasks Done Today</p>
+                        </div>
+                    </div>
 
-                <div>
-                    <h3 style="margin-bottom: 15px; color: var(--secondary-color);">
-                        <i class="fas fa-info-circle"></i> About
-                    </h3>
-                    <p>Productivity Task Tracker v1.0</p>
-                    <p>Track your daily tasks, earn rewards, and boost your productivity!</p>
+                    <div class="stat-pill">
+                        <div class="stat-icon accent">
+                            <i class="bi bi-lightning-charge"></i>
+                        </div>
+                        <div>
+                            <span id="homePoints" style="font-size: 1.25rem; font-weight: 700;">0</span>
+                            <p style="font-size: 0.75rem; color: var(--text-muted);">Today's Points</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-pill">
+                        <div class="stat-icon secondary">
+                            <i class="bi bi-gem"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <span id="homeAvailablePoints" style="font-size: 1.25rem; font-weight: 700;">0</span>
+                            <p style="font-size: 0.75rem; color: var(--text-muted);">Balance Points</p>
+                        </div>
+                        <button class="btn btn-accent btn-small" id="viewRewardsBtnQuick" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;">Shop</button>
+                    </div>
                 </div>
             </div>
-        </div>
-    </main>
 
-    <!-- Add/Edit Reward Modal -->
-    <div class="modal" id="rewardModal">
-        <div class="modal-content">
-            <span class="close-modal" id="closeRewardModal">&times;</span>
-            <h2 class="modal-title" id="rewardModalTitle">Add New Reward</h2>
-            
-            <form id="rewardForm">
-                <div class="form-group">
-                    <label for="rewardName">Reward Name</label>
-                    <input type="text" id="rewardName" placeholder="e.g., Movie Night, Favorite Dessert" required>
+            <!-- Tasks Page -->
+            <div id="addTaskPage" class="page-container">
+                <div class="panel">
+                    <h3>Add New Task</h3>
+                    <form id="taskForm" style="margin-top: 1.5rem;">
+                        <input type="text" id="taskName" class="auth-input" placeholder="What needs to be done?" required>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <select id="taskCategory" class="auth-input" required>
+                                <option value="">Category</option>
+                            </select>
+                            <input type="number" id="taskPoints" class="auth-input" placeholder="Points" value="10" min="1">
+                        </div>
+                        <input type="date" id="taskDate" class="auth-input">
+                        <button type="submit" class="btn btn-primary btn-wide" style="width: 100%; justify-content: center; padding: 0.75rem;">
+                            <i class="bi bi-plus-lg"></i> Add Task
+                        </button>
+                    </form>
                 </div>
-                <div class="form-group">
-                    <label for="rewardDescription">Description</label>
-                    <textarea id="rewardDescription" placeholder="Describe your reward..." rows="3"></textarea>
+                <div class="panel">
+                    <h3>All Planned Tasks</h3>
+                    <div id="allTasksContainer" class="task-list" style="margin-top: 1.5rem;"></div>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="rewardPoints">Points Required</label>
-                        <input type="number" id="rewardPoints" min="1" max="10000" value="100" required>
+            </div>
+
+            <!-- Templates Page -->
+            <div id="templatesPage" class="page-container">
+                <div class="panel-header">
+                    <div>
+                        <h2>Task Templates</h2>
+                        <p style="color: var(--text-muted);">Set tasks for a month or specific period</p>
                     </div>
-                    <div class="form-group">
-                        <label for="rewardType">Type</label>
-                        <select id="rewardType">
-                            <option value="treat">Treat</option>
-                            <option value="experience">Experience</option>
-                            <option value="purchase">Purchase</option>
-                            <option value="activity">Activity</option>
-                            <option value="other">Other</option>
-                        </select>
+                </div>
+                <div class="panel">
+                    <h3>1. Define Template Tasks</h3>
+                    <form id="templateTaskForm" style="margin-top: 1.5rem;">
+                        <input type="text" id="templateTaskName" class="auth-input" placeholder="Template Task Name" required>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <select id="templateTaskCategory" class="auth-input" required>
+                                <option value="">Category</option>
+                            </select>
+                            <input type="number" id="templateTaskPoints" class="auth-input" placeholder="Points" value="10">
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 0.75rem;">
+                            <i class="bi bi-plus-lg"></i> Add to Template
+                        </button>
+                    </form>
+                    <div id="templateTasksList" class="task-list" style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem;"></div>
+                </div>
+                <div class="panel">
+                    <h3>2. Apply to Period</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+                        <div>
+                            <label style="font-size: 0.875rem; color: var(--text-muted);">Start Date</label>
+                            <input type="date" id="templateStartDate" class="auth-input">
+                        </div>
+                        <div>
+                            <label style="font-size: 0.875rem; color: var(--text-muted);">End Date</label>
+                            <input type="date" id="templateEndDate" class="auth-input">
+                        </div>
+                    </div>
+                    <button id="applyTemplateBtn" class="btn btn-accent btn-wide" style="width: 100%; justify-content: center; padding: 1rem; margin-top: 1rem;">
+                        <i class="bi bi-magic"></i> Generate Tasks for this Period
+                    </button>
+                    <p id="templateStatus" style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 1rem;"></p>
+                </div>
+            </div>
+
+            <!-- Rewards Page -->
+            <div id="rewardsPage" class="page-container">
+                <div class="panel-header">
+                    <h2>Rewards Shop</h2>
+                </div>
+                <div class="panel" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div><p style="opacity: 0.9;">Available Balance</p><h3 style="font-size: 2rem; color:white;" id="rewardsPagePoints">0</h3></div>
+                        <button class="btn glass" id="addNewRewardBtn">New Reward</button>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="rewardIcon">Icon (optional)</label>
-                    <select id="rewardIcon">
-                        <option value="">No icon</option>
-                        <option value="fas fa-film">Movie</option>
-                        <option value="fas fa-utensils">Food</option>
-                        <option value="fas fa-gamepad">Game</option>
-                        <option value="fas fa-shopping-cart">Shopping</option>
-                        <option value="fas fa-coffee">Coffee</option>
-                        <option value="fas fa-book">Book</option>
-                        <option value="fas fa-headphones">Music</option>
-                        <option value="fas fa-spa">Relaxation</option>
-                        <option value="fas fa-gift">Gift</option>
+                <div id="rewardsList" class="dashboard-grid" style="margin-top: 2rem;"></div>
+            </div>
+
+            <!-- Analytics Page -->
+            <div id="analyticsPage" class="page-container">
+                <div class="panel-header"><h2>Progress Stats</h2></div>
+                <div class="panel">
+                    <div class="nav-menu" style="margin-top: 0; margin-bottom: 1.5rem;">
+                        <button class="nav-item active tab-btn" data-tab="daily">Daily</button>
+                        <button class="nav-item tab-btn" data-tab="weekly">Weekly</button>
+                        <button class="nav-item tab-btn" data-tab="rewards">Redemptions</button>
+                    </div>
+                    <div id="dailyTab" class="analytics-content active">
+                        <div style="height: 300px;"><canvas id="dailyChart"></canvas></div>
+                    </div>
+                    <div id="weeklyTab" class="analytics-content" style="display: none;">
+                        <div style="height: 300px;"><canvas id="weeklyChart"></canvas></div>
+                    </div>
+                    <div id="rewardsTab" class="analytics-content" style="display: none;">
+                        <div style="height: 350px; display: flex; justify-content: center;">
+                            <canvas id="rewardsPieChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div id="settingsPage" class="page-container">
+                <div class="panel">
+                    <h3>Categories</h3>
+                    <form id="addCategoryForm" style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <input type="text" id="newCategoryName" class="auth-input" placeholder="Name" required style="margin:0;">
+                        <input type="color" id="newCategoryColor" value="#6366f1" style="height: 46px;">
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </form>
+                    <div id="categoriesList" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.5rem;"></div>
+                </div>
+                <div class="panel">
+                    <h3>Backup</h3>
+                    <button class="btn btn-secondary" id="exportDataBtn">Export JSON</button>
+                    <button class="btn btn-secondary" id="importDataBtn">Import JSON</button>
+                    <input type="file" id="importDataInput" style="display: none;">
+                </div>
+
+                <div class="panel" style="border: 1px solid #fee2e2; background: rgba(239, 68, 68, 0.02);">
+                    <h3 style="color: #ef4444;">Danger Zone</h3>
+                    <p style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 1.5rem;">Deleting your data is permanent. This wipes all tasks, points, and custom categories.</p>
+                    <button class="btn" style="background: #ef4444; color: white; width: 100%; justify-content: center;" id="resetAllDataBtn">
+                        <i class="bi bi-trash3"></i> Delete All My Data
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Reward Modal -->
+    <div id="rewardModal" class="modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
+        <div class="auth-container" style="max-width: 500px; text-align: left;">
+            <h3 id="rewardModalTitle">New Reward</h3>
+            <form id="rewardForm" style="margin-top: 1.5rem;">
+                <input type="text" id="rewardName" class="auth-input" placeholder="Reward Name" required>
+                <textarea id="rewardDescription" class="auth-input" placeholder="What is this reward?"></textarea>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <input type="number" id="rewardPoints" class="auth-input" placeholder="Points Cost" required>
+                    <select id="rewardIcon" class="auth-input">
+                        <option value="fas fa-gift">Icon: Gift</option>
+                        <option value="fas fa-coffee">Icon: Coffee</option>
+                        <option value="fas fa-pizza-slice">Icon: Food</option>
+                        <option value="fas fa-gamepad">Icon: Gaming</option>
+                        <option value="fas fa-film">Icon: Movie</option>
                     </select>
                 </div>
-                <input type="hidden" id="rewardId">
-                
-                <div style="margin-top: 20px; text-align: center;">
-                    <button type="submit" class="button button-success">Save Reward</button>
-                    <button type="button" class="button button-secondary" id="cancelRewardBtn">Cancel</button>
-                    <button type="button" class="button button-danger" id="deleteRewardBtn" style="display: none;">Delete Reward</button>
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Save Reward</button>
+                    <button type="button" class="btn btn-secondary" id="closeRewardModal">Cancel</button>
                 </div>
             </form>
         </div>
     </div>
-
-    <!-- Edit Task Modal -->
-    <div class="modal" id="editTaskModal">
-        <div class="modal-content">
-            <span class="close-modal" id="closeEditModal">&times;</span>
-            <h2 class="modal-title">Edit Task</h2>
-            
-            <form id="editTaskForm">
-                <div class="form-group">
-                    <label for="editTaskName">Task Name</label>
-                    <input type="text" id="editTaskName" required>
-                </div>
-                <div class="form-group">
-                    <label for="editTaskCategory">Category</label>
-                    <select id="editTaskCategory" required></select>
-                </div>
-                <div class="form-group">
-                    <label for="editTaskPoints">Reward Points</label>
-                    <input type="number" id="editTaskPoints" min="1" max="100" required>
-                </div>
-                <input type="hidden" id="editTaskId">
-                <input type="hidden" id="editTaskDate">
-                
-                <div style="margin-top: 20px; text-align: center;">
-                    <button type="submit" class="button button-success">Save Changes</button>
-                    <button type="button" class="button button-danger" id="deleteTaskBtn">Delete Task</button>
-                </div>
-            </form>
-        </div>
+        </main>
     </div>
 
-   <script>
-    // App State
-    let currentDate = new Date();
-    let categories = [];
-    let templates = {
-        daily: [],
-        custom: {
-            days: [],
-            tasks: []
-        }
-    };
-    let tasks = {};
-    let rewards = [];
-    let redeemedRewards = []; // Track when rewards were redeemed
-    let charts = {};
-    let currentPage = 'home';
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
 
-    // Initialize the application
-    document.addEventListener('DOMContentLoaded', function() {
-        loadData();
-        initCategories();
-        renderDate();
-        renderHomePage();
-        setupEventListeners();
-        setupCharts();
-        
-        // Set default dates
-        const today = new Date();
-        document.getElementById('applyStartDate').valueAsDate = today;
-        document.getElementById('taskDate').valueAsDate = today;
-    });
-
-    // Setup charts
-    function setupCharts() {
-        // Daily Chart
-        const dailyCtx = document.getElementById('dailyChart').getContext('2d');
-        charts.daily = new Chart(dailyCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Completed', 'Pending'],
-                datasets: [{
-                    label: 'Tasks',
-                    data: [0, 0],
-                    backgroundColor: [
-                        'rgba(75, 192, 192, 0.6)',
-                        'rgba(255, 99, 132, 0.6)'
-                    ],
-                    borderColor: [
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(255, 99, 132, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1
-                        }
-                    }
-                }
-            }
-        });
-
-        // Weekly Chart
-        const weeklyCtx = document.getElementById('weeklyChart').getContext('2d');
-        charts.weekly = new Chart(weeklyCtx, {
-            type: 'line',
-            data: {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                datasets: [{
-                    label: 'Points Earned',
-                    data: [0, 0, 0, 0, 0, 0, 0],
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 2,
-                    tension: 0.1,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-
-        // Category Pie Chart
-        const categoryPieCtx = document.getElementById('categoryPieChart').getContext('2d');
-        charts.categoryPie = new Chart(categoryPieCtx, {
-            type: 'pie',
-            data: {
-                labels: ['No Data'],
-                datasets: [{
-                    data: [1],
-                    backgroundColor: ['rgba(201, 203, 207, 0.6)']
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    }
-                }
-            }
-        });
-
-        // Category Bar Chart
-        const categoryBarCtx = document.getElementById('categoryBarChart').getContext('2d');
-        charts.categoryBar = new Chart(categoryBarCtx, {
-            type: 'bar',
-            data: {
-                labels: ['No Data'],
-                datasets: [{
-                    label: 'Tasks',
-                    data: [0],
-                    backgroundColor: 'rgba(54, 162, 235, 0.6)'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    // Update analytics data
-    function updateAnalytics() {
-        updateDailyAnalytics();
-        updateWeeklyAnalytics();
-        updateCategoryAnalytics();
-    }
-
-    // Update daily analytics
-    function updateDailyAnalytics() {
-        const dateKey = formatDate(currentDate);
-        const tasksForDate = tasks[dateKey] || [];
-        
-        const completedTasks = tasksForDate.filter(task => task.completed).length;
-        const pendingTasks = tasksForDate.length - completedTasks;
-        const earnedPoints = tasksForDate.reduce((sum, task) => 
-            task.completed ? sum + task.points : sum, 0);
-        const completionRate = tasksForDate.length > 0 ? 
-            Math.round((completedTasks / tasksForDate.length) * 100) : 0;
-        
-        // Update stats
-        document.getElementById('dailyCompleted').textContent = completedTasks;
-        document.getElementById('dailyPending').textContent = pendingTasks;
-        document.getElementById('dailyPoints').textContent = earnedPoints;
-        document.getElementById('dailyRate').textContent = completionRate + '%';
-        
-        // Update chart
-        if (charts.daily) {
-            charts.daily.data.datasets[0].data = [completedTasks, pendingTasks];
-            charts.daily.update();
-        }
-    }
-
-    // Update weekly analytics
-    function updateWeeklyAnalytics() {
-        // Get dates for the current week
-        const today = new Date();
-        const dayOfWeek = today.getDay(); // 0 = Sunday
-        const startOfWeek = new Date(today);
-        startOfWeek.setDate(today.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1)); // Start from Monday
-        
-        const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-        const weekPoints = [0, 0, 0, 0, 0, 0, 0];
-        const weekCompleted = [0, 0, 0, 0, 0, 0, 0];
-        
-        let totalWeeklyCompleted = 0;
-        let totalWeeklyPoints = 0;
-        let bestDayPoints = 0;
-        let bestDayIndex = 0;
-        
-        // Calculate stats for each day of the week
-        for (let i = 0; i < 7; i++) {
-            const currentDay = new Date(startOfWeek);
-            currentDay.setDate(startOfWeek.getDate() + i);
-            const dateKey = formatDate(currentDay);
-            const tasksForDate = tasks[dateKey] || [];
-            
-            const completedTasks = tasksForDate.filter(task => task.completed).length;
-            const earnedPoints = tasksForDate.reduce((sum, task) => 
-                task.completed ? sum + task.points : sum, 0);
-            
-            weekPoints[i] = earnedPoints;
-            weekCompleted[i] = completedTasks;
-            totalWeeklyCompleted += completedTasks;
-            totalWeeklyPoints += earnedPoints;
-            
-            if (earnedPoints > bestDayPoints) {
-                bestDayPoints = earnedPoints;
-                bestDayIndex = i;
-            }
-        }
-        
-        const weeklyRate = totalWeeklyCompleted > 0 ? 
-            Math.round((totalWeeklyCompleted / getTotalTasksThisWeek()) * 100) : 0;
-        
-        // Update stats
-        document.getElementById('weeklyCompleted').textContent = totalWeeklyCompleted;
-        document.getElementById('weeklyPoints').textContent = totalWeeklyPoints;
-        document.getElementById('weeklyRate').textContent = weeklyRate + '%';
-        document.getElementById('bestDay').textContent = weekDays[bestDayIndex];
-        
-        // Update chart
-        if (charts.weekly) {
-            charts.weekly.data.datasets[0].data = weekPoints;
-            charts.weekly.update();
-        }
-    }
-
-    // Get total tasks for the current week
-    function getTotalTasksThisWeek() {
-        const today = new Date();
-        const dayOfWeek = today.getDay();
-        const startOfWeek = new Date(today);
-        startOfWeek.setDate(today.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1));
-        
-        let totalTasks = 0;
-        for (let i = 0; i < 7; i++) {
-            const currentDay = new Date(startOfWeek);
-            currentDay.setDate(startOfWeek.getDate() + i);
-            const dateKey = formatDate(currentDay);
-            totalTasks += tasks[dateKey] ? tasks[dateKey].length : 0;
-        }
-        
-        return totalTasks;
-    }
-
-    // Update category analytics
-    function updateCategoryAnalytics() {
-        const categoryStats = {};
-        
-        // Initialize category stats
-        categories.forEach(category => {
-            categoryStats[category.id] = {
-                name: category.name,
-                color: category.color,
-                completed: 0,
-                total: 0,
-                points: 0
-            };
-        });
-        
-        // Add uncategorized
-        categoryStats['uncategorized'] = {
-            name: 'Uncategorized',
-            color: '#999999',
-            completed: 0,
-            total: 0,
-            points: 0
-        };
-        
-        // Calculate stats from all tasks
-        for (const dateKey in tasks) {
-            tasks[dateKey].forEach(task => {
-                const categoryId = task.category || 'uncategorized';
-                if (!categoryStats[categoryId]) {
-                    categoryStats[categoryId] = {
-                        name: categories.find(c => c.id === categoryId)?.name || 'Unknown',
-                        color: categories.find(c => c.id === categoryId)?.color || '#999999',
-                        completed: 0,
-                        total: 0,
-                        points: 0
-                    };
-                }
-                
-                categoryStats[categoryId].total++;
-                if (task.completed) {
-                    categoryStats[categoryId].completed++;
-                    categoryStats[categoryId].points += task.points;
-                }
-            });
-        }
-        
-        // Filter out categories with no tasks
-        const categoriesWithTasks = Object.values(categoryStats).filter(cat => cat.total > 0);
-        
-        if (categoriesWithTasks.length === 0) {
-            // No data to display
-            if (charts.categoryPie) {
-                charts.categoryPie.data.labels = ['No Data'];
-                charts.categoryPie.data.datasets[0].data = [1];
-                charts.categoryPie.data.datasets[0].backgroundColor = ['rgba(201, 203, 207, 0.6)'];
-                charts.categoryPie.update();
-            }
-            
-            if (charts.categoryBar) {
-                charts.categoryBar.data.labels = ['No Data'];
-                charts.categoryBar.data.datasets[0].data = [0];
-                charts.categoryBar.update();
-            }
-            return;
-        }
-        
-        // Sort by completion count
-        categoriesWithTasks.sort((a, b) => b.completed - a.completed);
-        
-        // Prepare data for charts
-        const pieLabels = categoriesWithTasks.map(cat => cat.name);
-        const pieData = categoriesWithTasks.map(cat => cat.completed);
-        const pieColors = categoriesWithTasks.map(cat => cat.color);
-        
-        const barLabels = categoriesWithTasks.map(cat => cat.name);
-        const barData = categoriesWithTasks.map(cat => cat.completed);
-        const barColors = categoriesWithTasks.map(cat => cat.color);
-        
-        // Update pie chart
-        if (charts.categoryPie) {
-            charts.categoryPie.data.labels = pieLabels;
-            charts.categoryPie.data.datasets[0].data = pieData;
-            charts.categoryPie.data.datasets[0].backgroundColor = pieColors;
-            charts.categoryPie.update();
-        }
-        
-        // Update bar chart
-        if (charts.categoryBar) {
-            charts.categoryBar.data.labels = barLabels;
-            charts.categoryBar.data.datasets[0].data = barData;
-            charts.categoryBar.data.datasets[0].backgroundColor = barColors;
-            charts.categoryBar.update();
-        }
-    }
-
-    // Load data from localStorage
-    function loadData() {
-        console.log("Loading data from localStorage...");
-        
-        // Load categories
-        try {
-            const savedCategories = localStorage.getItem('productivityTracker_categories');
-            if (savedCategories) {
-                categories = JSON.parse(savedCategories);
-                console.log("Loaded categories:", categories.length);
-            }
-        } catch (e) {
-            console.error("Error loading categories:", e);
-        }
-        
-        if (categories.length === 0) {
-            // Default categories
-            categories = [
-                { id: 'work', name: 'Work', color: '#4a6fa5' },
-                { id: 'study', name: 'Study', color: '#4fc3a1' },
-                { id: 'fitness', name: 'Fitness', color: '#ff7e5f' },
-                { id: 'personal', name: 'Personal', color: '#9b5de5' },
-                { id: 'coding', name: 'Coding', color: '#00bbf9' }
-            ];
-            saveCategories();
-        }
-
-        // Load templates
-        try {
-            const savedTemplatesData = localStorage.getItem('productivityTracker_templates');
-            if (savedTemplatesData) {
-                templates = JSON.parse(savedTemplatesData);
-                console.log("Loaded templates:", templates);
-            }
-        } catch (e) {
-            console.error("Error loading templates:", e);
-        }
-
-        // Load tasks
-        try {
-            const savedTasks = localStorage.getItem('productivityTracker_tasks');
-            if (savedTasks) {
-                tasks = JSON.parse(savedTasks);
-                console.log("Loaded tasks for dates:", Object.keys(tasks).length);
-            }
-        } catch (e) {
-            console.error("Error loading tasks:", e);
-        }
-
-        // Load rewards
-        try {
-            const savedRewardsData = localStorage.getItem('productivityTracker_rewards');
-            if (savedRewardsData) {
-                const parsedData = JSON.parse(savedRewardsData);
-                
-                // Handle both old format (array) and new format (object)
-                if (Array.isArray(parsedData)) {
-                    rewards = parsedData;
-                } else if (typeof parsedData === 'object' && parsedData !== null) {
-                    // Convert object to array
-                    rewards = Object.values(parsedData);
-                }
-                console.log("Loaded rewards:", rewards.length);
-            }
-        } catch (e) {
-            console.error("Error loading rewards:", e);
-        }
-        
-        // Ensure all rewards have required properties
-        rewards = rewards.map(reward => {
-            if (!reward.id) {
-                reward.id = generateId(reward.name);
-            }
-            if (!reward.createdAt) {
-                reward.createdAt = new Date().toISOString();
-            }
-            if (!reward.timesRedeemed) {
-                reward.timesRedeemed = 0;
-            }
-            return reward;
-        });
-        
-        if (rewards.length === 0) {
-            // Default rewards
-            rewards = [
-                {
-                    id: 'movie-night',
-                    name: 'Movie Night',
-                    description: 'Watch a movie of your choice with popcorn',
-                    points: 150,
-                    type: 'experience',
-                    icon: 'fas fa-film',
-                    createdAt: new Date().toISOString(),
-                    timesRedeemed: 0
-                },
-                {
-                    id: 'coffee-treat',
-                    name: 'Coffee Treat',
-                    description: 'Get your favorite coffee from the cafe',
-                    points: 50,
-                    type: 'treat',
-                    icon: 'fas fa-coffee',
-                    createdAt: new Date().toISOString(),
-                    timesRedeemed: 0
-                },
-                {
-                    id: 'book-purchase',
-                    name: 'New Book',
-                    description: 'Buy a new book you\'ve been wanting',
-                    points: 300,
-                    type: 'purchase',
-                    icon: 'fas fa-book',
-                    createdAt: new Date().toISOString(),
-                    timesRedeemed: 0
-                }
-            ];
-            saveRewards();
-        }
-
-        // Load redeemed rewards history (just for tracking, not for disabling)
-        try {
-            const savedRedeemed = localStorage.getItem('productivityTracker_redeemed');
-            if (savedRedeemed) {
-                redeemedRewards = JSON.parse(savedRedeemed);
-                console.log("Loaded redeemed rewards history:", redeemedRewards.length);
-            }
-        } catch (e) {
-            console.error("Error loading redeemed rewards:", e);
-        }
-    }
-
-    // Generate ID for new rewards
-    function generateId(name) {
-        return name.toLowerCase().replace(/[^a-z0-9]/g, '-') + '-' + Date.now();
-    }
-
-    // Save data
-    function saveCategories() {
-        try {
-            localStorage.setItem('productivityTracker_categories', JSON.stringify(categories));
-            updateCategorySelects();
-            console.log("Categories saved successfully");
-        } catch (e) {
-            console.error("Error saving categories:", e);
-        }
-    }
-
-    function saveTemplates() {
-        try {
-            localStorage.setItem('productivityTracker_templates', JSON.stringify(templates));
-            console.log("Templates saved successfully");
-        } catch (e) {
-            console.error("Error saving templates:", e);
-        }
-    }
-
-    function saveTasks() {
-        try {
-            localStorage.setItem('productivityTracker_tasks', JSON.stringify(tasks));
-            console.log("Tasks saved successfully");
-        } catch (e) {
-            console.error("Error saving tasks:", e);
-        }
-    }
-
-    function saveRewards() {
-        try {
-            localStorage.setItem('productivityTracker_rewards', JSON.stringify(rewards));
-            console.log("Rewards saved successfully:", rewards.length);
-        } catch (e) {
-            console.error("Error saving rewards:", e);
-        }
-    }
-
-    function saveRedeemedRewards() {
-        try {
-            localStorage.setItem('productivityTracker_redeemed', JSON.stringify(redeemedRewards));
-            console.log("Redeemed rewards saved successfully");
-        } catch (e) {
-            console.error("Error saving redeemed rewards:", e);
-        }
-    }
-
-    // Initialize categories dropdown
-    function initCategories() {
-        updateCategorySelects();
-    }
-
-    // Update category dropdowns
-    function updateCategorySelects() {
-        const selects = [
-            'taskCategory',
-            'editTaskCategory',
-            'newDailyCategory',
-            'newCustomCategory'
-        ];
-        
-        selects.forEach(selectId => {
-            const select = document.getElementById(selectId);
-            if (select) {
-                select.innerHTML = '<option value="">Select category</option>';
-                categories.forEach(category => {
-                    const option = document.createElement('option');
-                    option.value = category.id;
-                    option.textContent = category.name;
-                    select.appendChild(option);
-                });
-            }
-        });
-    }
-
-    // Date handling
-    function formatDate(date) {
-        return date.toISOString().split('T')[0];
-    }
-
-    function formatDisplayDate(date) {
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        return date.toLocaleDateString('en-US', options);
-    }
-
-    function renderDate() {
-        document.getElementById('currentDateDisplay').textContent = formatDisplayDate(currentDate);
-    }
-
-    // Page navigation
-    function showPage(pageId) {
-        // Hide all pages
-        document.querySelectorAll('.page-container').forEach(page => {
-            page.classList.remove('active');
-        });
-        
-        // Show selected page
-        document.getElementById(pageId).classList.add('active');
-        currentPage = pageId.replace('Page', '');
-        
-        // Update page content
-        switch(pageId) {
-            case 'homePage':
-                renderHomePage();
-                break;
-            case 'addTasksPage':
-                renderAddTasksPage();
-                break;
-            case 'rewardsPage':
-                renderRewardsPage();
-                break;
-            case 'analyticsPage':
-                renderAnalyticsPage();
-                break;
-            case 'templatesPage':
-                renderTemplatesPage();
-                break;
-            case 'settingsPage':
-                renderSettingsPage();
-                break;
-        }
-    }
-
-    // Render analytics page
-    function renderAnalyticsPage() {
-        updateAnalytics();
-    }
-
-    // Render home page
-    function renderHomePage() {
-        const dateKey = formatDate(currentDate);
-        const tasksForDate = tasks[dateKey] || [];
-        const container = document.getElementById('tasksContainer');
-        
-        if (tasksForDate.length === 0) {
-            container.innerHTML = '<div class="no-tasks">No tasks for today. Go to "Add Tasks" page to create some!</div>';
-        } else {
-            container.innerHTML = '';
-            renderTaskList(tasksForDate, container, dateKey);
-        }
-        
-        updateCompletionRate();
-        updateHomeStats();
-        updateTotalPoints();
-    }
-
-    // Render task list
-    function renderTaskList(tasksList, container, dateKey, showActions = false) {
-        if (tasksList.length === 0) {
-            container.innerHTML = '<div class="no-tasks">No tasks found.</div>';
-            return;
-        }
-        
-        container.innerHTML = '';
-        
-        tasksList.forEach((task, index) => {
-            const category = categories.find(c => c.id === task.category) || { name: 'Uncategorized', color: '#999' };
-            
-            const taskElement = document.createElement('div');
-            taskElement.className = `task-item ${task.completed ? 'completed' : ''}`;
-            
-            let actionsHtml = '';
-            if (showActions) {
-                actionsHtml = `
-                    <div class="task-actions">
-                        <button class="button button-small edit-task" data-index="${index}" data-date="${dateKey}">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </div>
-                `;
-            }
-            
-            taskElement.innerHTML = `
-                <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''} data-index="${index}" data-date="${dateKey}">
-                <div class="task-content">
-                    <div class="task-name">${task.name}</div>
-                    <div>
-                        <span class="task-category" style="background-color: ${category.color}">${category.name}</span>
-                        <span class="task-points">${task.points} pts</span>
-                    </div>
-                </div>
-                ${actionsHtml}
-            `;
-            
-            container.appendChild(taskElement);
-        });
-    }
-
-    // Update completion rate
-    function updateCompletionRate() {
-        const dateKey = formatDate(currentDate);
-        const tasksForDate = tasks[dateKey] || [];
-        
-        if (tasksForDate.length === 0) {
-            document.getElementById('completionRate').textContent = '0% complete';
-            return;
-        }
-        
-        const completedTasks = tasksForDate.filter(task => task.completed).length;
-        const completionRate = Math.round((completedTasks / tasksForDate.length) * 100);
-        
-        document.getElementById('completionRate').textContent = `${completionRate}% complete`;
-    }
-
-    // Update home stats
-    function updateHomeStats() {
-        const dateKey = formatDate(currentDate);
-        const tasksForDate = tasks[dateKey] || [];
-        
-        const completedTasks = tasksForDate.filter(task => task.completed).length;
-        let earnedPoints = 0;
-        tasksForDate.forEach(task => {
-            if (task.completed) {
-                earnedPoints += task.points;
-            }
-        });
-        
-        document.getElementById('homeCompleted').textContent = completedTasks;
-        document.getElementById('homePoints').textContent = earnedPoints;
-        
-        // Update rewards stats
-        const availablePoints = calculateAvailablePoints();
-        const affordableCount = rewards.filter(reward => reward.points <= availablePoints).length;
-        
-        document.getElementById('homeAvailablePoints').textContent = availablePoints;
-        document.getElementById('homeAffordableRewards').textContent = affordableCount;
-    }
-
-    // Calculate available points
-    function calculateAvailablePoints() {
-        let totalPoints = 0;
-        let redeemedPoints = 0;
-        
-        // Calculate total earned points from completed tasks
-        for (const dateKey in tasks) {
-            tasks[dateKey].forEach(task => {
-                if (task.completed) {
-                    totalPoints += task.points;
-                }
-            });
-        }
-        
-        // Calculate total points spent on rewards
-        redeemedPoints = redeemedRewards.reduce((sum, redeemed) => {
-            const reward = rewards.find(r => r.id === redeemed.rewardId);
-            return sum + (reward ? reward.points : 0);
-        }, 0);
-        
-        return totalPoints - redeemedPoints;
-    }
-
-    // Update total points
-    function updateTotalPoints() {
-        const availablePoints = calculateAvailablePoints();
-        
-        // Calculate total points earned (not spent)
-        let totalPointsEarned = 0;
-        for (const dateKey in tasks) {
-            tasks[dateKey].forEach(task => {
-                if (task.completed) {
-                    totalPointsEarned += task.points;
-                }
-            });
-        }
-        
-        document.getElementById('totalPoints').textContent = totalPointsEarned;
-        document.getElementById('rewardsPagePoints').textContent = availablePoints;
-    }
-
-    // Render add tasks page
-    function renderAddTasksPage() {
-        // Render all tasks
-        const container = document.getElementById('allTasksContainer');
-        let allTasks = [];
-        
-        // Collect all tasks
-        for (const dateKey in tasks) {
-            tasks[dateKey].forEach((task, index) => {
-                allTasks.push({
-                    ...task,
-                    date: dateKey,
-                    index: index
-                });
-            });
-        }
-        
-        // Sort by date (newest first)
-        allTasks.sort((a, b) => new Date(b.date) - new Date(a.date));
-        
-        if (allTasks.length === 0) {
-            container.innerHTML = '<div class="no-tasks">No tasks yet. Add your first task above!</div>';
-            return;
-        }
-        
-        container.innerHTML = '';
-        
-        // Group tasks by date
-        const tasksByDate = {};
-        allTasks.forEach(task => {
-            if (!tasksByDate[task.date]) {
-                tasksByDate[task.date] = [];
-            }
-            tasksByDate[task.date].push(task);
-        });
-        
-        // Render grouped tasks
-        Object.keys(tasksByDate).sort().reverse().forEach(dateKey => {
-            const dateTasks = tasksByDate[dateKey];
-            const dateObj = new Date(dateKey);
-            const dateDisplay = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-            
-            const dateHeader = document.createElement('div');
-            dateHeader.className = 'day-header';
-            dateHeader.innerHTML = `<h3>${dateDisplay}</h3>`;
-            container.appendChild(dateHeader);
-            
-            const tasksList = document.createElement('div');
-            tasksList.className = 'tasks-container';
-            tasksList.style.maxHeight = 'none';
-            tasksList.style.marginBottom = '20px';
-            
-            dateTasks.forEach(task => {
-                const category = categories.find(c => c.id === task.category) || { name: 'Uncategorized', color: '#999' };
-                
-                const taskElement = document.createElement('div');
-                taskElement.className = `task-item ${task.completed ? 'completed' : ''}`;
-                taskElement.innerHTML = `
-                    <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''} data-index="${task.index}" data-date="${task.date}">
-                    <div class="task-content">
-                        <div class="task-name">${task.name}</div>
-                        <div>
-                            <span class="task-category" style="background-color: ${category.color}">${category.name}</span>
-                            <span class="task-points">${task.points} pts</span>
-                        </div>
-                    </div>
-                    <div class="task-actions">
-                        <button class="button button-small edit-task" data-index="${task.index}" data-date="${task.date}">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </div>
-                `;
-                
-                tasksList.appendChild(taskElement);
-            });
-            
-            container.appendChild(tasksList);
-        });
-    }
-
-    // Render rewards page
-    function renderRewardsPage() {
-        const container = document.getElementById('rewardsList');
-        const availablePoints = calculateAvailablePoints();
-        
-        if (rewards.length === 0) {
-            container.innerHTML = '<div class="no-tasks">No rewards yet. Click "Add New Reward" to create your first reward!</div>';
-            return;
-        }
-        
-        // Sort rewards: affordable first, then by points
-        const sortedRewards = [...rewards].sort((a, b) => {
-            const aAffordable = a.points <= availablePoints;
-            const bAffordable = b.points <= availablePoints;
-            
-            if (aAffordable && !bAffordable) return -1;
-            if (!aAffordable && bAffordable) return 1;
-            
-            return a.points - b.points;
-        });
-        
-        container.innerHTML = '';
-        
-        sortedRewards.forEach(reward => {
-            const isAffordable = reward.points <= availablePoints;
-            
-            const rewardCard = document.createElement('div');
-            rewardCard.className = `reward-card ${isAffordable ? 'affordable' : 'unaffordable'}`;
-            
-            const iconHtml = reward.icon ? `<i class="${reward.icon}" style="margin-right: 5px;"></i>` : '';
-            const typeBadge = `<span style="font-size: 0.7rem; background: var(--gray-medium); color: white; padding: 2px 6px; border-radius: 10px; margin-left: 5px;">${reward.type}</span>`;
-            const timesRedeemedBadge = reward.timesRedeemed > 0 ? 
-                `<span style="font-size: 0.7rem; background: var(--success-color); color: white; padding: 2px 6px; border-radius: 10px; margin-left: 5px;">Redeemed ${reward.timesRedeemed}x</span>` : '';
-            
-            rewardCard.innerHTML = `
-                <div class="reward-name">${iconHtml}${reward.name}${typeBadge}${timesRedeemedBadge}</div>
-                <div class="reward-description">${reward.description}</div>
-                <div class="reward-footer">
-                    <div class="reward-points">${reward.points} pts</div>
-                    <button class="redeem-button" data-reward-id="${reward.id}" ${!isAffordable ? 'disabled' : ''}>
-                        ${isAffordable ? '<i class="fas fa-gift"></i> Redeem Now' : `Need ${reward.points - availablePoints} more pts`}
-                    </button>
-                    <div class="task-actions">
-                        <button class="button button-small edit-reward" data-reward-id="${reward.id}" title="Edit Reward">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="button button-small button-danger delete-reward" data-reward-id="${reward.id}" title="Delete Reward">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-            `;
-            
-            container.appendChild(rewardCard);
-        });
-        
-        // Update stats
-        const totalRewards = rewards.length;
-        const affordableCount = rewards.filter(reward => reward.points <= availablePoints).length;
-        const totalTimesRedeemed = rewards.reduce((sum, reward) => sum + reward.timesRedeemed, 0);
-        
-        document.getElementById('totalRewards').textContent = totalRewards;
-        document.getElementById('affordableRewards').textContent = affordableCount;
-        document.getElementById('timesRedeemed').textContent = totalTimesRedeemed;
-    }
-
-    // Render templates page
-    function renderTemplatesPage() {
-        loadTemplateTasks('daily');
-    }
-
-    // Load template tasks
-    function loadTemplateTasks(type) {
-        console.log("Loading template tasks for:", type);
-        
-        if (type === 'daily') {
-            const tasksList = templates.daily || [];
-            const container = document.getElementById('dailyTasksList');
-            
-            if (tasksList.length === 0) {
-                container.innerHTML = '<div class="no-tasks" style="font-size: 0.9rem;">No daily template tasks yet. Add some below!</div>';
-                return;
-            }
-            
-            container.innerHTML = '';
-            
-            tasksList.forEach((task, index) => {
-                const category = categories.find(c => c.id === task.category) || { name: 'Uncategorized', color: '#999' };
-                
-                const taskDiv = document.createElement('div');
-                taskDiv.className = 'task-item';
-                taskDiv.innerHTML = `
-                    <div class="task-content" style="flex: 1; margin-left: 0;">
-                        <div class="task-name">${task.name}</div>
-                        <div>
-                            <span class="task-category" style="background-color: ${category.color}">${category.name}</span>
-                            <span class="task-points">${task.points} pts</span>
-                        </div>
-                    </div>
-                    <div class="task-actions">
-                        <button class="button button-small button-danger delete-template-task" data-type="daily" data-index="${index}">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                `;
-                
-                container.appendChild(taskDiv);
-            });
-            
-            updateTemplateCategorySelects('daily');
-        } else if (type === 'custom') {
-            const tasksList = templates.custom.tasks || [];
-            const container = document.getElementById('customTasksList');
-            
-            // Update day checkboxes
-            const selectedDays = templates.custom.days || [];
-            document.querySelectorAll('.day-checkbox').forEach(checkbox => {
-                checkbox.checked = selectedDays.includes(parseInt(checkbox.value));
-            });
-            
-            if (tasksList.length === 0) {
-                container.innerHTML = '<div class="no-tasks" style="font-size: 0.9rem;">No custom template tasks yet. Add some below!</div>';
-                return;
-            }
-            
-            container.innerHTML = '';
-            
-            tasksList.forEach((task, index) => {
-                const category = categories.find(c => c.id === task.category) || { name: 'Uncategorized', color: '#999' };
-                
-                const taskDiv = document.createElement('div');
-                taskDiv.className = 'task-item';
-                taskDiv.innerHTML = `
-                    <div class="task-content" style="flex: 1; margin-left: 0;">
-                        <div class="task-name">${task.name}</div>
-                        <div>
-                            <span class="task-category" style="background-color: ${category.color}">${category.name}</span>
-                            <span class="task-points">${task.points} pts</span>
-                        </div>
-                    </div>
-                    <div class="task-actions">
-                        <button class="button button-small button-danger delete-template-task" data-type="custom" data-index="${index}">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                `;
-                
-                container.appendChild(taskDiv);
-            });
-            
-            updateTemplateCategorySelects('custom');
-        }
-    }
-
-    function updateTemplateCategorySelects(type) {
-        const selectId = type === 'daily' ? 'newDailyCategory' : 'newCustomCategory';
-        const select = document.getElementById(selectId);
-        
-        if (!select) return;
-        
-        select.innerHTML = '<option value="">Select category</option>';
-        categories.forEach(category => {
-            const option = document.createElement('option');
-            option.value = category.id;
-            option.textContent = category.name;
-            select.appendChild(option);
-        });
-    }
-
-    // Add template task
-    function addTemplateTask(type) {
-        const nameInput = document.getElementById(type === 'daily' ? 'newDailyTask' : 'newCustomTask');
-        const categorySelect = document.getElementById(type === 'daily' ? 'newDailyCategory' : 'newCustomCategory');
-        const pointsInput = document.getElementById(type === 'daily' ? 'newDailyPoints' : 'newCustomPoints');
-        
-        const name = nameInput.value.trim();
-        const category = categorySelect.value;
-        const points = parseInt(pointsInput.value) || 10;
-        
-        if (!name || !category) {
-            alert('Please enter task name and select category');
-            return;
-        }
-        
-        if (type === 'daily') {
-            if (!templates.daily) templates.daily = [];
-            templates.daily.push({
-                name: name,
-                category: category,
-                points: points
-            });
-        } else if (type === 'custom') {
-            if (!templates.custom.tasks) templates.custom.tasks = [];
-            templates.custom.tasks.push({
-                name: name,
-                category: category,
-                points: points
-            });
-            
-            // Save selected days
-            const selectedDays = [];
-            document.querySelectorAll('.day-checkbox:checked').forEach(checkbox => {
-                selectedDays.push(parseInt(checkbox.value));
-            });
-            templates.custom.days = selectedDays;
-        }
-        
-        saveTemplates();
-        loadTemplateTasks(type);
-        
-        // Clear inputs
-        nameInput.value = '';
-        categorySelect.value = '';
-        pointsInput.value = '10';
-    }
-
-    // Apply template
-    function applyTemplate() {
-        const activeType = document.querySelector('.template-type-btn.active').dataset.type;
-        const startDateStr = document.getElementById('applyStartDate').value;
-        const duration = parseInt(document.getElementById('applyDuration').value);
-        
-        if (!startDateStr) {
-            alert('Please select a start date');
-            return;
-        }
-        
-        const startDate = new Date(startDateStr);
-        
-        let templateTasks = [];
-        let selectedDays = [];
-        
-        if (activeType === 'daily') {
-            templateTasks = templates.daily || [];
-        } else if (activeType === 'custom') {
-            templateTasks = templates.custom.tasks || [];
-            selectedDays = templates.custom.days || [];
-            
-            if (selectedDays.length === 0) {
-                alert('Please select at least one day for custom template');
-                return;
-            }
-        }
-        
-        if (templateTasks.length === 0) {
-            alert('No tasks in this template. Add some tasks first.');
-            return;
-        }
-        
-        let daysApplied = 0;
-        
-        for (let i = 0; i < duration; i++) {
-            const currentDate = new Date(startDate);
-            currentDate.setDate(startDate.getDate() + i);
-            
-            let shouldApply = false;
-            
-            if (activeType === 'daily') {
-                shouldApply = true;
-            } else if (activeType === 'custom') {
-                const dayOfWeek = currentDate.getDay(); // 0 = Sunday
-                shouldApply = selectedDays.includes(dayOfWeek);
-            }
-            
-            if (shouldApply) {
-                const dateKey = formatDate(currentDate);
-                
-                if (!tasks[dateKey]) {
-                    tasks[dateKey] = [];
-                }
-                
-                // Add template tasks to this date (only if not already existing)
-                templateTasks.forEach(templateTask => {
-                    // Check if similar task already exists for this date
-                    const exists = tasks[dateKey].some(task => 
-                        task.name === templateTask.name && 
-                        task.category === templateTask.category
-                    );
-                    
-                    if (!exists) {
-                        tasks[dateKey].push({
-                            id: Date.now() + Math.random(),
-                            name: templateTask.name,
-                            category: templateTask.category,
-                            points: templateTask.points,
-                            completed: false
-                        });
-                    }
-                });
-                
-                daysApplied++;
-            }
-        }
-        
-        saveTasks();
-        alert(`Template applied to ${daysApplied} days!`);
-        
-        // Refresh home page if needed
-        if (currentPage === 'home') {
-            renderHomePage();
-        }
-        // Update analytics
-        updateAnalytics();
-    }
-
-    // Reward functions
-    function redeemReward(rewardId) {
-        const reward = rewards.find(r => r.id === rewardId);
-        if (!reward) return;
-        
-        const availablePoints = calculateAvailablePoints();
-        
-        if (reward.points > availablePoints) {
-            alert(`You need ${reward.points - availablePoints} more points to redeem this reward!`);
-            return;
-        }
-        
-        if (confirm(`Redeem "${reward.name}" for ${reward.points} points?\n\nYou can redeem this reward again anytime you have enough points!`)) {
-            // Record the redemption
-            redeemedRewards.push({
-                rewardId: reward.id,
-                redeemedAt: new Date().toISOString(),
-                points: reward.points
-            });
-            
-            // Update the reward's redemption count
-            const rewardIndex = rewards.findIndex(r => r.id === rewardId);
-            if (rewardIndex !== -1) {
-                rewards[rewardIndex].timesRedeemed++;
-                rewards[rewardIndex].lastRedeemedAt = new Date().toISOString();
-            }
-            
-            saveRedeemedRewards();
-            saveRewards();
-            renderRewardsPage();
-            updateTotalPoints();
-            updateHomeStats();
-            
-            alert(`Congratulations! You've redeemed "${reward.name}"!\n\nYou've redeemed this reward ${rewards[rewardIndex].timesRedeemed} time(s) total.`);
-        }
-    }
-
-    function showRewardForm(reward = null) {
-        const modalTitle = document.getElementById('rewardModalTitle');
-        const form = document.getElementById('rewardForm');
-        const deleteBtn = document.getElementById('deleteRewardBtn');
-        
-        if (reward) {
-            modalTitle.textContent = 'Edit Reward';
-            document.getElementById('rewardName').value = reward.name;
-            document.getElementById('rewardDescription').value = reward.description;
-            document.getElementById('rewardPoints').value = reward.points;
-            document.getElementById('rewardType').value = reward.type;
-            document.getElementById('rewardIcon').value = reward.icon || '';
-            document.getElementById('rewardId').value = reward.id;
-            deleteBtn.style.display = 'inline-block';
-        } else {
-            modalTitle.textContent = 'Add New Reward';
-            form.reset();
-            document.getElementById('rewardPoints').value = 100;
-            document.getElementById('rewardId').value = '';
-            deleteBtn.style.display = 'none';
-        }
-        
-        document.getElementById('rewardModal').style.display = 'flex';
-    }
-
-    function deleteReward(rewardId) {
-        const reward = rewards.find(r => r.id === rewardId);
-        if (!reward) return;
-        
-        if (confirm(`Are you sure you want to delete the reward "${reward.name}"?\n\nThis will also remove all redemption history for this reward.\n\nThis action cannot be undone.`)) {
-            // Remove from rewards list
-            const index = rewards.findIndex(r => r.id === rewardId);
-            if (index !== -1) {
-                rewards.splice(index, 1);
-            }
-            
-            // Remove redemption records for this reward
-            const newRedeemedRewards = redeemedRewards.filter(r => r.rewardId !== rewardId);
-            redeemedRewards = newRedeemedRewards;
-            
-            saveRewards();
-            saveRedeemedRewards();
-            renderRewardsPage();
-            document.getElementById('rewardModal').style.display = 'none';
-            
-            alert('Reward deleted successfully!');
-        }
-    }
-
-    // Event Listeners
-    function setupEventListeners() {
-        // Theme toggle
-        document.getElementById('themeToggle').addEventListener('click', function() {
-            document.body.classList.toggle('dark-mode');
-            const icon = this.querySelector('i');
-            if (document.body.classList.contains('dark-mode')) {
-                icon.className = 'fas fa-sun';
-                this.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
-            } else {
-                icon.className = 'fas fa-moon';
-                this.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
-            }
-        });
-        
-        // Page navigation
-        document.getElementById('homeBtn').addEventListener('click', () => showPage('homePage'));
-        document.getElementById('addTaskPageBtn').addEventListener('click', () => showPage('addTasksPage'));
-        document.getElementById('rewardsPageBtn').addEventListener('click', () => showPage('rewardsPage'));
-        document.getElementById('analyticsPageBtn').addEventListener('click', () => showPage('analyticsPage'));
-        document.getElementById('templatesPageBtn').addEventListener('click', () => showPage('templatesPage'));
-        document.getElementById('settingsPageBtn').addEventListener('click', () => showPage('settingsPage'));
-        
-        // Quick actions
-        document.getElementById('viewRewardsBtn').addEventListener('click', (e) => {
-            e.preventDefault();
-            showPage('rewardsPage');
-        });
-        
-        document.getElementById('addTaskBtn').addEventListener('click', (e) => {
-            e.preventDefault();
-            showPage('addTasksPage');
-        });
-        
-        // Date navigation
-        document.getElementById('prevDay').addEventListener('click', function() {
-            currentDate.setDate(currentDate.getDate() - 1);
-            renderDate();
-            if (currentPage === 'home') {
-                renderHomePage();
-            }
-        });
-        
-        document.getElementById('nextDay').addEventListener('click', function() {
-            currentDate.setDate(currentDate.getDate() + 1);
-            renderDate();
-            if (currentPage === 'home') {
-                renderHomePage();
-            }
-        });
-        
-        document.getElementById('todayButton').addEventListener('click', function() {
-            currentDate = new Date();
-            renderDate();
-            if (currentPage === 'home') {
-                renderHomePage();
-            }
-        });
-        
-        // Add task form
-        document.getElementById('taskForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const taskName = document.getElementById('taskName').value;
-            const taskCategory = document.getElementById('taskCategory').value;
-            const taskPoints = parseInt(document.getElementById('taskPoints').value);
-            const taskDate = document.getElementById('taskDate').value;
-            
-            if (!taskName || !taskCategory) return;
-            
-            const dateKey = taskDate || formatDate(new Date());
-            
-            if (!tasks[dateKey]) {
-                tasks[dateKey] = [];
-            }
-            
-            tasks[dateKey].push({
-                id: Date.now(),
-                name: taskName,
-                category: taskCategory,
-                points: taskPoints,
-                completed: false
-            });
-            
-            saveTasks();
-            renderAddTasksPage();
-            
-            // Reset form
-            this.reset();
-            document.getElementById('taskPoints').value = 10;
-            document.getElementById('taskDate').valueAsDate = new Date();
-            
-            alert('Task added successfully!');
-            
-            // Update analytics
-            updateAnalytics();
-        });
-        
-        // Task completion toggle (delegated)
-        document.addEventListener('change', function(e) {
-            if (e.target.classList.contains('task-checkbox')) {
-                const index = parseInt(e.target.dataset.index);
-                const dateKey = e.target.dataset.date;
-                
-                if (tasks[dateKey] && tasks[dateKey][index]) {
-                    tasks[dateKey][index].completed = e.target.checked;
-                    saveTasks();
-                    
-                    // Refresh current view
-                    if (currentPage === 'home') {
-                        renderHomePage();
-                    } else if (currentPage === 'addTasks') {
-                        renderAddTasksPage();
-                    }
-                    
-                    // Update analytics
-                    updateAnalytics();
-                }
-            }
-        });
-        
-        // Edit task button (delegated)
-        document.addEventListener('click', function(e) {
-            if (e.target.closest('.edit-task')) {
-                const button = e.target.closest('.edit-task');
-                const index = parseInt(button.dataset.index);
-                const dateKey = button.dataset.date;
-                
-                if (tasks[dateKey] && tasks[dateKey][index]) {
-                    openEditModal(tasks[dateKey][index], index, dateKey);
-                }
-            }
-            
-            // Edit reward button
-            if (e.target.closest('.edit-reward')) {
-                const button = e.target.closest('.edit-reward');
-                const rewardId = button.dataset.rewardId;
-                const reward = rewards.find(r => r.id === rewardId);
-                if (reward) {
-                    showRewardForm(reward);
-                }
-            }
-            
-            // Delete reward button
-            if (e.target.closest('.delete-reward')) {
-                const button = e.target.closest('.delete-reward');
-                const rewardId = button.dataset.rewardId;
-                deleteReward(rewardId);
-            }
-            
-            // Redeem reward button
-            if (e.target.closest('.redeem-button')) {
-                const button = e.target.closest('.redeem-button');
-                if (!button.disabled) {
-                    const rewardId = button.dataset.rewardId;
-                    redeemReward(rewardId);
-                }
-            }
-            
-            // Delete template task
-            if (e.target.closest('.delete-template-task')) {
-                const button = e.target.closest('.delete-template-task');
-                const type = button.dataset.type;
-                const index = parseInt(button.dataset.index);
-                
-                if (confirm('Remove this task from template?')) {
-                    if (type === 'daily') {
-                        templates.daily.splice(index, 1);
-                    } else if (type === 'custom') {
-                        templates.custom.tasks.splice(index, 1);
-                    }
-                    saveTemplates();
-                    loadTemplateTasks(type);
-                }
-            }
-        });
-        
-        // Add new reward button
-        document.getElementById('addNewRewardBtn').addEventListener('click', function() {
-            showRewardForm();
-        });
-        
-        // Reward form
-        document.getElementById('rewardForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const name = document.getElementById('rewardName').value;
-            const description = document.getElementById('rewardDescription').value;
-            const points = parseInt(document.getElementById('rewardPoints').value);
-            const type = document.getElementById('rewardType').value;
-            const icon = document.getElementById('rewardIcon').value;
-            const rewardId = document.getElementById('rewardId').value;
-            
-            if (!name || points <= 0) {
-                alert('Please enter a valid reward name and points value');
-                return;
-            }
-            
-            if (rewardId) {
-                // Edit existing reward
-                const index = rewards.findIndex(r => r.id === rewardId);
-                if (index !== -1) {
-                    rewards[index] = {
-                        ...rewards[index],
-                        name,
-                        description,
-                        points,
-                        type,
-                        icon,
-                        updatedAt: new Date().toISOString()
-                    };
-                }
-            } else {
-                // Add new reward
-                const newId = generateId(name);
-                rewards.push({
-                    id: newId,
-                    name,
-                    description,
-                    points,
-                    type,
-                    icon,
-                    createdAt: new Date().toISOString(),
-                    timesRedeemed: 0
-                });
-            }
-            
-            saveRewards();
-            renderRewardsPage();
-            document.getElementById('rewardModal').style.display = 'none';
-            
-            alert(rewardId ? 'Reward updated successfully!' : 'Reward added successfully!');
-        });
-        
-        // Delete reward button in modal
-        document.getElementById('deleteRewardBtn').addEventListener('click', function() {
-            const rewardId = document.getElementById('rewardId').value;
-            if (rewardId) {
-                deleteReward(rewardId);
-            }
-        });
-        
-        // Cancel reward form
-        document.getElementById('cancelRewardBtn').addEventListener('click', function() {
-            document.getElementById('rewardModal').style.display = 'none';
-        });
-        
-        // Close modals
-        document.getElementById('closeRewardModal').addEventListener('click', function() {
-            document.getElementById('rewardModal').style.display = 'none';
-        });
-        
-        window.addEventListener('click', function(e) {
-            if (e.target.classList.contains('modal')) {
-                e.target.style.display = 'none';
-            }
-        });
-        
-        // Tab switching in analytics page
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('tab')) {
-                const tabId = e.target.dataset.tab;
-                
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                e.target.classList.add('active');
-                
-                document.querySelectorAll('.tab-content').forEach(content => {
-                    content.classList.remove('active');
-                });
-                document.getElementById(`${tabId}Tab`).classList.add('active');
-                
-                // Update analytics when switching tabs
-                updateAnalytics();
-            }
-        });
-        
-        // Template type buttons
-        document.querySelectorAll('.template-type-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.template-type-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                
-                const type = this.dataset.type;
-                document.querySelectorAll('.template-content').forEach(content => {
-                    content.classList.remove('active');
-                });
-                document.getElementById(`${type}TemplateContent`).classList.add('active');
-                
-                loadTemplateTasks(type);
-            });
-        });
-        
-        // Add template task buttons
-        document.getElementById('addDailyTask').addEventListener('click', () => addTemplateTask('daily'));
-        document.getElementById('addCustomTask').addEventListener('click', () => addTemplateTask('custom'));
-        
-        // Apply template button
-        document.getElementById('applyTemplateNow').addEventListener('click', applyTemplate);
-        
-        // Day checkbox changes
-        document.addEventListener('change', function(e) {
-            if (e.target.classList.contains('day-checkbox')) {
-                const selectedDays = [];
-                document.querySelectorAll('.day-checkbox:checked').forEach(checkbox => {
-                    selectedDays.push(parseInt(checkbox.value));
-                });
-                templates.custom.days = selectedDays;
-                saveTemplates();
-            }
-        });
-    }
-</script>
+    <!-- Scripts -->
+    <script type="module" src="js/app.js"></script>
 </body>
 </html>
